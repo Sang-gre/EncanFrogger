@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 public class MainContainer extends JFrame {
@@ -13,7 +14,7 @@ public class MainContainer extends JFrame {
     public MainContainer(){
         setTitle("EncanFrogger");
         setSize(850, 500);
-        setMinimumSize(new Dimension(850, 500));
+        setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -32,6 +33,26 @@ public class MainContainer extends JFrame {
         add(mainPanel);
 
         launchGame();
+
+        Image customCursor = new ImageIcon("ASSETS/customCursor.png").getImage();
+        CursorGlassPane glassPane = new CursorGlassPane(customCursor, mainPanel); 
+        setGlassPane(glassPane);
+        glassPane.setVisible(true);
+
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Image empty = toolkit.createImage("");
+        setCursor(toolkit.createCustomCursor(empty, new Point(0,0), "blank cursor"));
+
+        glassPane.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            Point panelPoint = SwingUtilities.convertPoint(glassPane, e.getPoint(), mainPanel);
+            Component clicked = SwingUtilities.getDeepestComponentAt(mainPanel, panelPoint.x, panelPoint.y);
+            if(clicked != null) {
+                clicked.dispatchEvent(SwingUtilities.convertMouseEvent(glassPane, e, clicked));
+            }
+        }
+    });
 
         setVisible(true);
     }
