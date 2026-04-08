@@ -11,12 +11,14 @@ public class GameSecondPage extends JPanel {
     MainContainer parent;
 
     private Image background;
+    private Image buttonDashboard;
 
     public GameSecondPage(MainContainer parent){
         this.parent = parent;
         setLayout(new BorderLayout());
 
         background = new ImageIcon("ASSETS/background.png").getImage();
+        buttonDashboard = new ImageIcon("ASSETS/buttonDashboard.png").getImage();
 
         setupButtons();
     }
@@ -26,7 +28,6 @@ public class GameSecondPage extends JPanel {
         buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
         buttonPanel.setOpaque(false);
-        //button initialization
         startBttn = new JButton("START");
         menuBttn = new JButton("MENU");
         exitBttn = new JButton("EXIT");
@@ -58,6 +59,15 @@ public class GameSecondPage extends JPanel {
         super.paintComponent(g);
         if (background != null) {
             g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+        }
+
+        if (buttonDashboard != null) {
+            int targetWidth = getWidth();   
+            int targetHeight = buttonDashboard.getHeight(this) * targetWidth / buttonDashboard.getWidth(this); 
+            int x = (getWidth() - targetWidth);
+            int y = (getHeight() - targetHeight);
+
+            g.drawImage(buttonDashboard, x, y, targetWidth, targetHeight, this);
         }
     }
 }

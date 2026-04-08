@@ -1,5 +1,5 @@
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class MainContainer extends JFrame {
 
@@ -13,7 +13,7 @@ public class MainContainer extends JFrame {
     public MainContainer(){
         setTitle("EncanFrogger");
         setSize(850, 500);
-        setResizable(false);
+        setMinimumSize(new Dimension(850, 500));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
