@@ -3,49 +3,46 @@ dito yung first window to appear sa game, nasa loob siya ng cardLayouted na Main
 */
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
-public class GameLauncher extends JPanel{
-    //components
-    JButton startBttn;
-    JButton menuBttn;
-    JButton exitBttn;
+public class GameLauncher extends JPanel {
 
-    JPanel buttonPanel;
+    MainContainer parent;
 
-    public GameLauncher(){
+    public GameLauncher(MainContainer parent){
+        this.parent = parent;
+
         setLayout(new BorderLayout());
 
-        setupButtons();
-    }
+        JLabel title = new JLabel("ENCANFROGGER", JLabel.CENTER);
+        JLabel title2 = new JLabel("THE ADVENTURES OF SANG'GRES", JLabel.CENTER);
+        JLabel subtitle = new JLabel("Click anywhere to continue", JLabel.CENTER);
 
-    public void setupButtons(){
+        title.setFont(new Font("Arial", Font.BOLD, 28));
+        subtitle.setFont(new Font("Arial", Font.PLAIN, 16));
+
+        JPanel textPanel = new JPanel();
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        textPanel.add(Box.createVerticalGlue());
+        textPanel.add(title);
+        textPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        textPanel.add(title2);
+        textPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        textPanel.add(subtitle);
+        textPanel.add(Box.createVerticalGlue());
+
+        add(textPanel, BorderLayout.CENTER);
+
         
-        buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel,  BoxLayout.Y_AXIS));
-        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        //button initialization
-        startBttn = new JButton("START");
-        menuBttn = new JButton("MENU");
-        exitBttn = new JButton("EXIT");
-
-        //button alignment
-        startBttn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        menuBttn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        exitBttn.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        //button spacing
-        buttonPanel.add(Box.createVerticalGlue());
-        buttonPanel.add(startBttn);
-        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        buttonPanel.add(menuBttn);
-        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        buttonPanel.add(exitBttn);
-        buttonPanel.add(Box.createVerticalGlue());
-
-
-
-        add(buttonPanel, BorderLayout.CENTER);
-        
+        addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+                parent.showSecondPage();
+            }
+        });
     }
 }
