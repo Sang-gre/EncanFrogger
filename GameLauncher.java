@@ -40,6 +40,9 @@ public class GameLauncher extends JPanel {
             int x = (getWidth() - targetWidth) / 2;
             int y = (getHeight() - targetHeight);
 
+            int verticalOffset = +40; 
+            y += verticalOffset;
+
             g.drawImage(titleFont, x, y, targetWidth, targetHeight, this);
         }
     }
