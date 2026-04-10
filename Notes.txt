@@ -1,4 +1,9 @@
+
+
 FOR CMD:
+    Quickest way to compile and run:
+    run.bat
+
     To create a list of all files:
     dir /s /b src\*.java > sources.txt
 
@@ -9,6 +14,9 @@ FOR CMD:
     java -cp bin main.GameLauncher
 
 FOR POWERSHELL:
+    Quickest way to compile and run:
+    ./run.bat
+
     To compile:
     javac -d bin -sourcepath src (Get-ChildItem -Recurse src/*.java)
 

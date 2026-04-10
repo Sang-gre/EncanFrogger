@@ -1,8 +1,0 @@
-C:\GitHub\EncanFrogger\src\core\GamePanel.java
-C:\GitHub\EncanFrogger\src\core\GameState.java
-C:\GitHub\EncanFrogger\src\gameobjects\GameObject.java
-C:\GitHub\EncanFrogger\src\main\GameLauncher.java
-C:\GitHub\EncanFrogger\src\ui\components\Cursor.java
-C:\GitHub\EncanFrogger\src\ui\overlays\CursorGlassPane.java
-C:\GitHub\EncanFrogger\src\ui\screens\MainPanel.java
-C:\GitHub\EncanFrogger\src\ui\screens\TitlePanel.java
