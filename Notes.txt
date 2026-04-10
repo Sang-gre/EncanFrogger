@@ -1,4 +1,3 @@
-
 FOR CMD:
     To create a list of all files:
     dir /s /b src\*.java > sources.txt
@@ -8,6 +7,15 @@ FOR CMD:
 
     Run game:
     java -cp bin main.GameLauncher
+
+FOR POWERSHELL:
+    To compile:
+    javac -d bin -sourcepath src (Get-ChildItem -Recurse src/*.java)
+
+    To run:
+    java -cp bin main.GameLauncher
+
+
 
 Don't mind:
 javac -d bin -sourcepath src src/main/GameLauncher.java
