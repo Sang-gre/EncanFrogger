@@ -1,3 +1,4 @@
+package gameobjects;
 import javax.swing.*;
 import java.awt.*;
 

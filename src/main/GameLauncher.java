@@ -1,17 +1,24 @@
+package main;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class MainContainer extends JFrame {
+import core.GamePanel;
+import ui.overlays.CursorGlassPane;
+import ui.screens.MainPanel;
+import ui.screens.TitlePanel;
+
+public class GameLauncher extends JFrame {
 
     JPanel mainPanel;
     CardLayout cardLayout;
 
-    GameLauncher gameLaunch;
-    GameSecondPage secondPage;
+    TitlePanel gameLaunch;
+    MainPanel secondPage;
     GamePanel gamePanel;
 
-    public MainContainer(){
+    public GameLauncher(){
         setTitle("EncanFrogger");
         setSize(850, 500);
         setResizable(false);
@@ -22,8 +29,8 @@ public class MainContainer extends JFrame {
         mainPanel = new JPanel(cardLayout);
 
         
-        gameLaunch = new GameLauncher(this);
-        secondPage = new GameSecondPage(this);
+        gameLaunch = new TitlePanel(this);
+        secondPage = new MainPanel(this);
         gamePanel = new GamePanel();
 
         mainPanel.add(gameLaunch, "Launch");
@@ -74,6 +81,6 @@ public class MainContainer extends JFrame {
     }
 
     public static void main(String[] args){
-        new MainContainer();
+        new GameLauncher();
     }
 }

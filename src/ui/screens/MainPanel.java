@@ -1,19 +1,22 @@
+package ui.screens;
 import java.awt.*;
 import javax.swing.*;
 
-public class GameSecondPage extends JPanel {
+import main.GameLauncher;
+
+public class MainPanel extends JPanel {
 
     JButton startBttn;
     JButton menuBttn;
     JButton exitBttn;
 
     JPanel buttonPanel;
-    MainContainer parent;
+    GameLauncher parent;
 
     private Image background;
     private Image buttonDashboard;
 
-    public GameSecondPage(MainContainer parent){
+    public MainPanel(GameLauncher parent){
         this.parent = parent;
         setLayout(new BorderLayout());
 

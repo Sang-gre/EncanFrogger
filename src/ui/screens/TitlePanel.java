@@ -1,17 +1,18 @@
-/*
-dito yung first window to appear sa game, nasa loob siya ng cardLayouted na MainContainer 
-*/
+package ui.screens;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class GameLauncher extends JPanel {
+import main.GameLauncher;
 
-    MainContainer parent;
+public class TitlePanel extends JPanel {
+
+    GameLauncher parent;
     private Image background;
     private Image titleFont;
 
-    public GameLauncher(MainContainer parent){
+    public TitlePanel(GameLauncher parent){
         this.parent = parent;
 
         background = new ImageIcon("ASSETS/background.png").getImage();

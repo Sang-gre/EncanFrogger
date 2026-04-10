@@ -1,0 +1,13 @@
+
+FOR CMD:
+    To create a list of all files:
+    dir /s /b src\*.java > sources.txt
+
+    To compile contents of said list: 
+    javac -d bin @sources.txt
+
+    Run game:
+    java -cp bin main.GameLauncher
+
+Don't mind:
+javac -d bin -sourcepath src src/main/GameLauncher.java

@@ -1,0 +1,1 @@
+![UML Class Diagram](docs/class-diagram.drawio.svg)
