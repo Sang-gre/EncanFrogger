@@ -2,7 +2,7 @@
 
 FOR CMD:
     Quickest way to compile and run:
-    run.bat
+    run.cmd
 
     To create a list of all files:
     dir /s /b src\*.java > sources.txt
@@ -15,7 +15,7 @@ FOR CMD:
 
 FOR POWERSHELL:
     Quickest way to compile and run:
-    ./run.bat
+    ./run.cmd
 
     To compile:
     javac -d bin -sourcepath src (Get-ChildItem -Recurse src/*.java)
