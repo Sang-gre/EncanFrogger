@@ -54,7 +54,7 @@ public class Obstacle extends GameObject {
     public void onCollide(GameObject other) {
         // deactivate on collision
         if (other instanceof Player) {
-            this.isActive = false;
+            setActive(false);
             System.out.println("Obstacle hit the player!");
         }
     }
