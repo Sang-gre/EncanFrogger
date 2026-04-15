@@ -5,12 +5,17 @@ import java.awt.*;
 import java.awt.event.*;
 
 import gameobjects.Player;
+import threads.GameLogicThread;
+import threads.RenderThread;
 import assets.AssetManager; 
 
 public class GamePanel extends JPanel implements KeyListener {
     private GameState state;
     private Player player;
     private AssetManager assetManager;
+    
+    private GameLogicThread logicThread;
+    private RenderThread renderThread;
 
     public GamePanel(){
         this.state = GameState.SETTING_UP;
@@ -56,11 +61,7 @@ public class GamePanel extends JPanel implements KeyListener {
         }
     } 
 
-    public void startGame() {
-        this.state = GameState.PLAYING;
-        
-        /* threads here */
-    }
+    
 
 
     private void chooseChar(){
@@ -108,6 +109,22 @@ public class GamePanel extends JPanel implements KeyListener {
 
         add(characPanel, BorderLayout.CENTER);
         //
+
+
+        //------------------LOGIC----------------
+        //dito yung if blabla is selected pero waray paman class for eachchar so
+        if (terra.isSelected()){
+            //chuchu
+        }
+
+        next.addActionListener( e -> {
+            showMap();
+        });
+    }
+
+
+    public void showMap(){
+        //oki
     }
 
     @Override
@@ -134,11 +151,35 @@ public class GamePanel extends JPanel implements KeyListener {
             }        
     }
 
+    public void startGame() {
+        this.state = GameState.PLAYING;
+
+        removeAll();
+        revalidate();
+        repaint();
+
+        logicThread = new GameLogicThread(this);
+        renderThread = new RenderThread(this);
+
+        logicThread.start();
+        renderThread.start();
+    }
+
+    public void updateGame(){
+        if (player != null){
+            player.update();
+        }
+    }
+
+    
+
     @Override
     public void keyTyped(KeyEvent e) {}
 
     @Override
     public void keyReleased(KeyEvent e) {}
+
+
 
     public GameState getState() { return state; }
     public void setState(GameState state) { this.state = state; }
