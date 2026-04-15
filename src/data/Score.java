@@ -1,7 +1,17 @@
 package data;
 
 public class Score {
-    private String initials; //3 letter?
-    private int points;
-    private int level;
+    private int currentScore;
+
+    public void addScore(int score){
+        currentScore += score;
+    }
+
+    public int getScore() {
+        return currentScore;
+    }
+
+    public void reset() {
+        currentScore = 0;
+    }
 }

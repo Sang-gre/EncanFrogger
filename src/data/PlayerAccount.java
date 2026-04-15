@@ -1,13 +1,33 @@
 package data;
 
-
-import java.util.List;
+import java.util.ArrayList;
+import gameobjects.Player;
 
 public class PlayerAccount {
-    private int currentLevel;
-    private int totalCoins;
-    private List<String> unlockedCharacters;
-    private String selectedCharacter;
+    private String initials;
+    private int coins;
+    private int highScore;
+    private ArrayList<Player> unlockedChar;
 
-    
+    public PlayerAccount(String initials) {
+        this.initials = initials;
+        this.coins = 0;
+        this.highScore = 0;
+        unlockedChar = new ArrayList<> ();
+    }
+
+    // getters & setters
+    public String getInitials() { return initials; }
+    public int getCoins() { return coins; }
+    public int getHighScore() { return highScore; }
+
+    public void addCoins(int amount) {
+        coins += amount;
+    }
+
+    public void updateHighScore(int score) {
+        if (score > highScore) {
+            highScore = score;
+        }
+    }
 }
