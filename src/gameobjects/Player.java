@@ -8,6 +8,7 @@ public class Player extends GameObject {
     private int coins;
     private int level;
     private boolean abilityReady;
+    private Direction direction;
 
     public Player(int x, int y) {
         super(x, y, 40, 40, 5); // default size & speed
@@ -18,23 +19,30 @@ public class Player extends GameObject {
         this.abilityReady = true;
     }
 
-    // movement using Direction enum
-    public void move(Direction dir) {
-        switch (dir) {
-            case UP:
-                y -= speed;
-                break;
-            case DOWN:
-                y += speed;
-                break;
-            case LEFT:
-                x -= speed;
-                break;
-            case RIGHT:
-                x += speed;
-                break;
-        }
+    public void setDirection(Direction direction){
+        this.direction = direction;
     }
+    
+    // movement using Direction enum
+    @Override
+public void move() {
+    if (direction == null) return;
+
+    switch (direction) {
+        case UP: 
+            y -= speed; 
+            break;
+        case DOWN: 
+            y += speed; 
+            break;
+        case LEFT: 
+            x -= speed; 
+            break;
+        case RIGHT: 
+            x += speed; 
+            break;
+    }
+}
 
     public void useAbility() {
         if (abilityReady) {
@@ -57,8 +65,8 @@ public class Player extends GameObject {
 
     @Override
     public void update() {
-        // future: animations, cooldowns, etc.
-    }
+    move();
+}
 
     @Override
     public void draw(Graphics g) {
