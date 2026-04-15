@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import gameobjects.Player;
-import assets.AssetManager;
+import assets.AssetManager; 
 
 public class GamePanel extends JPanel implements KeyListener {
     private GameState state;
@@ -13,11 +13,13 @@ public class GamePanel extends JPanel implements KeyListener {
     private AssetManager assetManager;
 
     public GamePanel(){
-        this.state = GameState.MENU;
+        this.state = GameState.SETTING_UP;
         this.assetManager = new AssetManager();
 
         setFocusable(true);
         addKeyListener(this);
+
+        chooseChar(); //dire gud didi hiya igcall guys, test run la ini
     }
 
     @Override
@@ -27,6 +29,7 @@ public class GamePanel extends JPanel implements KeyListener {
         switch (state) {
             case MENU:
                 // draw menu
+
                 break;
             case SHOP:
                 // draw shop
@@ -34,8 +37,12 @@ public class GamePanel extends JPanel implements KeyListener {
             case LEADERBOARD:
                 // draw leaderboard
                 break;
+            case SETTING_UP:
+                chooseChar();
+
             case PLAYING:
                 // draw game
+                //startGame();
                 break;
             case PAUSED:
                 // draw pause screen
@@ -53,6 +60,54 @@ public class GamePanel extends JPanel implements KeyListener {
         this.state = GameState.PLAYING;
         
         /* threads here */
+    }
+
+
+    private void chooseChar(){
+        setLayout(new BorderLayout());
+
+        JPanel characPanel = new JPanel(new BorderLayout());
+        JPanel characTitle = new JPanel();
+        JPanel characBttn = new JPanel();
+            characBttn.setLayout(new BoxLayout(characBttn, BoxLayout.X_AXIS));
+        JPanel buttons = new JPanel(new BorderLayout());
+            buttons.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        characTitle.add(new JLabel ("CHOOSE CHARACTER"), SwingConstants.CENTER);
+
+        //characters button - i'll be using radio button po
+        JRadioButton flammara = new JRadioButton("Flammara"); //remove th ename if not necessary 
+        JRadioButton deia = new JRadioButton("Deia");
+        JRadioButton adamus = new JRadioButton("Adamus");
+        JRadioButton terra = new JRadioButton("Terra");
+
+        ButtonGroup charGroup = new ButtonGroup();
+        charGroup.add(flammara);
+        charGroup.add(deia);
+        charGroup.add(adamus);
+        charGroup.add(terra);
+
+        characBttn.add(flammara);
+        characBttn.add(Box.createHorizontalStrut(40));
+        characBttn.add(deia);
+        characBttn.add(Box.createHorizontalStrut(40));
+        characBttn.add(adamus);
+        characBttn.add(Box.createHorizontalStrut(40));
+        characBttn.add(terra);
+        characBttn.add(Box.createHorizontalStrut(40));
+
+        JButton next = new JButton("NEXT");
+        JButton back = new JButton("BACK");
+
+        buttons.add(back, BorderLayout.WEST);
+        buttons.add(next, BorderLayout.EAST);
+
+        characPanel.add(characTitle, BorderLayout.NORTH);
+        characPanel.add(buttons, BorderLayout.SOUTH);
+        characPanel.add(characBttn, BorderLayout.EAST);
+
+        add(characPanel, BorderLayout.CENTER);
+        //
     }
 
     @Override
