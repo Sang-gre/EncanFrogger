@@ -1,12 +1,12 @@
 package gameobjects;
-import javax.swing.*;
+
 import java.awt.*;
 
 public abstract class GameObject {
     protected int x, y;
     protected int width, height;
     protected int speed;
-    protected boolean isActive;
+    private boolean isActive;
 
     public GameObject(int x, int y, int width, int height, int speed) {
         this.x = x;
@@ -22,23 +22,24 @@ public abstract class GameObject {
         return new Rectangle(x, y, width, height);
     }
 
-    // basic movement (can be overridden)
-    public void move() {
-        // default: no movement
-}
-
+    // basic movement
+    public abstract void move();
     // update logic
-    public void update() {
-        move();
-    }
-
-    public boolean isActive() {
-    return isActive;
-}
-
+    public abstract void update();
     // render method
     public abstract void draw(Graphics g);
-
     // collision handling
     public abstract void onCollide(GameObject other);
+
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
+    public int getSpeed() { return speed; }
+    public boolean isActive() { return isActive; }
+
+    public void setX(int x) { this.x = x; }
+    public void setY(int y) { this.y = y; }
+    public void setSpeed(int speed) { this.speed = speed; }
+    public void setActive(boolean active) { this.isActive = active; }
 }
