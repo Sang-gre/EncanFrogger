@@ -2,7 +2,7 @@ package gameobjects;
 
 import java.awt.*;
 
-public class Player extends GameObject {
+public abstract class Player extends GameObject {
 
     private int lives;
     private int coins;
