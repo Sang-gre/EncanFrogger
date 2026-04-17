@@ -1,23 +1,22 @@
 package main;
 
 import core.GamePanel;
+import ui.CursorGlassPane;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import ui.overlays.CursorGlassPane;
-import ui.screens.MainPanel;
-import ui.screens.TitlePanel;
 
 public class GameLauncher extends JFrame {
 
-    JPanel mainPanel;
-    CardLayout cardLayout;
+    private final JPanel mainPanel;
+    private final CardLayout cardLayout;
 
-    TitlePanel gameLaunch;
-    MainPanel secondPage;
-    GamePanel gamePanel;
+    private final TitlePanel gameLaunch;
+    private final MainPanel secondPage;
+    private final GamePanel gamePanel;
 
-    public GameLauncher(){
+    public GameLauncher() {
         setTitle("EncanFrogger");
         setSize(850, 500);
         setMinimumSize(new Dimension(850, 500));
@@ -27,19 +26,21 @@ public class GameLauncher extends JFrame {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        
         gameLaunch = new TitlePanel(this);
         secondPage = new MainPanel(this);
-        gamePanel = new GamePanel();
+        gamePanel = new GamePanel(this);
 
         mainPanel.add(gameLaunch, "Launch");
-        mainPanel.add(secondPage, "SecondPage");
+        mainPanel.add(secondPage, "Menu");
         mainPanel.add(gamePanel, "Game");
 
         add(mainPanel);
-
         launchGame();
+        setupCursor();
+        setVisible(true);
+    }
 
+    private void setupCursor() {
         Image customCursor = new ImageIcon("ASSETS/customCursor.png").getImage();
         CursorGlassPane glassPane = new CursorGlassPane(customCursor, mainPanel); 
         setGlassPane(glassPane);
@@ -50,36 +51,30 @@ public class GameLauncher extends JFrame {
         setCursor(toolkit.createCustomCursor(empty, new Point(0,0), "blank cursor"));
 
         glassPane.addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            Point panelPoint = SwingUtilities.convertPoint(glassPane, e.getPoint(), mainPanel);
-            Component clicked = SwingUtilities.getDeepestComponentAt(mainPanel, panelPoint.x, panelPoint.y);
-            if(clicked != null) {
-                clicked.dispatchEvent(SwingUtilities.convertMouseEvent(glassPane, e, clicked));
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Point panelPoint = SwingUtilities.convertPoint(glassPane, e.getPoint(), mainPanel);
+                Component clicked = SwingUtilities.getDeepestComponentAt(mainPanel, panelPoint.x, panelPoint.y);
+                if(clicked != null) {
+                    clicked.dispatchEvent(SwingUtilities.convertMouseEvent(glassPane, e, clicked));
+                }
             }
-        }
-    });
-
-        setVisible(true);
+        });
     }
 
     public void launchGame(){
         cardLayout.show(mainPanel, "Launch");
     }
 
-    public void showSecondPage(){
-        cardLayout.show(mainPanel, "SecondPage");
+    public void menuGame(){
+        cardLayout.show(mainPanel, "Menu");
     }
 
     public void startGame(){
         cardLayout.show(mainPanel, "Game");
     }
 
-    public void menuGame(){
-        cardLayout.show(mainPanel, "SecondPage"); 
-    }
-
     public static void main(String[] args){
-        new GameLauncher();
+        SwingUtilities.invokeLater(GameLauncher::new);
     }
 }

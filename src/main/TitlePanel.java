@@ -1,10 +1,8 @@
-package ui.screens;
+package main;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
-import main.GameLauncher;
 
 public class TitlePanel extends JPanel {
 
@@ -23,7 +21,7 @@ public class TitlePanel extends JPanel {
         addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e){
-                parent.showSecondPage();
+                parent.menuGame();
             }
         });
     }

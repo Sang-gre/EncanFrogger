@@ -1,4 +1,4 @@
-package ui.overlays;
+package ui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
