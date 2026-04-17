@@ -5,122 +5,53 @@ import gameobjects.Player;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import main.GameLauncher;
 import threads.GameLogicThread;
 import threads.RenderThread;
 
 public class GamePanel extends JPanel implements KeyListener {
 
+    private final GameLauncher launcher;
+    private final AssetManager assetManager;
+
     private GameState state;
     private Player player;
-    private AssetManager assetManager;
 
     private GameLogicThread logicThread;
     private RenderThread renderThread;
 
-    private JButton nextBtn;
-    private JButton backBtn;
-
-    private JPanel background;
-
-    public GamePanel() {
-        this.state = GameState.SETTING_UP;
+    public GamePanel(GameLauncher launcher) {
+        this.launcher     = launcher;
         this.assetManager = new AssetManager();
+        this.state        = GameState.CHARACTER_SELECT;
 
         setFocusable(true);
         addKeyListener(this);
 
-        chooseChar();
+        showCharacterSelect();
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-    }
-
-    private void chooseChar() {
-
+    public void showCharacterSelect() {
+        this.state = GameState.CHARACTER_SELECT;
         removeAll();
         setLayout(new BorderLayout());
-
-        background = new JPanel() {
-            Image img = new ImageIcon("assets/chooseCharacterBackground.png").getImage();
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
-            }
-        };
-
-        background.setLayout(new BorderLayout());
-
-        JPanel characBttn = new JPanel();
-        characBttn.setLayout(new BoxLayout(characBttn, BoxLayout.X_AXIS));
-        characBttn.setOpaque(false);
-
-        JRadioButton paopao = new JRadioButton("PaoPao");
-        JRadioButton terra = new JRadioButton("Terra");
-        JRadioButton flammara = new JRadioButton("Flammara");
-        JRadioButton adamus = new JRadioButton("Adamus");
-        JRadioButton deia = new JRadioButton("Deia");
-
-        ButtonGroup charGroup = new ButtonGroup();
-        charGroup.add(paopao);
-        charGroup.add(terra);
-        charGroup.add(flammara);
-        charGroup.add(adamus);
-        charGroup.add(deia);
-
-        characBttn.add(paopao);
-        characBttn.add(Box.createHorizontalStrut(40));
-        characBttn.add(terra);
-        characBttn.add(Box.createHorizontalStrut(40));
-        characBttn.add(flammara);
-        characBttn.add(Box.createHorizontalStrut(40));
-        characBttn.add(adamus);
-        characBttn.add(Box.createHorizontalStrut(40));
-        characBttn.add(deia);
-
-        background.add(characBttn, BorderLayout.CENTER);
-
-        JPanel buttonPanel = new JPanel(new BorderLayout());
-        buttonPanel.setOpaque(false);
-
-        backBtn = new JButton("Back");
-        nextBtn = new JButton("Next");
-
-        backBtn.setFocusPainted(false);
-        nextBtn.setFocusPainted(false);
-
-        buttonPanel.add(backBtn, BorderLayout.WEST);
-        buttonPanel.add(nextBtn, BorderLayout.EAST);
-
-        background.add(buttonPanel, BorderLayout.SOUTH);
-
-        add(background, BorderLayout.CENTER);
-
-        nextBtn.addActionListener(e -> {
-            if (!flammara.isSelected() &&
-                !deia.isSelected() &&
-                !adamus.isSelected() &&
-                !terra.isSelected()) {
-
-                JOptionPane.showMessageDialog(GamePanel.this, "Please select a character!");
-                return;
-            }
-            startGame();
-        });
-
-        backBtn.addActionListener(e -> {
-            System.out.println("Back clicked");
-        });
-
+        add(new CharacterSelect(this, () -> launcher.menuGame()), BorderLayout.CENTER); // add BorderLayout.CENTER
         revalidate();
         repaint();
     }
 
-    public void startGame() {
-        this.state = GameState.PLAYING;
+    public void showCharacterSelectMidGame() {
+        this.state = GameState.CHARACTER_SELECT;
+        removeAll();
+        setLayout(new BorderLayout());
+        add(new CharacterSelect(this, null), BorderLayout.CENTER);
+        revalidate();
+        repaint();
+    }
+
+    public void startLevel(Player selectedPlayer) {
+        this.player = selectedPlayer;
+        this.state  = GameState.PLAYING;
 
         removeAll();
         revalidate();
@@ -128,7 +59,6 @@ public class GamePanel extends JPanel implements KeyListener {
 
         logicThread = new GameLogicThread(this);
         renderThread = new RenderThread(this);
-
         logicThread.start();
         renderThread.start();
     }
@@ -139,42 +69,25 @@ public class GamePanel extends JPanel implements KeyListener {
         }
     }
 
+
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
 
-        if (state == GameState.PLAYING) {
-            if (key == KeyEvent.VK_ESCAPE) {
-                state = GameState.PAUSED;
-            }
+        if (state == GameState.PLAYING && key == KeyEvent.VK_ESCAPE) {
+            state = GameState.PAUSED;
         } else if (state == GameState.PAUSED && key == KeyEvent.VK_ESCAPE) {
             state = GameState.PLAYING;
         }
     }
 
-    @Override 
-    public void keyTyped(KeyEvent e) {}
+    @Override public void keyTyped(KeyEvent e) {}
+    @Override public void keyReleased(KeyEvent e) {}
 
-    @Override 
-    public void keyReleased(KeyEvent e) {}
 
-    public GameState getState() { 
-        return state; 
-    }
-
-    public void setState(GameState state) { 
-        this.state = state; 
-    }
-
-    public Player getPlayer() { 
-        return player; 
-    }
-
-    public void setPlayer(Player player) { 
-        this.player = player; 
-    }
-
-    public AssetManager getAssetManager() { 
-        return assetManager; 
-    }
+    public GameState getState()           { return state; }
+    public void setState(GameState state) { this.state = state; }
+    public Player getPlayer()             { return player; }
+    public void setPlayer(Player player)  { this.player = player; }
+    public AssetManager getAssetManager() { return assetManager; }
 }

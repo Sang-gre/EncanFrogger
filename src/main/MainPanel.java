@@ -1,9 +1,8 @@
-package ui.screens;
+package main;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import main.GameLauncher;
 
 public class MainPanel extends JPanel {
 
