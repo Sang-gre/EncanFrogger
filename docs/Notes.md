@@ -75,7 +75,7 @@ Main gameplay
     - `checkGameConditions()` checks win/lose conditions and updates state
     - `keyPressed(KeyEvent e)` handles controls (pause, move, ability, menu navigation)
     - `stopThreads()`stops game threads before switching screens
-    - More methods pa for rendering
+    - More methods pa for rendering or idkk depende kay Denise
 - **Relationships:** 
     - Receives **GameLauncher** so it can call its methods
     - Creates and controls **CharacterSelect** (passes itself so selection affects GamePanel)
@@ -86,6 +86,26 @@ Main gameplay
     - Uses **GameState** to control behavior
 
 ### [GameState.java](../src/core/GameState.java)
+- **Role:** 
+- **Methods:**
+- **Relationships:** 
+
+---
+
+## 📂 Package: `level`
+level handling
+
+### [DataManager.java](../src/core/DataManager.java)
+- **Role:**
+- **Methods:**
+- **Relationships:** 
+
+---
+
+## 📂 Package: `persistence`
+Saving / loading data
+
+### [CharacterSelect.java](../src/core/CharacterSelect.java)
 - **Role:**
 - **Methods:**
 - **Relationships:** 
