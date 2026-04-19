@@ -44,12 +44,7 @@ public void move() {
     }
 }
 
-    public void useAbility() {
-        if (abilityReady) {
-            System.out.println("Ability used!");
-            abilityReady = false;
-        }
-    }
+    public abstract void useAbility();
 
     public void loseLife() {
         lives--;

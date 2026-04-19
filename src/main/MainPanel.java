@@ -14,7 +14,6 @@ public class MainPanel extends JPanel {
     GameLauncher parent;
 
     private Image background;
-    private Image buttonDashboard;
 
     private Image startImg;
     private Image menuImg;
@@ -30,8 +29,7 @@ public class MainPanel extends JPanel {
     }
 
     private void loadAssets() {
-        background = new ImageIcon("ASSETS/background.png").getImage();
-        buttonDashboard = new ImageIcon("ASSETS/buttonDashboard.png").getImage();
+        background = new ImageIcon("ASSETS/buttonDashboardBackground.png").getImage();
 
         startImg = new ImageIcon("ASSETS/startButton.png").getImage();
         menuImg  = new ImageIcon("ASSETS/menuButton.png").getImage();
@@ -129,11 +127,5 @@ public class MainPanel extends JPanel {
             g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
         }
 
-        if (buttonDashboard != null) {
-            int targetW = getWidth();
-            int targetH = buttonDashboard.getHeight(this) * targetW / buttonDashboard.getWidth(this);
-
-            g.drawImage(buttonDashboard, 0, getHeight() - targetH, targetW, targetH, this);
-        }
     }
 }

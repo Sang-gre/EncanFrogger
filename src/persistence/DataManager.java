@@ -1,4 +1,4 @@
-package data;
+package persistence;
 
 public class DataManager {
     

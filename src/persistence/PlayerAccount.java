@@ -1,4 +1,4 @@
-package data;
+package persistence;
 
 import java.util.ArrayList;
 import gameobjects.Player;
