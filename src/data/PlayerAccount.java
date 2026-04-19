@@ -9,6 +9,12 @@ public class PlayerAccount {
     private int highScore;
     private ArrayList<Player> unlockedChar;
 
+    private static int counter = 0000;
+
+    static {
+        counter++;
+    }
+
     public PlayerAccount(String initials) {
         this.initials = initials;
         this.coins = 0;

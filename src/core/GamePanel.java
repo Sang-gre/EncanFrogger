@@ -49,6 +49,17 @@ public class GamePanel extends JPanel implements KeyListener {
         repaint();
     }
 
+    public void showMapSelect(Player selectedPlayer){
+        this.state = GameState.MAP_SELECT;
+
+        removeAll();
+        setLayout(new BorderLayout());
+
+        add(new MapSelect(this, () -> showCharacterSelect(), selectedPlayer), BorderLayout.CENTER);
+
+        revalidate();
+        repaint();
+    }
     public void startLevel(Player selectedPlayer) {
         this.player = selectedPlayer;
         this.state  = GameState.PLAYING;

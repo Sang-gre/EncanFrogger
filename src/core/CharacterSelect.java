@@ -1,46 +1,24 @@
 package core;
 
-import gameobjects.Player;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
+import gameobjects.Player;
+import gameobjects.Paopao;
+import gameobjects.Terra;
+import gameobjects.Flamara;
+import gameobjects.Adamus;
+import gameobjects.Deia;
 
-public class CharacterSelect extends JPanel {
-
-    private final GamePanel gamePanel;
-    private final Runnable onBack;
+public class CharacterSelect extends Selection {
 
     private JRadioButton paopao, terra, flammara, adamus, deia;
 
     public CharacterSelect(GamePanel gamePanel, Runnable onBack) {
-        this.gamePanel = gamePanel;
-        this.onBack    = onBack;
-
-        setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(800, 600));
-
-        add(createBackground(), BorderLayout.CENTER);
+        super(gamePanel, onBack);
     }
 
-    private JPanel createBackground() {
-        JPanel background = new JPanel(new BorderLayout()) {
-            private final Image img = new ImageIcon("assets/chooseCharacterBackground.png").getImage();
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
-            }
-        };
-
-        background.setOpaque(true);
-        background.add(createCharacterButtons(), BorderLayout.CENTER);
-        background.add(createNavButtons(), BorderLayout.SOUTH);
-
-        return background;
-    }
-
-    private JPanel createCharacterButtons() {
+    @Override
+    public JPanel createSelectionButtons() {
         paopao  = new JRadioButton("PaoPao");
         terra = new JRadioButton("Terra");
         flammara = new JRadioButton("Flammara");
@@ -79,112 +57,23 @@ public class CharacterSelect extends JPanel {
         return wrapper;
     }
 
-    private JPanel createNavButtons() {
-        JPanel panel = new JPanel(null);
-        panel.setOpaque(false);
-        panel.setPreferredSize(new Dimension(800, 100));
-
-        int btnWidth = 140;
-        int btnHeight = 60;
-        int margin = 20;
-
-        JButton backBtn = null;
-
-        if (onBack != null) {
-            backBtn = createImageButton("assets/backButton.png", btnWidth, btnHeight);
-            backBtn.addActionListener(e -> onBack.run());
-            panel.add(backBtn);
-        }
-
-        final JButton nextBtn = createImageButton("assets/nextButton.png", btnWidth, btnHeight);
-        nextBtn.addActionListener((ActionEvent e) -> {
-            if (!validateSelection()) {
-                JOptionPane.showMessageDialog(CharacterSelect.this, "Please select a character!");
-                return;
-            }
-            gamePanel.startLevel(getSelectedPlayer());
-        });
-
-        panel.add(nextBtn);
-
-        JButton finalBackBtn = backBtn;
-
-        panel.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-
-                int w = panel.getWidth();
-                int h = panel.getHeight();
-
-                if (finalBackBtn != null) {
-                    finalBackBtn.setBounds(
-                            margin,
-                            h - btnHeight,
-                            btnWidth,
-                            btnHeight
-                    );
-                }
-
-                nextBtn.setBounds(
-                        w - btnWidth - margin,
-                        h - btnHeight,
-                        btnWidth,
-                        btnHeight
-                );
-            }
-        });
-
-        return panel;
-    }
-
-    private JButton createImageButton(String path, int width, int height) {
-
-    ImageIcon icon = new ImageIcon(path);
-    Image scaled = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
-
-    JButton button = new JButton(new ImageIcon(scaled));
-
-    button.setBorderPainted(false);
-    button.setContentAreaFilled(false);
-    button.setFocusPainted(false);
-    button.setOpaque(false);
-
-    button.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                button.setLocation(button.getX(), button.getY() + 4);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                button.setLocation(button.getX(), button.getY() - 4);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                button.setLocation(button.getX(), button.getY());
-            }
-        });
-
-        return button;
-    }
-
-    private Player getSelectedPlayer() {
-        //if (paopao.isSelected())   return new Player("PaoPao");
-        //if (terra.isSelected())    return new Player("Terra");
-       // if (flammara.isSelected()) return new Player("Flammara");
-       // if (adamus.isSelected())   return new Player("Adamus");
-      //  if (deia.isSelected())     return new Player("Deia");
+    protected Player getSelectedPlayer() {
+        if (paopao.isSelected())   return new Paopao(0, 0);
+        if (terra.isSelected())    return new Terra(0, 0);
+        if (flammara.isSelected()) return new Flamara(0, 0);
+        if (adamus.isSelected())   return new Adamus(0, 0);
+        if (deia.isSelected())     return new Deia(0, 0);
         return null;
     }
 
-    private boolean validateSelection() {
+    @Override
+    protected void onNext(){
+        Player selected = getSelectedPlayer();
+        getGamePanel().showMapSelect(selected);
+    }
+
+    @Override
+    public boolean validateSelection() {
         return paopao.isSelected()   || terra.isSelected()  || flammara.isSelected() || adamus.isSelected() ||deia.isSelected();
     }
 }
