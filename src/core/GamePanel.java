@@ -117,6 +117,10 @@ public class GamePanel extends JPanel implements KeyListener {
         if (state == GameState.PAUSED && key == KeyEvent.VK_ESCAPE) {
             state = GameState.PLAYING;
         }
+
+        player.setDirection(Direction.UP);
+        player.move();
+        player.setDirection(null);
     }
 
     @Override public void keyTyped(KeyEvent e) {}

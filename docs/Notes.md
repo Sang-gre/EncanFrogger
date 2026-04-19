@@ -2,9 +2,9 @@
 
 EncanFrogger Code EXPLAINED! An stuff la anay nga I that might be confusing
 
----
+<details>
+<summary><b> 🏗 Relationships Overview </b></summary>
 
-## 🏗 Relationships Overview
 Refer to the UML diagram
 - **Association:** ----------
     - has-a or talks-to
@@ -22,34 +22,31 @@ Refer to the UML diagram
     - has-a or "Part-of" but independent
     - Class A has a Class B (Independent)
     - `public Constructor(OtherClass obj){}`
+</details>
 
 ---
 
-## 📂 Package: `main`
-The starting point of the application.
+<h2> 🛠 System Architecture </h2>
 
-### [GameLauncher.java](../src/main/GameLauncher.java)
-- **Role:** Entry point
-- **Methods:**
-    - `GameLauncher()`: insert text 
-- **Relationships:** 
-    - Creates **MainPanel** and **TitlePanel** and gives itself (this) so those panels can call **GameLauncher** methods
-    - Creates and shows **GamePanel**
-    - Puts **CursorGlassPane** on top of everything (overlay layer). **CursorGlassPane** captures mouse clicks, then **GameLauncher** forwards those clicks to the actual UI components
+<details>
+<summary><b> 📂 Package: characters </b></summary>
 
-### [MainPanel.java](../src/main/MainPanel.java)
+Defines different playable characters and their abilities
+
+### [Adamus.java](../src/core/GameLogicThread.java)
 - **Role:**
 - **Methods:**
 - **Relationships:** 
 
-### [TitlePanel.java](../src/main/TitlePanel.java)
-- **Role:**
-- **Methods:**
-- **Relationships:** 
+</details>
 
----
 
-## 📂 Package: `core`
+
+
+
+<details>
+<summary><b> 📂 Package: core </b></summary>
+
 Main gameplay
 
 ### [CharacterSelect.java](../src/core/CharacterSelect.java)
@@ -90,22 +87,146 @@ Main gameplay
 - **Methods:**
 - **Relationships:** 
 
----
+</details>
 
-## 📂 Package: `level`
+
+
+
+
+<details>
+<summary><b> 📂 Package: gameobjects </b></summary>
+
+Defines all objects that exist and interact in the game world.
+
+### [Coin.java](../src/core/RenderThread.java)
+- **Role:**
+- **Methods:**
+- **Relationships:** 
+
+### [Direction.java](../src/core/Direction.java)
+- **Role:**
+- **Methods:**
+- **Relationships:** 
+
+</details>
+
+
+
+
+
+<details>
+<summary><b> 📂 Package: level </b></summary>
+
 level handling
+
+### [LevelManager.java](../src/core/LevelManager.java)
+- **Role:**
+- **Methods:**
+- **Relationships:** 
+
+</details>
+
+
+
+
+<details>
+<summary><b> 📂 Package: main </b></summary>
+
+The starting point of the application.
+
+### [GameLauncher.java](../src/main/GameLauncher.java)
+- **Role:** Entry point
+- **Methods:**
+    - `GameLauncher()`: insert text 
+- **Relationships:** 
+    - Creates **MainPanel** and **TitlePanel** and gives itself (this) so those panels can call **GameLauncher** methods
+    - Creates and shows **GamePanel**
+    - Puts **CursorGlassPane** on top of everything (overlay layer). **CursorGlassPane** captures mouse clicks, then **GameLauncher** forwards those clicks to the actual UI components
+
+### [MainPanel.java](../src/main/MainPanel.java)
+- **Role:**
+- **Methods:**
+- **Relationships:** 
+
+### [TitlePanel.java](../src/main/TitlePanel.java)
+- **Role:**
+- **Methods:**
+- **Relationships:** 
+
+</details>
+
+
+
+
+
+<details>
+<summary><b> 📂 Package: persistence </b></summary>
+Saving / loading data
 
 ### [DataManager.java](../src/core/DataManager.java)
 - **Role:**
 - **Methods:**
 - **Relationships:** 
 
----
-
-## 📂 Package: `persistence`
-Saving / loading data
-
-### [CharacterSelect.java](../src/core/CharacterSelect.java)
+### [LeaderboardManager.java](../src/core/LeaderboardManager.java)
 - **Role:**
 - **Methods:**
 - **Relationships:** 
+
+### [PlayerAccountjava](../src/core/PlayerAccount.java)
+- **Role:**
+- **Methods:**
+- **Relationships:** 
+
+### [SaveState.java](../src/core/SaveState.java)
+- **Role:**
+- **Methods:**
+- **Relationships:** 
+
+### [Score.java](../src/core/Score.java)
+- **Role:**
+- **Methods:**
+- **Relationships:** 
+
+</details>
+
+
+
+
+
+<details>
+<summary><b> 📂 Package: threads </b></summary>
+
+Runs game processes simultaneously
+
+### [GameLogicThread.java](../src/core/GameLogicThread.java)
+- **Role:**
+- **Methods:**
+- **Relationships:** 
+
+### [RenderThread.java](../src/core/RenderThread.java)
+- **Role:**
+- **Methods:**
+- **Relationships:** 
+
+</details>
+
+
+
+
+
+<details>
+<summary><b> 📂 Package: ui </b></summary>
+
+Runs game processes simultaneously
+
+### [CursorGlassPane.java](../src/core/CursorGlassPane.java)
+- **Role:** Custom cursor overlay
+- **Methods:** 
+    - `CursorGlassPane(Image, JPanel)` sets custom cursor image and attaches mouse listeners
+    - `forwardEvent(e)` sends mouse events to the actual UI components underneath
+    - `paintComponent(g)` draws the custom cursor at the current mouse position
+- **Relationships:** 
+    - Receives **mainPanel** so it knows where to forward mouse events
+
+</details>

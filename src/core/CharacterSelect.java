@@ -2,12 +2,13 @@ package core;
 
 import java.awt.*;
 import javax.swing.*;
+
+import characters.Adamus;
+import characters.Deia;
+import characters.Flamara;
+import characters.Paopao;
+import characters.Terra;
 import gameobjects.Player;
-import gameobjects.Paopao;
-import gameobjects.Terra;
-import gameobjects.Flamara;
-import gameobjects.Adamus;
-import gameobjects.Deia;
 
 public class CharacterSelect extends Selection {
 
