@@ -9,7 +9,7 @@ public class Adamus extends Player {
     private int bridgeLane;
     private int bridgeDuration;
     private int bridgeTimer;
-    private static final int COOLDOWN = 200;
+    private static final int COOLDOWN = 60; //can be changed as well
 
     public Adamus(int x, int y) {
         super(x, y);
