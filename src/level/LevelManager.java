@@ -3,11 +3,6 @@ package level;
 import core.GameMap;
 import gameobjects.Coin;
 import gameobjects.Obstacle;
-<<<<<<< HEAD
-=======
-import gameobjects.Platform;
-
->>>>>>> d77496b3dd8b48615b3ddbdf11ef8c68e67fb346
 import java.awt.*;
 import java.util.*;
 import javax.swing.ImageIcon;
@@ -19,14 +14,12 @@ public class LevelManager {
     private static final float LANE_BOTTOM_MARGIN = 0.15f;
     private static final int OBSTACLE_WIDTH = 60;
     private static final int OBSTACLE_HEIGHT = 40;
-    private static final int PLATFORM_WIDTH = 120;
     private static final int COIN_SIZE = 20;
     private static final float BASE_SPEED = 2.5f;
     private static final float SPEED_INCREMENT = 0.4f;
     private static final int BASE_OBSTACLE_COUNT = 3;
     private static final int BASE_COIN_COUNT = 6;
     private static final int PLATFORM_LANE_COUNT = 2;
-    private static final int PLATFORM_COUNT = 2;
 
     private int screenWidth;
     private int screenHeight;
@@ -40,15 +33,8 @@ public class LevelManager {
     private boolean[] isPlatformLane;
 
     private final Map<Obstacle, Integer> obstacleLanes = new HashMap<>();
-<<<<<<< HEAD
     private final java.util.List<Obstacle> obstacles = new ArrayList<>();
     private final java.util.List<Coin> coins = new ArrayList<>();
-=======
-    private final Map<Platform, Integer> platformLanes = new HashMap<>();
-    private final List<Obstacle> obstacles = new ArrayList<>();
-    private final List<Platform> platforms = new ArrayList<>();
-    private final List<Coin> coins = new ArrayList<>();
->>>>>>> d77496b3dd8b48615b3ddbdf11ef8c68e67fb346
     private final Random rng = new Random();
 
     private Image background;
@@ -72,73 +58,42 @@ public class LevelManager {
 
         laneHeight = usable / LANE_COUNT;
         laneY = new int[LANE_COUNT];
+
         for (int i = 0; i < LANE_COUNT; i++) {
             laneY[i] = topY + i * laneHeight;
         }
     }
 
-<<<<<<< HEAD
     public void loadLevel(int n, GameMap map) {
-=======
-    private void repositionEntities() {
-        for (Obstacle o : obstacles) {
-            Integer lane = obstacleLanes.get(o);
-            if (lane != null) {
-                o.setPosition(o.getX(), centeredY(lane, OBSTACLE_HEIGHT));
-            }
-        }
-
-        for (Platform p : platforms) {
-            Integer lane = platformLanes.get(p);
-            if (lane != null) {
-                p.setPosition(p.getX(), centeredY(lane, OBSTACLE_HEIGHT));
-            }
-        }
-
-        coins.clear();
-        spawnCoins();
-    }
-
-    public void loadLevel(int n) {
->>>>>>> d77496b3dd8b48615b3ddbdf11ef8c68e67fb346
         currentLevel = n;
         obstacleSpeed = BASE_SPEED + (n - 1) * SPEED_INCREMENT;
 
         obstacles.clear();
         obstacleLanes.clear();
-        platforms.clear();
-        platformLanes.clear();
         coins.clear();
 
-        initPlatformLanes();
         spawnObstacles();
-        spawnPlatforms();
         spawnCoins();
+        initPlatformLanes();
 
-<<<<<<< HEAD
+        // 🔥 Load background per map
         switch (map) {
             case LIREO:
-                background = new ImageIcon("assets/maps/lireoMap.png").getImage();
+                background = new ImageIcon("assets/maps/lireo.png").getImage();
                 break;
             case HATHORIA:
-                background = new ImageIcon("assets/maps/hathoriaMap.png").getImage();
+                background = new ImageIcon("assets/maps/hathoria.png").getImage();
                 break;
             case ADAMYA:
-                background = new ImageIcon("assets/maps/adamyaMap.png").getImage();
+                background = new ImageIcon("assets/maps/adamya.png").getImage();
                 break;
             case SAPIRO:
-                background = new ImageIcon("assets/maps/sapiroMap.png").getImage();
+                background = new ImageIcon("assets/maps/sapiro.png").getImage();
                 break;
             case MINEAVE:
-                background = new ImageIcon("assets/maps/mineaveMap.png").getImage();
+                background = new ImageIcon("assets/maps/mineave.png").getImage();
                 break;
         }
-=======
-        // TODO: load map-specific background/tileset based on selected map
-        // TODO: adjust LANE_COUNT or lane layout depending on the map
-
-        System.out.println("Level " + n + " loaded | speed=" + obstacleSpeed);
->>>>>>> d77496b3dd8b48615b3ddbdf11ef8c68e67fb346
     }
 
     private void initPlatformLanes() {
@@ -148,14 +103,15 @@ public class LevelManager {
         }
     }
 
-<<<<<<< HEAD
     public void update() {
         for (Obstacle o : obstacles) o.update();
         for (Coin c : coins) c.update();
     }
 
+    // 🔥 UPDATED DRAW
     public void draw(Graphics g, int width, int height) {
 
+        // draw background FULL SCREEN
         if (background != null) {
             g.drawImage(background, 0, 0, width, height, null);
         }
@@ -168,36 +124,12 @@ public class LevelManager {
         for (int lane = 0; lane < LANE_COUNT; lane++) {
             for (int i = 0; i < BASE_OBSTACLE_COUNT; i++) {
                 Obstacle o = new Obstacle(0, 0, OBSTACLE_WIDTH, OBSTACLE_HEIGHT, lane, obstacleSpeed, Direction.RIGHT);
-=======
-    public void spawnObstacles() {
-        int countPerLane = BASE_OBSTACLE_COUNT + (currentLevel - 1);
-
-        for (int lane = 0; lane < LANE_COUNT; lane++) {
-            if (isPlatformLane[lane])
-                continue;
-
-            Direction dir = (lane % 2 == 0) ? Direction.RIGHT : Direction.LEFT;
-            int y = centeredY(lane, OBSTACLE_HEIGHT);
-            int spread = screenWidth / countPerLane;
-
-            for (int i = 0; i < countPerLane; i++) {
-                int startX = (dir == Direction.RIGHT)
-                        ? -OBSTACLE_WIDTH - i * spread
-                        : screenWidth + i * spread;
-
-                // TODO: vary obstacle width per level
-                Obstacle o = new Obstacle(
-                        startX, y,
-                        OBSTACLE_WIDTH, OBSTACLE_HEIGHT,
-                        lane, obstacleSpeed, dir);
->>>>>>> d77496b3dd8b48615b3ddbdf11ef8c68e67fb346
                 obstacles.add(o);
                 obstacleLanes.put(o, lane);
             }
         }
     }
 
-<<<<<<< HEAD
     private void spawnCoins() {
         for (int i = 0; i < BASE_COIN_COUNT; i++) {
             coins.add(new Coin(100, 100, COIN_SIZE, COIN_SIZE));
@@ -207,158 +139,4 @@ public class LevelManager {
     public java.util.List<Obstacle> getObstacles() { return obstacles; }
     public java.util.List<Coin> getCoins() { return coins; }
     public int getCurrentLevel() { return currentLevel; }
-=======
-    public void spawnPlatforms() {
-        for (int lane = 0; lane < LANE_COUNT; lane++) {
-            if (!isPlatformLane[lane])
-                continue;
-
-            Direction dir = (lane % 2 == 0) ? Direction.RIGHT : Direction.LEFT;
-            int y = centeredY(lane, OBSTACLE_HEIGHT);
-            int spread = screenWidth / PLATFORM_COUNT;
-
-            for (int i = 0; i < PLATFORM_COUNT; i++) {
-                int startX = (dir == Direction.RIGHT)
-                        ? -PLATFORM_WIDTH - i * spread
-                        : screenWidth + i * spread;
-
-                Platform p = new Platform(
-                        startX, y,
-                        PLATFORM_WIDTH, OBSTACLE_HEIGHT,
-                        lane, obstacleSpeed * 0.7f, dir);
-                platforms.add(p);
-                platformLanes.put(p, lane);
-            }
-        }
-    }
-
-    public void spawnCoins() {
-        int count = BASE_COIN_COUNT + (currentLevel - 1);
-
-        for (int i = 0; i < count; i++) {
-            int lane = rng.nextInt(LANE_COUNT);
-            int x = rng.nextInt(Math.max(1, screenWidth - COIN_SIZE));
-            int y = centeredY(lane, COIN_SIZE);
-
-            // TODO: if isPlatformLane[lane], attach coin to a platform
-            // TODO: avoid spawning coins directly on top of obstacles
-            coins.add(new Coin(x, y, COIN_SIZE, COIN_SIZE));
-        }
-    }
-
-    public void update() {
-        List<Obstacle> toRespawn = new ArrayList<>();
-        for (Obstacle o : obstacles) {
-            if (!o.isActive())
-                continue;
-            o.update();
-            if (o.isOffScreen(screenWidth))
-                toRespawn.add(o);
-        }
-        for (Obstacle o : toRespawn)
-            respawnObstacle(o);
-
-        List<Platform> toRespawnPlatforms = new ArrayList<>();
-        for (Platform p : platforms) {
-            if (!p.isActive())
-                continue;
-            p.update();
-
-            // moves coins on platforms
-            for (Coin c : coins) {
-                if (c.isActive() && p.isPlayerOn(c)) {
-                    c.setPosition(c.getX() + (int) p.getSpeed(), c.getY());
-                }
-            }
-            if (p.isOffScreen(screenWidth))
-                toRespawnPlatforms.add(p);
-        }
-        for (Platform p : toRespawnPlatforms)
-            respawnPlatform(p);
-
-        // update coins
-        for (Coin c : coins) {
-            if (c.isActive())
-                c.update();
-        }
-    }
-
-    public void draw(Graphics g) {
-        for (Obstacle o : obstacles) {
-            if (o.isActive())
-                o.draw(g);
-        }
-        for (Platform p : platforms) {
-            if (p.isActive())
-                p.draw(g);
-        }
-        for (Coin c : coins) {
-            if (c.isActive())
-                c.draw(g);
-        }
-    }
-
-    private void respawnObstacle(Obstacle o) {
-        boolean fromLeft = rng.nextBoolean();
-        Direction dir = fromLeft ? Direction.RIGHT : Direction.LEFT;
-        int x = fromLeft ? -OBSTACLE_WIDTH : screenWidth;
-        Integer lane = obstacleLanes.get(o);
-        int y = centeredY(lane, OBSTACLE_HEIGHT);
-        o.reset(x, y, obstacleSpeed, dir);
-    }
-
-    private void respawnPlatform(Platform p) {
-        boolean fromLeft = rng.nextBoolean();
-        Direction dir = fromLeft ? Direction.RIGHT : Direction.LEFT;
-        int x = fromLeft ? -PLATFORM_WIDTH : screenWidth;
-        Integer lane = platformLanes.get(p);
-        int y = centeredY(lane, OBSTACLE_HEIGHT);
-        p.reset(x, y, obstacleSpeed * 0.7f, dir);
-    }
-
-    private int centeredY(int lane, int entityHeight) {
-        return laneY[lane] + (laneHeight - entityHeight) / 2;
-    }
-
-    public int getLaneIndex(int yPosition) {
-        for (int i = 0; i < LANE_COUNT; i++) {
-            if (yPosition >= laneY[i] && yPosition < laneY[i] + laneHeight) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public boolean isPlayerOnPlatform(gameobjects.Player player) {
-        for (Platform p : platforms) {
-            if (p.isActive() && p.isPlayerOn(player))
-                return true;
-        }
-        return false;
-    }
-
-    public List<Obstacle> getObstacles() {
-        return Collections.unmodifiableList(obstacles);
-    }
-
-    public List<Platform> getPlatforms() {
-        return Collections.unmodifiableList(platforms);
-    }
-
-    public List<Coin> getCoins() {
-        return Collections.unmodifiableList(coins);
-    }
-
-    public int getCurrentLevel() {
-        return currentLevel;
-    }
-
-    public float getObstacleSpeed() {
-        return obstacleSpeed;
-    }
-
-    public boolean isPlatformLane(int lane) {
-        return lane >= 0 && lane < LANE_COUNT && isPlatformLane[lane];
-    }
->>>>>>> d77496b3dd8b48615b3ddbdf11ef8c68e67fb346
 }
