@@ -4,15 +4,14 @@ import assets.AssetManager;
 import gameobjects.Coin;
 import gameobjects.Obstacle;
 import gameobjects.Player;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 import level.Direction;
 import level.LevelManager;
 import main.GameLauncher;
 import threads.GameLogicThread;
 import threads.RenderThread;
-
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
 
 public class GamePanel extends JPanel implements KeyListener {
 
@@ -29,6 +28,8 @@ public class GamePanel extends JPanel implements KeyListener {
 
     private boolean levelTransitioning = false;
     private int currentLevel = 1;
+
+    private GameMap currentMap;
 
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
@@ -77,17 +78,15 @@ public class GamePanel extends JPanel implements KeyListener {
         repaint();
     }
 
-    public void startLevel(Player selectedPlayer) {
-        this.levelTransitioning = false;
+    public void startLevel(Player selectedPlayer, GameMap map) {
         this.player = selectedPlayer;
         this.state = GameState.PLAYING;
+        this.currentMap = map;
 
         this.levelManager = new LevelManager(getWidth(), getHeight());
-        this.collisionSystem = new CollisionSystem();
 
-        levelManager.loadLevel(currentLevel);
+        levelManager.loadLevel(currentLevel, currentMap);
 
-        // TODO: replace with proper spawn point from MapSelect once maps are implemented
         player.setPosition(getWidth() / 2, (int) (getHeight() * 0.85f));
 
         removeAll();
@@ -230,5 +229,21 @@ public class GamePanel extends JPanel implements KeyListener {
 
     public CollisionSystem getCollisionSystem() {
         return collisionSystem;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        if (levelManager != null) {
+
+            levelManager.resize(getWidth(), getHeight());
+
+            levelManager.draw(g, getWidth(), getHeight());
+        }
+
+        if (player != null) {
+            player.draw(g);
+        }
     }
 }

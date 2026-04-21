@@ -7,9 +7,9 @@ import javax.swing.*;
 
 public class MapSelect extends Selection {
 
-    private GamePanel gamePanel;
     private Player selectedPlayer;
     private JRadioButton lireo, hathoria, adamya, sapiro, mineave;
+    private GameMap selectedMap;
 
     public MapSelect(GamePanel gamePanel, Runnable onBack, Player selectedPlayer) {
         super(gamePanel, onBack);
@@ -18,51 +18,70 @@ public class MapSelect extends Selection {
 
     @Override
     public JPanel createSelectionButtons() {
-        lireo  = new JRadioButton("Lireo");
-        hathoria = new JRadioButton("Hathoria");
-        adamya = new JRadioButton("Adamya");
-        sapiro = new JRadioButton("Sapiro");
-        mineave = new JRadioButton("Mineave");
 
-        for (JRadioButton btn : new JRadioButton[]{lireo, hathoria, adamya, sapiro, mineave}) {
-            btn.setOpaque(false);
-            btn.setForeground(Color.WHITE);
-            btn.setFocusPainted(false);
-        }
+        lireo   = createBtn("assets/flags/lireoFlagMap.png");
+        hathoria = createBtn("assets/flags/hathoriaFlagMap.png");
+        adamya  = createBtn("assets/flags/adamyaFlagMap.png");
+        sapiro  = createBtn("assets/flags/sapiroFlagMap.png");
+        mineave = createBtn("assets/flags/mineaveFlagMap.png");
+
+        JRadioButton[] buttons = {lireo, hathoria, adamya, sapiro, mineave};
 
         ButtonGroup group = new ButtonGroup();
-        for (JRadioButton btn : new JRadioButton[]{lireo, hathoria, adamya, sapiro, mineave}) {
-            group.add(btn);
+        for (JRadioButton b : buttons) {
+            group.add(b);
         }
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        JPanel panel = new JPanel(new GridLayout(1, 5));
         panel.setOpaque(false);
+        panel.setBorder(BorderFactory.createEmptyBorder(120, 20, 0, 20));
 
-        JPanel wrapper = new JPanel(new GridBagLayout());
-        wrapper.setOpaque(false);
+        for (JRadioButton b : buttons) {
+            panel.add(b);
+        }
 
-        panel.add(lireo);
-        panel.add(Box.createHorizontalStrut(40));
-        panel.add(hathoria);
-        panel.add(Box.createHorizontalStrut(40));
-        panel.add(adamya);
-        panel.add(Box.createHorizontalStrut(40));
-        panel.add(sapiro);
-        panel.add(Box.createHorizontalStrut(40));
-        panel.add(mineave);
-
-        wrapper.add(panel);
-        return wrapper;
+        return panel;
     }
 
-    public void onNext(){
-        getGamePanel().startLevel(selectedPlayer);
+    private JRadioButton createBtn(String path) {
+        JRadioButton btn = new JRadioButton();
+
+        btn.putClientProperty("img", new ImageIcon(path).getImage());
+
+        btn.setOpaque(false);
+        btn.setBorderPainted(false);
+        btn.setContentAreaFilled(false);
+        btn.setFocusPainted(false);
+
+        btn.setHorizontalAlignment(SwingConstants.CENTER);
+        btn.setVerticalAlignment(SwingConstants.CENTER);
+
+        btn.addItemListener(e -> {
+            boolean selected = (e.getStateChange() == ItemEvent.SELECTED);
+
+            Image img = (Image) btn.getClientProperty("img");
+
+            int scale = selected ? 110 : 100; 
+
+            int width = btn.getWidth();
+            int height = btn.getHeight();
+
+            if (width <= 0 || height <= 0) return;
+
+            int newW = width * scale / 100;
+            int newH = height * scale / 100;
+
+            Image scaled = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+            btn.setIcon(new ImageIcon(scaled));
+        });
+
+        return btn;
     }
 
     @Override
     public JPanel createBackground() {
-        JPanel background = new JPanel(new BorderLayout()) {
+
+        JPanel background = new JPanel(null) {
             private final Image img = new ImageIcon("assets/mapSelectBackground.png").getImage();
 
             @Override
@@ -72,72 +91,68 @@ public class MapSelect extends Selection {
             }
         };
 
-        background.setOpaque(true);
-        background.add(createSelectionButtons(), BorderLayout.CENTER);
-        background.add(createNavButtons(), BorderLayout.SOUTH);
+        JPanel selection = createSelectionButtons();
+        JPanel nav = createNavButtons();
+
+        background.add(selection);
+        background.add(nav);
+
+        background.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+
+                int w = background.getWidth();
+                int h = background.getHeight();
+
+                selection.setBounds(0, 0, w, h - 50);
+                nav.setBounds(0, h - 100, w, 100);
+
+                resizeFlags(w, h - 100);
+            }
+        });
 
         return background;
     }
 
-    protected JPanel createNavButtons() {
-        JPanel panel = new JPanel(null);
-        panel.setOpaque(false);
-        panel.setPreferredSize(new Dimension(800, 100));
+    private void resizeFlags(int panelWidth, int panelHeight) {
 
-        int btnWidth = 140;
-        int btnHeight = 60;
-        int margin = 20;
+        int count = 5;
 
-        JButton backBtn = null;
+        int cardWidth = panelWidth / count;
+        int cardHeight = panelHeight - 100;
 
-        if (onBack != null) {
-            backBtn = createImageButton("assets/backButton.png", btnWidth, btnHeight);
-            backBtn.addActionListener(e -> onBack.run());
-            panel.add(backBtn);
+        JRadioButton[] buttons = {lireo, hathoria, adamya, sapiro, mineave};
+
+        for (JRadioButton btn : buttons) {
+
+            Image img = (Image) btn.getClientProperty("img");
+
+            Image scaled = img.getScaledInstance(cardWidth, cardHeight, Image.SCALE_SMOOTH);
+
+            btn.setIcon(new ImageIcon(scaled));
         }
-
-        final JButton nextBtn = createImageButton("assets/nextButton.png", btnWidth, btnHeight);
-        nextBtn.addActionListener((ActionEvent e) -> {
-            if (!validateSelection()) {
-                JOptionPane.showMessageDialog(MapSelect.this, "Please select a character!");
-                return;
-            }
-            onNext();
-        });
-
-        panel.add(nextBtn);
-
-        JButton finalBackBtn = backBtn;
-
-        panel.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-
-                int w = panel.getWidth();
-                int h = panel.getHeight();
-
-                if (finalBackBtn != null) {
-                    finalBackBtn.setBounds(
-                            margin,
-                            h - btnHeight,
-                            btnWidth,
-                            btnHeight
-                    );
-                }
-
-                nextBtn.setBounds(
-                        w - btnWidth - margin,
-                        h - btnHeight,
-                        btnWidth,
-                        btnHeight
-                );
-            }
-        });
-
-        return panel;
     }
 
+    @Override
+    protected void onNext() {
+
+        GameMap selectedMap = null;
+
+        if (lireo.isSelected()) selectedMap = GameMap.LIREO;
+        else if (hathoria.isSelected()) selectedMap = GameMap.HATHORIA;
+        else if (adamya.isSelected()) selectedMap = GameMap.ADAMYA;
+        else if (sapiro.isSelected()) selectedMap = GameMap.SAPIRO;
+        else if (mineave.isSelected()) selectedMap = GameMap.MINEAVE;
+
+        // ✅ prevent crash
+        if (selectedMap == null) return;
+
+        getGamePanel().startLevel(selectedPlayer, selectedMap);
+    }
+
+    @Override
     public boolean validateSelection() {
-        return lireo.isSelected()   || hathoria.isSelected()  || adamya.isSelected() || sapiro.isSelected() || mineave.isSelected();
+        return lireo.isSelected() || hathoria.isSelected() || adamya.isSelected() || sapiro.isSelected() || mineave.isSelected();
     }
+
 }
