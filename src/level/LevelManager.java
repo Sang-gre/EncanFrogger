@@ -13,8 +13,8 @@ public class LevelManager {
 
     // All of these can be changed, like I just set those values for now
     private static final int LANE_COUNT = 6;
-    private static final float LANE_TOP_MARGIN = 0.10f;         //Goal zone
-    private static final float LANE_BOTTOM_MARGIN = 0.15f;      //Start zone
+    private static final float LANE_TOP_MARGIN = 0.10f; // Goal zone
+    private static final float LANE_BOTTOM_MARGIN = 0.15f; // Start zone
     private static final int OBSTACLE_WIDTH = 60;
     private static final int OBSTACLE_HEIGHT = 40;
     private static final int COIN_SIZE = 20;
@@ -22,7 +22,7 @@ public class LevelManager {
     private static final float SPEED_INCREMENT = 0.4f;
     private static final int BASE_OBSTACLE_COUNT = 3;
     private static final int BASE_COIN_COUNT = 6;
-    private static final float LOG_LANE_CHANCE = 0.35f;
+    private static final int PLATFORM_LANE_COUNT = 2;
 
     private int screenWidth;
     private int screenHeight;
@@ -31,7 +31,7 @@ public class LevelManager {
 
     private int currentLevel;
     private float obstacleSpeed;
-    private boolean[] isLogLane;
+    private boolean[] isPlatformLane;
 
     private final Map<Obstacle, Integer> obstacleLanes = new HashMap<>();
     private final List<Obstacle> obstacles = new ArrayList<>();
@@ -71,7 +71,8 @@ public class LevelManager {
                 o.setPosition(o.getBounds().x, centeredY(lane, OBSTACLE_HEIGHT));
             }
         }
-        coins.clear(); //I'm not sure about this pa, basically it would despawn a coin when screen is resized
+        coins.clear(); // I'm not sure about this pa, basically it would despawn a coin when screen is
+                       // resized
         spawnCoins();
     }
 
@@ -85,6 +86,7 @@ public class LevelManager {
 
         spawnObstacles();
         spawnCoins();
+        initPlatformLanes();
 
         // TODO: load map-specific background/tileset based on selected map
         // TODO: adjust LANE_COUNT or lane layout depending on the map
@@ -92,6 +94,13 @@ public class LevelManager {
 
         // Debug
         System.out.println("Level " + n + " loaded | speed=" + obstacleSpeed);
+    }
+
+    private void initPlatformLanes() {
+        isPlatformLane = new boolean[LANE_COUNT];
+        for (int i = 0; i < LANE_COUNT; i++) {
+            isPlatformLane[i] = i >= (LANE_COUNT - PLATFORM_LANE_COUNT);
+        }
     }
 
     public void update() {
@@ -202,7 +211,7 @@ public class LevelManager {
         return Collections.unmodifiableList(coins);
     }
 
-    public boolean isLogLane(int lane) {
-        return lane >= 0 && lane < LANE_COUNT && isLogLane[lane];
+    public boolean isPlatformLane(int lane) {
+        return lane >= 0 && lane < LANE_COUNT && isPlatformLane[lane];
     }
 }

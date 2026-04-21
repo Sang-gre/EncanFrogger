@@ -89,7 +89,7 @@ Main gameplay
     - `resize()` called from GamePanel when window is resized
     - `repositionEntities` repositions objects upon resize
     - `loadLevel()` starts the level. Main method for the class
-    - `rollLogLanes()`
+    - `initLogLanes()` commputes which lanes are platform lanes and stores result into dedicated array
     - `spawnObstacles()` spawns obastcales across all lanes
     - `spawnCoins()` spawns coins at random positions across random lanes
     - `respawn()` when obstacle goes off screen instead of creating a new object, it reuses by calling reset()
