@@ -76,22 +76,21 @@ public class LevelManager {
         spawnCoins();
         initPlatformLanes();
 
-        // 🔥 Load background per map
         switch (map) {
             case LIREO:
-                background = new ImageIcon("assets/maps/lireo.png").getImage();
+                background = new ImageIcon("assets/maps/lireoMap.png").getImage();
                 break;
             case HATHORIA:
-                background = new ImageIcon("assets/maps/hathoria.png").getImage();
+                background = new ImageIcon("assets/maps/hathoriaMap.png").getImage();
                 break;
             case ADAMYA:
-                background = new ImageIcon("assets/maps/adamya.png").getImage();
+                background = new ImageIcon("assets/maps/adamyaMap.png").getImage();
                 break;
             case SAPIRO:
-                background = new ImageIcon("assets/maps/sapiro.png").getImage();
+                background = new ImageIcon("assets/maps/sapiroMap.png").getImage();
                 break;
             case MINEAVE:
-                background = new ImageIcon("assets/maps/mineave.png").getImage();
+                background = new ImageIcon("assets/maps/mineaveMap.png").getImage();
                 break;
         }
     }
@@ -108,10 +107,8 @@ public class LevelManager {
         for (Coin c : coins) c.update();
     }
 
-    // 🔥 UPDATED DRAW
     public void draw(Graphics g, int width, int height) {
 
-        // draw background FULL SCREEN
         if (background != null) {
             g.drawImage(background, 0, 0, width, height, null);
         }
