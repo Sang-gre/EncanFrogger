@@ -1,7 +1,6 @@
 package gameobjects;
 
 import java.awt.*;
-
 import level.Direction;
 
 public abstract class Player extends GameObject {
@@ -28,16 +27,16 @@ public abstract class Player extends GameObject {
             return;
         switch (direction) {
             case UP:
-                y -= speed;
+                y -= (int) speed;
                 break;
             case DOWN:
-                y += speed;
+                y += (int) speed;
                 break;
             case LEFT:
-                x -= speed;
+                x -= (int) speed;
                 break;
             case RIGHT:
-                x += speed;
+                x += (int) speed;
                 break;
         }
     }

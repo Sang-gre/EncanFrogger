@@ -5,10 +5,10 @@ import java.awt.*;
 public abstract class GameObject {
     protected int x, y;
     protected int width, height;
-    protected int speed;
+    protected float speed;
     private boolean isActive;
 
-    public GameObject(int x, int y, int width, int height, int speed) {
+    public GameObject(int x, int y, int width, int height, float speed) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -17,22 +17,22 @@ public abstract class GameObject {
         this.isActive = true;
     }
 
-    // AABB collision boundary
     public Rectangle getBounds() {
         return new Rectangle(x, y, width, height);
     }
 
-    // basic movement
     public abstract void move();
 
-    // update logic
     public abstract void update();
 
-    // render method
     public abstract void draw(Graphics g);
 
-    // collision handling
     public abstract void onCollide(GameObject other);
+
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 
     public int getX() {
         return x;
@@ -50,7 +50,7 @@ public abstract class GameObject {
         return height;
     }
 
-    public int getSpeed() {
+    public float getSpeed() {
         return speed;
     }
 
@@ -66,16 +66,11 @@ public abstract class GameObject {
         this.y = y;
     }
 
-    public void setSpeed(int speed) {
+    public void setSpeed(float speed) {
         this.speed = speed;
     }
 
     public void setActive(boolean active) {
         this.isActive = active;
-    }
-
-    public void setPosition(int x, int y) {
-        this.x = x;
-        this.y = y;
     }
 }
