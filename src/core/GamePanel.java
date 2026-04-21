@@ -7,6 +7,9 @@ import gameobjects.Platform;
 import gameobjects.Player;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.swing.*;
 import level.Direction;
 import level.LevelManager;
@@ -31,6 +34,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private int currentLevel = 1;
 
     private GameMap currentMap;
+    private final Set<Integer> heldKeys = new HashSet<>();
 
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
@@ -85,9 +89,17 @@ public class GamePanel extends JPanel implements KeyListener {
 
         levelManager.loadLevel(currentLevel, currentMap);
 
-        // TODO: replace with proper spawn point from MapSelect once maps are
-        // implemented
-        player.setPosition(getWidth() / 2, (int) (getHeight() * 0.85f));
+        // 👇 set grid step size on player
+        player.setStepSize(
+                levelManager.getColumnWidth(),
+                levelManager.getLaneHeight());
+
+        // snap player to nearest grid cell at spawn
+        int spawnCol = levelManager.getColumnCount() / 2;
+        int spawnLane = levelManager.getLaneCount() - 1;
+        int[] colX = levelManager.getColumnX();
+        int[] laneY = levelManager.getLaneY();
+        player.setPosition(colX[spawnCol], laneY[spawnLane]);
 
         removeAll();
         revalidate();
@@ -97,14 +109,17 @@ public class GamePanel extends JPanel implements KeyListener {
         renderThread = new RenderThread(this);
         logicThread.start();
         renderThread.start();
+
+        SwingUtilities.invokeLater(this::requestFocusInWindow);
     }
 
     public void updateGame() {
         if (state != GameState.PLAYING)
             return;
 
-        if (player != null)
+        if (player != null) {
             player.update();
+        }
         if (levelManager != null)
             levelManager.update();
 
@@ -119,8 +134,9 @@ public class GamePanel extends JPanel implements KeyListener {
                 levelManager.getPlatforms(),
                 levelManager.getCoins());
 
-        // water lane death
         int playerLane = levelManager.getLaneIndex(player.getY());
+
+        // water lane death
         if (levelManager.isPlatformLane(playerLane)
                 && !levelManager.isPlayerOnPlatform(player)) {
             player.loseLife();
@@ -128,7 +144,7 @@ public class GamePanel extends JPanel implements KeyListener {
         }
 
         // player reaches top
-        if (!levelTransitioning && player.getBounds().y <= (int) (getHeight() * 0.10f)) {
+        if (!levelTransitioning && playerLane == 0) {
             levelTransitioning = true;
             currentLevel = levelManager.getCurrentLevel() + 1;
             stopThreads();
@@ -163,28 +179,43 @@ public class GamePanel extends JPanel implements KeyListener {
         if (state != GameState.PLAYING || player == null)
             return;
 
+        int px = player.getX();
+        int py = player.getY();
+        int stepX = levelManager.getColumnWidth();
+        int stepY = levelManager.getLaneHeight();
+
         switch (key) {
-            case KeyEvent.VK_UP:
-                player.setDirection(Direction.UP);
+            case KeyEvent.VK_UP: case KeyEvent.VK_W:
+                if (py - stepY >= 0) {
+                    player.setDirection(Direction.UP);
+                    player.move();
+                    player.setDirection(null);
+                }
                 break;
-            case KeyEvent.VK_DOWN:
-                player.setDirection(Direction.DOWN);
+            case KeyEvent.VK_DOWN: case KeyEvent.VK_S:
+                if (py + stepY + player.getHeight() <= getHeight()) {
+                    player.setDirection(Direction.DOWN);
+                    player.move();
+                    player.setDirection(null);
+                }
                 break;
-            case KeyEvent.VK_LEFT:
-                player.setDirection(Direction.LEFT);
+            case KeyEvent.VK_LEFT: case KeyEvent.VK_A:
+                if (px - stepX >= 0) {
+                    player.setDirection(Direction.LEFT);
+                    player.move();
+                    player.setDirection(null);
+                }
                 break;
-            case KeyEvent.VK_RIGHT:
-                player.setDirection(Direction.RIGHT);
+            case KeyEvent.VK_RIGHT: case KeyEvent.VK_D:
+                if (px + stepX + player.getWidth() <= getWidth()) {
+                    player.setDirection(Direction.RIGHT);
+                    player.move();
+                    player.setDirection(null);
+                }
                 break;
             case KeyEvent.VK_SPACE:
                 player.useAbility();
                 break;
-        }
-
-        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN
-                || key == KeyEvent.VK_LEFT || key == KeyEvent.VK_RIGHT) {
-            player.move();
-            player.setDirection(null);
         }
     }
 
@@ -194,6 +225,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
+        heldKeys.remove(e.getKeyCode());
     }
 
     public void stopThreads() {

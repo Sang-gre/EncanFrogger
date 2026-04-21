@@ -11,6 +11,8 @@ public abstract class Player extends GameObject {
     private int cooldownTimer;
     private boolean abilityReady;
     private Direction direction;
+    private int stepX;
+    private int stepY;
 
     public Player(int x, int y) {
         super(x, y, 40, 40, 5);
@@ -27,16 +29,16 @@ public abstract class Player extends GameObject {
             return;
         switch (direction) {
             case UP:
-                y -= (int) speed;
+                y -= stepY;
                 break;
             case DOWN:
-                y += (int) speed;
+                y += stepY;
                 break;
             case LEFT:
-                x -= (int) speed;
+                x -= stepX;
                 break;
             case RIGHT:
-                x += (int) speed;
+                x += stepX;
                 break;
         }
     }
@@ -101,6 +103,11 @@ public abstract class Player extends GameObject {
 
     public int getLevel() {
         return level;
+    }
+
+    public void setStepSize(int stepX, int stepY) {
+        this.stepX = stepX;
+        this.stepY = stepY;
     }
 
     public boolean isAbilityReady() {

@@ -38,43 +38,60 @@ public class GameLauncher extends JFrame {
         launchGame();
         setupCursor();
         setVisible(true);
+
     }
 
     private void setupCursor() {
         Image customCursor = new ImageIcon("ASSETS/customCursor.png").getImage();
-        CursorGlassPane glassPane = new CursorGlassPane(customCursor, mainPanel); 
+        CursorGlassPane glassPane = new CursorGlassPane(customCursor, mainPanel);
         setGlassPane(glassPane);
         glassPane.setVisible(true);
+        glassPane.setFocusable(true);
+        glassPane.requestFocusInWindow();
 
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Image empty = toolkit.createImage("");
-        setCursor(toolkit.createCustomCursor(empty, new Point(0,0), "blank cursor"));
+        setCursor(toolkit.createCustomCursor(empty, new Point(0, 0), "blank cursor"));
 
         glassPane.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Point panelPoint = SwingUtilities.convertPoint(glassPane, e.getPoint(), mainPanel);
                 Component clicked = SwingUtilities.getDeepestComponentAt(mainPanel, panelPoint.x, panelPoint.y);
-                if(clicked != null) {
+                if (clicked != null) {
                     clicked.dispatchEvent(SwingUtilities.convertMouseEvent(glassPane, e, clicked));
                 }
             }
         });
+
+        glassPane.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                gamePanel.dispatchEvent(e);
+                gamePanel.requestFocusInWindow();
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                gamePanel.dispatchEvent(e);
+            }
+        });
     }
 
-    public void launchGame(){
+    public void launchGame() {
         cardLayout.show(mainPanel, "Launch");
     }
 
-    public void menuGame(){
+    public void menuGame() {
         cardLayout.show(mainPanel, "Menu");
     }
 
-    public void startGame(){
+    public void startGame() {
         cardLayout.show(mainPanel, "Game");
+        SwingUtilities.invokeLater(() -> getGlassPane().requestFocusInWindow());
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(GameLauncher::new);
     }
 }
