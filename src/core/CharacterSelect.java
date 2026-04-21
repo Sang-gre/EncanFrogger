@@ -119,7 +119,7 @@ public class CharacterSelect extends Selection {
                 int w = background.getWidth();
                 int h = background.getHeight();
 
-                selection.setBounds(0, 0, w, h);
+                selection.setBounds(0, 0, w, h - 50);
 
                 nav.setBounds(0, h - 100, w, 100);
             }
