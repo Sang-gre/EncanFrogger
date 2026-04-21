@@ -3,14 +3,13 @@ package gameobjects;
 import java.awt.*;
 import level.Direction;
 
-public class Obstacle extends GameObject {
+public class Platform extends GameObject {
 
     private int lane;
     private Direction direction;
 
-    public Obstacle(int x, int y, int width, int height, int lane, float speed, Direction direction) {
+    public Platform(int x, int y, int width, int height, int lane, float speed, Direction direction) {
         super(x, y, width, height, speed);
-
         this.lane = lane;
         this.direction = direction;
     }
@@ -24,18 +23,9 @@ public class Obstacle extends GameObject {
             case RIGHT:
                 x += speed;
                 break;
-            case UP:
-                y -= speed;
-                break;
-            case DOWN:
-                y += speed;
+            default:
                 break;
         }
-    }
-
-    @Override
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, width, height);
     }
 
     @Override
@@ -45,17 +35,14 @@ public class Obstacle extends GameObject {
 
     @Override
     public void draw(Graphics g) {
-        g.setColor(Color.RED);
+        g.setColor(new Color(139, 90, 43));
         g.fillRect(x, y, width, height);
-        // TODO: replace with AssetManager sprite
+        // TODO: replace with AssetManager sprite "platform"
     }
 
     @Override
     public void onCollide(GameObject other) {
-        if (other instanceof Player) {
-            setActive(false);
-            System.out.println("Obstacle hit the player!");
-        }
+        // player is safe on platform
     }
 
     public void reset(int x, int y, float speed, Direction dir) {
@@ -68,6 +55,10 @@ public class Obstacle extends GameObject {
 
     public boolean isOffScreen(int screenWidth) {
         return x > screenWidth + width || x + width < 0;
+    }
+
+    public boolean isPlayerOn(GameObject obj) {
+        return getBounds().intersects(obj.getBounds());
     }
 
     public int getLane() {

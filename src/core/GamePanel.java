@@ -3,6 +3,7 @@ package core;
 import assets.AssetManager;
 import gameobjects.Coin;
 import gameobjects.Obstacle;
+import gameobjects.Platform;
 import gameobjects.Player;
 import java.awt.*;
 import java.awt.event.*;
@@ -42,20 +43,18 @@ public class GamePanel extends JPanel implements KeyListener {
         showCharacterSelect();
     }
 
-    // Has back button pagfirst character select palang
+    // Has back button on first character select
     public void showCharacterSelect() {
         stopThreads();
         this.state = GameState.CHARACTER_SELECT;
         removeAll();
         setLayout(new BorderLayout());
-        add(new CharacterSelect(this, () -> launcher.menuGame()), BorderLayout.CENTER); // add BorderLayout.CENTER
+        add(new CharacterSelect(this, () -> launcher.menuGame()), BorderLayout.CENTER);
         revalidate();
         repaint();
     }
 
-    // Idkk, for mid game na character selection kasi where
-    // would the back button go??
-    // Or idk what if save state?? will figure it out later
+    // Mid-game character selection
     public void showCharacterSelectMidGame() {
         stopThreads();
         this.state = GameState.CHARACTER_SELECT;
@@ -68,12 +67,9 @@ public class GamePanel extends JPanel implements KeyListener {
 
     public void showMapSelect(Player selectedPlayer) {
         this.state = GameState.MAP_SELECT;
-
         removeAll();
         setLayout(new BorderLayout());
-
         add(new MapSelect(this, () -> showCharacterSelect(), selectedPlayer), BorderLayout.CENTER);
-
         revalidate();
         repaint();
     }
@@ -87,6 +83,11 @@ public class GamePanel extends JPanel implements KeyListener {
 
         levelManager.loadLevel(currentLevel, currentMap);
 
+<<<<<<< HEAD
+=======
+        // TODO: replace with proper spawn point from MapSelect once maps are
+        // implemented
+>>>>>>> d77496b3dd8b48615b3ddbdf11ef8c68e67fb346
         player.setPosition(getWidth() / 2, (int) (getHeight() * 0.85f));
 
         removeAll();
@@ -115,21 +116,19 @@ public class GamePanel extends JPanel implements KeyListener {
         if (player == null || levelManager == null)
             return;
 
-        // Player + obstacles
-        for (Obstacle o : levelManager.getObstacles()) {
-            if (collisionSystem.checkAABB(player, o)) {
-                collisionSystem.handleCollision(player, o);
-            }
+        collisionSystem.checkAll(player, levelManager.getObstacles(),
+                levelManager.getPlatforms(),
+                levelManager.getCoins());
+
+        // water lane death
+        int playerLane = levelManager.getLaneIndex(player.getY());
+        if (levelManager.isPlatformLane(playerLane)
+                && !levelManager.isPlayerOnPlatform(player)) {
+            player.loseLife();
+            resetPlayerPosition();
         }
 
-        // Player + coins
-        for (Coin c : levelManager.getCoins()) {
-            if (collisionSystem.checkAABB(player, c)) {
-                collisionSystem.handleCollision(player, c);
-            }
-        }
-
-        // Reaches Top. To be changed pa I think
+        // player reaches top
         if (!levelTransitioning && player.getBounds().y <= (int) (getHeight() * 0.10f)) {
             levelTransitioning = true;
             currentLevel = levelManager.getCurrentLevel() + 1;
@@ -137,6 +136,7 @@ public class GamePanel extends JPanel implements KeyListener {
             showCharacterSelect();
         }
 
+        // game over
         if (!player.isAlive()) {
             state = GameState.GAME_OVER;
         }
@@ -177,9 +177,16 @@ public class GamePanel extends JPanel implements KeyListener {
             case KeyEvent.VK_RIGHT:
                 player.setDirection(Direction.RIGHT);
                 break;
+            case KeyEvent.VK_SPACE:
+                player.useAbility();
+                break;
         }
-        player.move();
-        player.setDirection(null);
+
+        if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN
+                || key == KeyEvent.VK_LEFT || key == KeyEvent.VK_RIGHT) {
+            player.move();
+            player.setDirection(null);
+        }
     }
 
     @Override

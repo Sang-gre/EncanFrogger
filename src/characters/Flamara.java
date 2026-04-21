@@ -6,15 +6,15 @@ import java.awt.*;
 
 public class Flamara extends Player {
 
-    private int dashSpeed;
+    private float dashSpeed;
     private int dashDuration;
     private int dashTimer;
-    private int normalSpeed;
-    private static final int COOLDOWN = 60; //can be changed
+    private float normalSpeed;
+    private static final int COOLDOWN = 60; // can be changed
 
     public Flamara(int x, int y) {
         super(x, y);
-        this.dashSpeed = 20;
+        this.dashSpeed = 20.0f;
         this.dashDuration = 10;
         this.normalSpeed = speed;
         this.dashTimer = 0;
@@ -29,10 +29,10 @@ public class Flamara extends Player {
     }
 
     public void dashForward() {
-         speed = dashSpeed;
-         dashTimer = dashDuration;
+        speed = dashSpeed;
+        dashTimer = dashDuration;
         // Made her dash forward twice. Like idk how the speed thing would work kasi
-         if (getDirection() != null) {
+        if (getDirection() != null) {
             move();
             move();
         }
@@ -62,6 +62,11 @@ public class Flamara extends Player {
         super.onCollide(other);
     }
 
-    public int getDashSpeed()    { return dashSpeed; }
-    public int getDashDuration() { return dashDuration; }
+    public float getDashSpeed() {
+        return dashSpeed;
+    }
+
+    public float getDashDuration() {
+        return dashDuration;
+    }
 }

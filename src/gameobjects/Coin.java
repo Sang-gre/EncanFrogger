@@ -18,10 +18,7 @@ public class Coin extends GameObject {
 
     @Override
     public void update() {
-        if (!isActive()) return;
-        if (x + width < 0) {
-            setActive(false);
-        }
+        // TODO: if coin is on a log, move with it via LevelManager
     }
 
     @Override
