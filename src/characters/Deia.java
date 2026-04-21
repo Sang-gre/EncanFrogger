@@ -11,7 +11,7 @@ public class Deia extends Player {
     private int phaseCount;
     private boolean windShield;
     private int phaseTimer;
-    private static final int COOLDOWN = 150;
+    private static final int COOLDOWN = 60; //can be changed
 
     public Deia(int x, int y) {
         super(x, y);

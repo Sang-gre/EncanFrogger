@@ -8,7 +8,7 @@ public class Terra extends Player {
 
     private int slowRadius;
     private int slowDuration;
-    private static final int COOLDOWN = 180;
+    private static final int COOLDOWN = 60; // can be changed, might be too big
 
     public Terra(int x, int y) {
         super(x, y);

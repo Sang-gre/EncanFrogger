@@ -24,22 +24,58 @@ public abstract class GameObject {
 
     // basic movement
     public abstract void move();
+
     // update logic
     public abstract void update();
+
     // render method
     public abstract void draw(Graphics g);
+
     // collision handling
     public abstract void onCollide(GameObject other);
 
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
-    public int getSpeed() { return speed; }
-    public boolean isActive() { return isActive; }
+    public int getX() {
+        return x;
+    }
 
-    public void setX(int x) { this.x = x; }
-    public void setY(int y) { this.y = y; }
-    public void setSpeed(int speed) { this.speed = speed; }
-    public void setActive(boolean active) { this.isActive = active; }
+    public int getY() {
+        return y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public void setActive(boolean active) {
+        this.isActive = active;
+    }
+
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 }

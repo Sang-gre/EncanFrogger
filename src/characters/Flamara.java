@@ -10,7 +10,7 @@ public class Flamara extends Player {
     private int dashDuration;
     private int dashTimer;
     private int normalSpeed;
-    private static final int COOLDOWN = 120;
+    private static final int COOLDOWN = 60; //can be changed
 
     public Flamara(int x, int y) {
         super(x, y);

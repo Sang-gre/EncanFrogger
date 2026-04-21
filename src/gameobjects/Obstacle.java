@@ -2,6 +2,8 @@ package gameobjects;
 
 import java.awt.*;
 
+import level.Direction;
+
 public class Obstacle extends GameObject {
 
     private int lane;
@@ -9,7 +11,7 @@ public class Obstacle extends GameObject {
     private Direction direction;
 
     public Obstacle(int x, int y, int width, int height, int lane, float speed, Direction direction) {
-        super(x, y, width, height, 0); 
+        super(x, y, width, height, 0);
 
         this.lane = lane;
         this.speed = speed;
@@ -57,5 +59,17 @@ public class Obstacle extends GameObject {
             setActive(false);
             System.out.println("Obstacle hit the player!");
         }
+    }
+
+    public void reset(int x, int y, float speed, Direction dir) {
+        this.x = x;
+        this.y = y;
+        this.speed = speed;
+        this.direction = dir;
+        setActive(true);
+    }
+
+    public boolean isOffScreen(int screenWidth) {
+        return x > screenWidth || x + width < 0;
     }
 }

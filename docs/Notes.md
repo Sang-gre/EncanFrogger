@@ -85,6 +85,16 @@ Main gameplay
 ### [GameState.java](../src/core/GameState.java)
 - **Role:** 
 - **Methods:**
+    - `computeLanes()` divides the screem area evenly into lanes
+    - `resize()` called from GamePanel when window is resized
+    - `repositionEntities` repositions objects upon resize
+    - `loadLevel()` starts the level. Main method for the class
+    - `initLogLanes()` commputes which lanes are platform lanes and stores result into dedicated array
+    - `spawnObstacles()` spawns obastcales across all lanes
+    - `spawnCoins()` spawns coins at random positions across random lanes
+    - `respawn()` when obstacle goes off screen instead of creating a new object, it reuses by calling reset()
+    - `update()` called every game tick. Updates all active obstacles and checks if any went off screen, puts them into toRespawn.
+    - `centeredY()` returns the Y coordinate that vertically centers an entity within the lane.
 - **Relationships:** 
 
 </details>

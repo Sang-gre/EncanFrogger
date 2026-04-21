@@ -2,6 +2,8 @@ package gameobjects;
 
 import java.awt.*;
 
+import level.Direction;
+
 public abstract class Player extends GameObject {
 
     private int lives;
