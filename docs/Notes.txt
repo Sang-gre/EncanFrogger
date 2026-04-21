@@ -1,3 +1,10 @@
+Minor problems that can be fixed towards the end:
+- Panel of starting menu is kinda blurry
+- Resizing has this weird ano sa background
+- Pop-up "Are you sure you want to quit" when window X is pressed
+- Mouse location during start
+- Location of main title in titlepanel is not vertically centered when window is resized
+- Buffer pages
 
 
 FOR CMD:
