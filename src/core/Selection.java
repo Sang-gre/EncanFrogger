@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import gameobjects.Player;
 
 public abstract class Selection extends JPanel {
 
