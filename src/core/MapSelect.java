@@ -55,7 +55,7 @@ public class MapSelect extends Selection {
         wrapper.add(panel);
         return wrapper;
     }
-    
+
     public void onNext(){
         getGamePanel().startLevel(selectedPlayer);
     }
@@ -79,7 +79,7 @@ public class MapSelect extends Selection {
         return background;
     }
 
-    private JPanel createNavButtons() {
+    protected JPanel createNavButtons() {
         JPanel panel = new JPanel(null);
         panel.setOpaque(false);
         panel.setPreferredSize(new Dimension(800, 100));

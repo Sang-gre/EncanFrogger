@@ -37,7 +37,7 @@ public abstract class Selection extends JPanel {
         return background;
     }
 
-    private JPanel createNavButtons() {
+    protected JPanel createNavButtons() {
         JPanel panel = new JPanel(null);
         panel.setOpaque(false);
         panel.setPreferredSize(new Dimension(800, 100));
