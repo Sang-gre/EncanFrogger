@@ -4,12 +4,10 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import gameobjects.Player;
-
 public abstract class Selection extends JPanel {
 
     private final GamePanel gamePanel;
-    private final Runnable onBack;
+    protected final Runnable onBack;
 
     public Selection(GamePanel gamePanel, Runnable onBack) {
         this.gamePanel = gamePanel;
@@ -99,7 +97,7 @@ public abstract class Selection extends JPanel {
 
     protected abstract void onNext();
 
-    private JButton createImageButton(String path, int width, int height) {
+    public JButton createImageButton(String path, int width, int height) {
 
         ImageIcon icon = new ImageIcon(path);
         Image scaled = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
