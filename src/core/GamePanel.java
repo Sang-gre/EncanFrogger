@@ -83,11 +83,8 @@ public class GamePanel extends JPanel implements KeyListener {
 
         levelManager.loadLevel(currentLevel, currentMap);
 
-<<<<<<< HEAD
-=======
         // TODO: replace with proper spawn point from MapSelect once maps are
         // implemented
->>>>>>> d77496b3dd8b48615b3ddbdf11ef8c68e67fb346
         player.setPosition(getWidth() / 2, (int) (getHeight() * 0.85f));
 
         removeAll();
