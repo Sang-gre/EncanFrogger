@@ -75,11 +75,13 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     public void startLevel(Player selectedPlayer, GameMap map) {
+        this.levelTransitioning = false;
         this.player = selectedPlayer;
         this.state = GameState.PLAYING;
         this.currentMap = map;
 
         this.levelManager = new LevelManager(getWidth(), getHeight());
+        this.collisionSystem = new CollisionSystem();
 
         levelManager.loadLevel(currentLevel, currentMap);
 
@@ -240,9 +242,7 @@ public class GamePanel extends JPanel implements KeyListener {
         super.paintComponent(g);
 
         if (levelManager != null) {
-
             levelManager.resize(getWidth(), getHeight());
-
             levelManager.draw(g, getWidth(), getHeight());
         }
 

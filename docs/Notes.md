@@ -33,10 +33,22 @@ Refer to the UML diagram
 
 Defines different playable characters and their abilities
 
-### [Adamus.java](../src/core/GameLogicThread.java)
+### [Adamus.java](../src/core/Adamus.java)
 - **Role:**
 - **Methods:**
 - **Relationships:** 
+
+### [Deia.java](../src/core/Deia.java)
+- **Role:** Blue sang'gre. Can phase (ignore) through an obstacle
+- **Methods:**
+    - `useAbility()` activates phase if ready and has available charge
+    - `phaseThrough()` enables shield and consumed one charge
+    - `isPhasing()` checks if shield is active
+    - `update()` updates cooldown
+    - `draw(g)` renders character. Nagiging transparent HAHAHAHA
+    - `onCollide(other)` ignores one obstacle hit if shield is active
+- **Relationships:** 
+    - Extends **Player** and inherits movements, lives, and base behavior
 
 </details>
 

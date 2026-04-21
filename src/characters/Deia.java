@@ -10,14 +10,12 @@ public class Deia extends Player {
 
     private int phaseCount;
     private boolean windShield;
-    private int phaseTimer;
     private static final int COOLDOWN = 60; //can be changed
 
     public Deia(int x, int y) {
         super(x, y);
         this.phaseCount = 3;
         this.windShield = false;
-        this.phaseTimer = 0;
     }
 
     @Override
@@ -25,7 +23,6 @@ public class Deia extends Player {
         if (isAbilityReady() && phaseCount > 0) {
             phaseThrough();
             startCooldown(COOLDOWN);
-            phaseCount--;
         }
     }
 
@@ -41,13 +38,6 @@ public class Deia extends Player {
     @Override
     public void update() {
         super.update();
-
-        if (phaseTimer > 0) {
-            phaseTimer--;
-            if (phaseTimer == 0) {
-                windShield = false;
-            }
-        }
     }
 
     @Override
@@ -67,7 +57,6 @@ public class Deia extends Player {
     public void onCollide(GameObject other) {
         if (other instanceof Obstacle && windShield) {
             windShield = false;
-            // TODO: CollisionSystem should skip damage for this collision
         } else {
             super.onCollide(other);
         }
