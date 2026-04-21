@@ -47,57 +47,42 @@ public class CharacterSelect extends Selection {
             group.add(btn);
         }
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        JPanel panel = new JPanel(new GridLayout(1, 5, gap, 0));
         panel.setOpaque(false);
 
+        panel.setBorder(BorderFactory.createEmptyBorder(115, 0, 0, 0));
+
         panel.add(paopao);
-        panel.add(Box.createHorizontalStrut(gap));
         panel.add(terra);
-        panel.add(Box.createHorizontalStrut(gap));
         panel.add(flammara);
-        panel.add(Box.createHorizontalStrut(gap));
         panel.add(adamus);
-        panel.add(Box.createHorizontalStrut(gap));
         panel.add(deia);
 
-        JPanel centerWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        centerWrapper.setOpaque(false);
-        centerWrapper.add(panel);
-        centerWrapper.setBorder(BorderFactory.createEmptyBorder(115, 0, 0, 0));
-
-        return centerWrapper;
+        return panel;
     }
 
     private JRadioButton createBtn(String normal, String selected, int w, int h) {
         JRadioButton btn = new JRadioButton();
-        btn.setIcon(scaleIcon(normal, w, h));
-        btn.setSelectedIcon(scaleIcon(selected, w, h));
+
+        btn.putClientProperty("normalImg", new ImageIcon(normal).getImage());
+        btn.putClientProperty("selectedImg", new ImageIcon(selected).getImage());
 
         btn.setOpaque(false);
         btn.setBorderPainted(false);
         btn.setContentAreaFilled(false);
         btn.setFocusPainted(false);
 
-        Dimension size = new Dimension(w, h);
-        btn.setPreferredSize(size);
-        btn.setMinimumSize(size);
-        btn.setMaximumSize(size);
+        btn.setHorizontalAlignment(SwingConstants.CENTER);
+        btn.setVerticalAlignment(SwingConstants.CENTER);
 
         return btn;
-    }
-
-    private ImageIcon scaleIcon(String path, int w, int h) {
-        Image img = new ImageIcon(path).getImage()
-                .getScaledInstance(w, h, Image.SCALE_SMOOTH);
-        return new ImageIcon(img);
     }
 
     @Override
     public JPanel createBackground() {
 
         JPanel background = new JPanel(null) {
-            private final Image img = new ImageIcon("assets/mapSelectBackground.png").getImage();
+            private final Image img = new ImageIcon("assets/chooseCharacterBackground.png").getImage();
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -107,7 +92,7 @@ public class CharacterSelect extends Selection {
         };
 
         JPanel selection = createSelectionButtons();
-        JPanel nav = super.createNavButtons(); 
+        JPanel nav = super.createNavButtons();
 
         background.add(selection);
         background.add(nav);
@@ -120,8 +105,9 @@ public class CharacterSelect extends Selection {
                 int h = background.getHeight();
 
                 selection.setBounds(0, 0, w, h - 50);
-
                 nav.setBounds(0, h - 100, w, 100);
+
+                resizeCards(w, h - 100);
             }
         });
 
@@ -135,6 +121,41 @@ public class CharacterSelect extends Selection {
         if (adamus.isSelected()) return new Adamus(0, 0);
         if (deia.isSelected()) return new Deia(0, 0);
         return null;
+    }
+
+    private void resizeCards(int panelWidth, int panelHeight) {
+
+        int gap = 10;
+        int cardCount = 5;
+
+        int totalGap = gap * (cardCount - 1);
+
+        int maxWidth = (panelWidth - totalGap - 40) / cardCount;
+
+        int maxHeight = panelHeight - 120;
+
+        double ratio = 290.0 / 155.0;
+
+        int widthFromHeight = (int) (maxHeight / ratio);
+
+        int cardWidth = Math.min(maxWidth, widthFromHeight);
+        int cardHeight = (int) (cardWidth * ratio);
+
+        JRadioButton[] buttons = {paopao, terra, flammara, adamus, deia};
+
+        for (JRadioButton btn : buttons) {
+
+            Image normal = (Image) btn.getClientProperty("normalImg");
+            Image selected = (Image) btn.getClientProperty("selectedImg");
+
+            Image scaledNormal = normal.getScaledInstance(cardWidth, cardHeight, Image.SCALE_SMOOTH);
+            Image scaledSelected = selected.getScaledInstance(cardWidth, cardHeight, Image.SCALE_SMOOTH);
+
+            btn.setIcon(new ImageIcon(scaledNormal));
+            btn.setSelectedIcon(new ImageIcon(scaledSelected));
+
+            btn.revalidate();
+        }
     }
 
     @Override
