@@ -73,4 +73,9 @@ public abstract class GameObject {
     public void setActive(boolean active) {
         this.isActive = active;
     }
+
+    public void setSize(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
 }

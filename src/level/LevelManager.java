@@ -13,18 +13,18 @@ import javax.swing.ImageIcon;
 
 public class LevelManager {
 
-    private static final int LANE_COUNT = 6;
-    private static final float LANE_TOP_MARGIN = 0.10f;
-    private static final float LANE_BOTTOM_MARGIN = 0.15f;
+    private static final int LANE_COUNT = 10;
+    private static final float LANE_TOP_MARGIN = 0.05f;
+    private static final float LANE_BOTTOM_MARGIN = 0.05f;
     private static final int OBSTACLE_WIDTH = 60;
-    private static final int OBSTACLE_HEIGHT = 40;
+    private static final int OBSTACLE_HEIGHT = 30;
     private static final int PLATFORM_WIDTH = 120;
     private static final int COIN_SIZE = 20;
     private static final float BASE_SPEED = 2.5f;
     private static final float SPEED_INCREMENT = 0.4f;
     private static final int BASE_OBSTACLE_COUNT = 3;
     private static final int BASE_COIN_COUNT = 6;
-    private static final int PLATFORM_LANE_COUNT = 2;
+    private static final int PLATFORM_LANE_COUNT = 4;
     private static final int PLATFORM_COUNT = 2;
     private static final int COLUMN_COUNT = 10;
 
@@ -83,13 +83,15 @@ public class LevelManager {
         for (Obstacle o : obstacles) {
             Integer lane = obstacleLanes.get(o);
             if (lane != null) {
-                o.setPosition(o.getX(), centeredY(lane, OBSTACLE_HEIGHT));
+                o.setPosition(o.getX(), centeredY(lane, laneHeight));
+                o.setSize(columnWidth, laneHeight);
             }
         }
         for (Platform p : platforms) {
             Integer lane = platformLanes.get(p);
             if (lane != null) {
-                p.setPosition(p.getX(), centeredY(lane, OBSTACLE_HEIGHT));
+                p.setPosition(p.getX(), centeredY(lane, laneHeight));
+                p.setSize(columnWidth * 2, laneHeight);
             }
         }
         coins.clear();
@@ -133,15 +135,17 @@ public class LevelManager {
     private void initPlatformLanes() {
         isPlatformLane = new boolean[LANE_COUNT];
         for (int i = 0; i < LANE_COUNT; i++) {
-            isPlatformLane[i] = i >= (LANE_COUNT - PLATFORM_LANE_COUNT);
+            isPlatformLane[i] = i >= 1 && i <= PLATFORM_LANE_COUNT;
         }
     }
 
-    public void spawnObstacles() {
+    private void spawnObstacles() {
         int countPerLane = BASE_OBSTACLE_COUNT + (currentLevel - 1);
 
         for (int lane = 0; lane < LANE_COUNT; lane++) {
             if (isPlatformLane[lane])
+                continue;
+            if (lane == 0 || lane == LANE_COUNT - 1)
                 continue;
 
             Direction dir = (lane % 2 == 0) ? Direction.RIGHT : Direction.LEFT;
@@ -153,10 +157,9 @@ public class LevelManager {
                         ? -OBSTACLE_WIDTH - i * spread
                         : screenWidth + i * spread;
 
-                // TODO: vary obstacle width per level
                 Obstacle o = new Obstacle(
                         startX, y,
-                        OBSTACLE_WIDTH, OBSTACLE_HEIGHT,
+                        columnWidth, laneHeight,
                         lane, obstacleSpeed, dir);
                 obstacles.add(o);
                 obstacleLanes.put(o, lane);
@@ -180,7 +183,7 @@ public class LevelManager {
 
                 Platform p = new Platform(
                         startX, y,
-                        PLATFORM_WIDTH, OBSTACLE_HEIGHT,
+                        columnWidth * 2, laneHeight,
                         lane, obstacleSpeed * 0.7f, dir);
                 platforms.add(p);
                 platformLanes.put(p, lane);
@@ -256,18 +259,16 @@ public class LevelManager {
     }
 
     private void respawnObstacle(Obstacle o) {
-        boolean fromLeft = rng.nextBoolean();
-        Direction dir = fromLeft ? Direction.RIGHT : Direction.LEFT;
-        int x = fromLeft ? -OBSTACLE_WIDTH : screenWidth;
+        Direction dir = o.getDirection();
+        int x = (dir == Direction.RIGHT) ? -OBSTACLE_WIDTH : screenWidth;
         Integer lane = obstacleLanes.get(o);
         int y = centeredY(lane, OBSTACLE_HEIGHT);
         o.reset(x, y, obstacleSpeed, dir);
     }
 
     private void respawnPlatform(Platform p) {
-        boolean fromLeft = rng.nextBoolean();
-        Direction dir = fromLeft ? Direction.RIGHT : Direction.LEFT;
-        int x = fromLeft ? -PLATFORM_WIDTH : screenWidth;
+        Direction dir = p.getDirection();
+        int x = (dir == Direction.RIGHT) ? -PLATFORM_WIDTH : screenWidth;
         Integer lane = platformLanes.get(p);
         int y = centeredY(lane, OBSTACLE_HEIGHT);
         p.reset(x, y, obstacleSpeed * 0.7f, dir);

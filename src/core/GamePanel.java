@@ -32,6 +32,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
     private boolean levelTransitioning = false;
     private int currentLevel = 1;
+    private float platformOffsetAccumulator = 0f;
 
     private GameMap currentMap;
     private final Set<Integer> heldKeys = new HashSet<>();
@@ -89,12 +90,11 @@ public class GamePanel extends JPanel implements KeyListener {
 
         levelManager.loadLevel(currentLevel, currentMap);
 
-        // 👇 set grid step size on player
-        player.setStepSize(
-                levelManager.getColumnWidth(),
-                levelManager.getLaneHeight());
+        // resize player to grid cell
+        player.setSize(levelManager.getColumnWidth(), levelManager.getLaneHeight());
+        player.setStepSize(levelManager.getColumnWidth(), levelManager.getLaneHeight());
 
-        // snap player to nearest grid cell at spawn
+        // spawn player at bottom center cell
         int spawnCol = levelManager.getColumnCount() / 2;
         int spawnLane = levelManager.getLaneCount() - 1;
         int[] colX = levelManager.getColumnX();
@@ -104,6 +104,18 @@ public class GamePanel extends JPanel implements KeyListener {
         removeAll();
         revalidate();
         repaint();
+
+        // handle window resize
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                if (levelManager != null && player != null) {
+                    levelManager.resize(getWidth(), getHeight());
+                    player.setSize(levelManager.getColumnWidth(), levelManager.getLaneHeight());
+                    player.setStepSize(levelManager.getColumnWidth(), levelManager.getLaneHeight());
+                }
+            }
+        });
 
         logicThread = new GameLogicThread(this);
         renderThread = new RenderThread(this);
@@ -134,21 +146,39 @@ public class GamePanel extends JPanel implements KeyListener {
                 levelManager.getPlatforms(),
                 levelManager.getCoins());
 
-        int playerLane = levelManager.getLaneIndex(player.getY());
+        // move player along with platform if standing on one
+        boolean onPlatform = false;
+        for (Platform p : levelManager.getPlatforms()) {
+            if (p.isActive() && p.isPlayerOn(player)) {
+                onPlatform = true;
+                player.setX(player.getX() + p.getDeltaX());
+                break;
+            }
+        }
 
-        // water lane death
-        if (levelManager.isPlatformLane(playerLane)
-                && !levelManager.isPlayerOnPlatform(player)) {
+        if (!onPlatform) {
+            platformOffsetAccumulator = 0f;
+        }
+
+        // water lane death — only if in platform zone but not on a log
+        int playerLane = levelManager.getLaneIndex(player.getY());
+        if (levelManager.isPlatformLane(playerLane) && !onPlatform) {
             player.loseLife();
             resetPlayerPosition();
         }
 
-        // player reaches top
+        // player reaches top lane
         if (!levelTransitioning && playerLane == 0) {
             levelTransitioning = true;
             currentLevel = levelManager.getCurrentLevel() + 1;
             stopThreads();
             showCharacterSelect();
+        }
+
+        // player falls off side of screen while on log
+        if (player.getX() + player.getWidth() < 0 || player.getX() > getWidth()) {
+            player.loseLife();
+            resetPlayerPosition();
         }
 
         // game over
@@ -185,28 +215,32 @@ public class GamePanel extends JPanel implements KeyListener {
         int stepY = levelManager.getLaneHeight();
 
         switch (key) {
-            case KeyEvent.VK_UP: case KeyEvent.VK_W:
+            case KeyEvent.VK_UP:
+            case KeyEvent.VK_W:
                 if (py - stepY >= 0) {
                     player.setDirection(Direction.UP);
                     player.move();
                     player.setDirection(null);
                 }
                 break;
-            case KeyEvent.VK_DOWN: case KeyEvent.VK_S:
+            case KeyEvent.VK_DOWN:
+            case KeyEvent.VK_S:
                 if (py + stepY + player.getHeight() <= getHeight()) {
                     player.setDirection(Direction.DOWN);
                     player.move();
                     player.setDirection(null);
                 }
                 break;
-            case KeyEvent.VK_LEFT: case KeyEvent.VK_A:
+            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_A:
                 if (px - stepX >= 0) {
                     player.setDirection(Direction.LEFT);
                     player.move();
                     player.setDirection(null);
                 }
                 break;
-            case KeyEvent.VK_RIGHT: case KeyEvent.VK_D:
+            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_D:
                 if (px + stepX + player.getWidth() <= getWidth()) {
                     player.setDirection(Direction.RIGHT);
                     player.move();

@@ -7,25 +7,30 @@ public class Platform extends GameObject {
 
     private int lane;
     private Direction direction;
+    private float exactX;
+    private int previousX;
 
     public Platform(int x, int y, int width, int height, int lane, float speed, Direction direction) {
         super(x, y, width, height, speed);
+        this.exactX = x;
         this.lane = lane;
         this.direction = direction;
     }
 
     @Override
     public void move() {
+        previousX = x;
         switch (direction) {
             case LEFT:
-                x -= speed;
+                exactX -= speed;
                 break;
             case RIGHT:
-                x += speed;
+                exactX += speed;
                 break;
             default:
                 break;
         }
+        x = (int) exactX;
     }
 
     @Override
@@ -47,6 +52,7 @@ public class Platform extends GameObject {
 
     public void reset(int x, int y, float speed, Direction dir) {
         this.x = x;
+        this.exactX = x;
         this.y = y;
         this.speed = speed;
         this.direction = dir;
@@ -67,5 +73,9 @@ public class Platform extends GameObject {
 
     public Direction getDirection() {
         return direction;
+    }
+
+    public int getDeltaX() {
+        return x - previousX;
     }
 }
