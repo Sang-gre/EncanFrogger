@@ -2,16 +2,19 @@ package gameobjects;
 
 import java.awt.*;
 
+import level.Direction;
+
 public abstract class Player extends GameObject {
 
     private int lives;
     private int coins;
     private int level;
+    private int cooldownTimer;
     private boolean abilityReady;
     private Direction direction;
 
     public Player(int x, int y) {
-        super(x, y, 40, 40, 5); // default size & speed
+        super(x, y, 40, 40, 5);
 
         this.lives = 3;
         this.coins = 0;
@@ -19,30 +22,25 @@ public abstract class Player extends GameObject {
         this.abilityReady = true;
     }
 
-    public void setDirection(Direction direction){
-        this.direction = direction;
-    }
-    
-    // movement using Direction enum
     @Override
-public void move() {
-    if (direction == null) return;
-
-    switch (direction) {
-        case UP: 
-            y -= speed; 
-            break;
-        case DOWN: 
-            y += speed; 
-            break;
-        case LEFT: 
-            x -= speed; 
-            break;
-        case RIGHT: 
-            x += speed; 
-            break;
+    public void move() {
+        if (direction == null)
+            return;
+        switch (direction) {
+            case UP:
+                y -= speed;
+                break;
+            case DOWN:
+                y += speed;
+                break;
+            case LEFT:
+                x -= speed;
+                break;
+            case RIGHT:
+                x += speed;
+                break;
+        }
     }
-}
 
     public abstract void useAbility();
 
@@ -60,8 +58,18 @@ public void move() {
 
     @Override
     public void update() {
-    move();
-}
+        if (!abilityReady) {
+            cooldownTimer--;
+            if (cooldownTimer <= 0) {
+                setAbilityReady(true);
+            }
+        }
+    }
+
+    protected void startCooldown(int frames) {
+        setAbilityReady(false);
+        cooldownTimer = frames;
+    }
 
     @Override
     public void draw(Graphics g) {
@@ -71,8 +79,36 @@ public void move() {
 
     @Override
     public void onCollide(GameObject other) {
-        // basic example
+        // TODO: handle different collision types (obstacles, coins)
         System.out.println("Player collided with: " + other.getClass().getSimpleName());
         loseLife();
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public boolean isAbilityReady() {
+        return abilityReady;
+    }
+
+    protected void setAbilityReady(boolean ready) {
+        this.abilityReady = ready;
     }
 }

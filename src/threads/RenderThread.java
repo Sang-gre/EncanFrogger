@@ -19,7 +19,7 @@ public class RenderThread extends Thread {
             try {
                 Thread.sleep(16); // ~60 FPS
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                break;
             }
         }
     }

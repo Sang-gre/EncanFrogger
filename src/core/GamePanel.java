@@ -2,9 +2,9 @@ package core;
 
 import assets.AssetManager;
 import gameobjects.Coin;
-import gameobjects.Direction;
 import gameobjects.Obstacle;
 import gameobjects.Player;
+import level.Direction;
 import level.LevelManager;
 import main.GameLauncher;
 import threads.GameLogicThread;
@@ -21,16 +21,19 @@ public class GamePanel extends JPanel implements KeyListener {
 
     private GameState state;
     private Player player;
-    private LevelManager    levelManager;
+    private LevelManager levelManager;
     private CollisionSystem collisionSystem;
 
     private GameLogicThread logicThread;
     private RenderThread renderThread;
 
+    private boolean levelTransitioning = false;
+    private int currentLevel = 1;
+
     public GamePanel(GameLauncher launcher) {
-        this.launcher     = launcher;
+        this.launcher = launcher;
         this.assetManager = new AssetManager();
-        this.state        = GameState.CHARACTER_SELECT;
+        this.state = GameState.CHARACTER_SELECT;
 
         setFocusable(true);
         addKeyListener(this);
@@ -49,7 +52,8 @@ public class GamePanel extends JPanel implements KeyListener {
         repaint();
     }
 
-    // Idkk, for mid game na character selection kasi where would the back button go??
+    // Idkk, for mid game na character selection kasi where
+    // would the back button go??
     // Or idk what if save state?? will figure it out later
     public void showCharacterSelectMidGame() {
         stopThreads();
@@ -61,8 +65,7 @@ public class GamePanel extends JPanel implements KeyListener {
         repaint();
     }
 
-
-    public void showMapSelect(Player selectedPlayer){
+    public void showMapSelect(Player selectedPlayer) {
         this.state = GameState.MAP_SELECT;
 
         removeAll();
@@ -74,17 +77,19 @@ public class GamePanel extends JPanel implements KeyListener {
         repaint();
     }
 
-
-
     public void startLevel(Player selectedPlayer) {
+        this.levelTransitioning = false;
         this.player = selectedPlayer;
-        this.state  = GameState.PLAYING;
+        this.state = GameState.PLAYING;
 
-        this.levelManager    = new LevelManager();
+        this.levelManager = new LevelManager(getWidth(), getHeight());
         this.collisionSystem = new CollisionSystem();
 
-        // Level Manager loads level here
-        
+        levelManager.loadLevel(currentLevel);
+
+        // TODO: replace with proper spawn point from MapSelect once maps are implemented
+        player.setPosition(getWidth() / 2, (int) (getHeight() * 0.85f));
+
         removeAll();
         revalidate();
         repaint();
@@ -96,15 +101,52 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     public void updateGame() {
-        if (player != null) {
+        if (state != GameState.PLAYING)
+            return;
+
+        if (player != null)
             player.update();
-        }
+        if (levelManager != null)
+            levelManager.update();
+
+        checkGameConditions();
     }
 
     private void checkGameConditions() {
-        // implement
+        if (player == null || levelManager == null)
+            return;
+
+        // Player + obstacles
+        for (Obstacle o : levelManager.getObstacles()) {
+            if (collisionSystem.checkAABB(player, o)) {
+                collisionSystem.handleCollision(player, o);
+            }
+        }
+
+        // Player + coins
+        for (Coin c : levelManager.getCoins()) {
+            if (collisionSystem.checkAABB(player, c)) {
+                collisionSystem.handleCollision(player, c);
+            }
+        }
+
+        // Reaches Top. To be changed pa I think
+        if (!levelTransitioning && player.getBounds().y <= (int) (getHeight() * 0.10f)) {
+            levelTransitioning = true;
+            currentLevel = levelManager.getCurrentLevel() + 1;
+            stopThreads();
+            showCharacterSelect();
+        }
+
+        if (!player.isAlive()) {
+            state = GameState.GAME_OVER;
+        }
     }
 
+    private void resetPlayerPosition() {
+        player.setPosition(getWidth() / 2, (int) (getHeight() * 0.85f));
+        levelTransitioning = false;
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -112,32 +154,81 @@ public class GamePanel extends JPanel implements KeyListener {
 
         if (state == GameState.PLAYING && key == KeyEvent.VK_ESCAPE) {
             state = GameState.PAUSED;
+            return;
         }
-        
+
         if (state == GameState.PAUSED && key == KeyEvent.VK_ESCAPE) {
             state = GameState.PLAYING;
+            return;
         }
+
+        if (state != GameState.PLAYING || player == null)
+            return;
+
+        switch (key) {
+            case KeyEvent.VK_UP:
+                player.setDirection(Direction.UP);
+                break;
+            case KeyEvent.VK_DOWN:
+                player.setDirection(Direction.DOWN);
+                break;
+            case KeyEvent.VK_LEFT:
+                player.setDirection(Direction.LEFT);
+                break;
+            case KeyEvent.VK_RIGHT:
+                player.setDirection(Direction.RIGHT);
+                break;
+        }
+        player.move();
+        player.setDirection(null);
     }
 
-    @Override public void keyTyped(KeyEvent e) {}
-    @Override public void keyReleased(KeyEvent e) {}
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
 
     public void stopThreads() {
         if (logicThread != null) {
+            logicThread.stopThread();
             logicThread.interrupt();
             logicThread = null;
         }
         if (renderThread != null) {
+            renderThread.stopThread();
             renderThread.interrupt();
             renderThread = null;
         }
     }
 
-    public GameState getState()           { return state; }
-    public void setState(GameState state) { this.state = state; }
-    public Player getPlayer()             { return player; }
-    public void setPlayer(Player player)  { this.player = player; }
-    public AssetManager getAssetManager() { return assetManager; }
-    public LevelManager   getLevelManager()        { return levelManager; }
-    public CollisionSystem getCollisionSystem()    { return collisionSystem; }
+    public GameState getState() {
+        return state;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public AssetManager getAssetManager() {
+        return assetManager;
+    }
+
+    public LevelManager getLevelManager() {
+        return levelManager;
+    }
+
+    public CollisionSystem getCollisionSystem() {
+        return collisionSystem;
+    }
 }

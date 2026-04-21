@@ -19,7 +19,7 @@ public class GameLogicThread extends Thread {
             try {
                 Thread.sleep(16); //60 up per sec
             } catch (InterruptedException e) {
-                //e.printStackTrace();
+                break;
             }
         }
     }
