@@ -1,8 +1,9 @@
 package core;
 
-import java.awt.*;
-import javax.swing.*;
 import gameobjects.Player;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 public class MapSelect extends Selection {
 
@@ -59,9 +60,84 @@ public class MapSelect extends Selection {
         getGamePanel().startLevel(selectedPlayer);
     }
 
+    @Override
+    public JPanel createBackground() {
+        JPanel background = new JPanel(new BorderLayout()) {
+            private final Image img = new ImageIcon("assets/mapSelectBackground.png").getImage();
 
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+
+        background.setOpaque(true);
+        background.add(createSelectionButtons(), BorderLayout.CENTER);
+        background.add(createNavButtons(), BorderLayout.SOUTH);
+
+        return background;
+    }
+
+    protected JPanel createNavButtons() {
+        JPanel panel = new JPanel(null);
+        panel.setOpaque(false);
+        panel.setPreferredSize(new Dimension(800, 100));
+
+        int btnWidth = 140;
+        int btnHeight = 60;
+        int margin = 20;
+
+        JButton backBtn = null;
+
+        if (onBack != null) {
+            backBtn = createImageButton("assets/backButton.png", btnWidth, btnHeight);
+            backBtn.addActionListener(e -> onBack.run());
+            panel.add(backBtn);
+        }
+
+        final JButton nextBtn = createImageButton("assets/nextButton.png", btnWidth, btnHeight);
+        nextBtn.addActionListener((ActionEvent e) -> {
+            if (!validateSelection()) {
+                JOptionPane.showMessageDialog(MapSelect.this, "Please select a character!");
+                return;
+            }
+            onNext();
+        });
+
+        panel.add(nextBtn);
+
+        JButton finalBackBtn = backBtn;
+
+        panel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+
+                int w = panel.getWidth();
+                int h = panel.getHeight();
+
+                if (finalBackBtn != null) {
+                    finalBackBtn.setBounds(
+                            margin,
+                            h - btnHeight,
+                            btnWidth,
+                            btnHeight
+                    );
+                }
+
+                nextBtn.setBounds(
+                        w - btnWidth - margin,
+                        h - btnHeight,
+                        btnWidth,
+                        btnHeight
+                );
+            }
+        });
+
+        return panel;
+    }
 
     public boolean validateSelection() {
-        return lireo.isSelected()   || hathoria.isSelected()  || adamya.isSelected() || sapiro.isSelected() ||mineave.isSelected();
+        return lireo.isSelected()   || hathoria.isSelected()  || adamya.isSelected() || sapiro.isSelected() || mineave.isSelected();
     }
 }
