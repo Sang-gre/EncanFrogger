@@ -1,7 +1,8 @@
 package characters;
 
-import gameobjects.Player;
 import gameobjects.GameObject;
+import gameobjects.Player;
+import gameobjects.PlayerType;
 import java.awt.*;
 
 public class Terra extends Player {
@@ -11,7 +12,7 @@ public class Terra extends Player {
     private static final int COOLDOWN = 60; // can be changed, might be too big
 
     public Terra(int x, int y) {
-        super(x, y);
+        super(x, y, PlayerType.TERRA);
         this.slowRadius = 100;
         this.slowDuration = 180;
     }
