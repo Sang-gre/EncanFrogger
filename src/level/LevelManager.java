@@ -201,7 +201,7 @@ public class LevelManager {
             boolean validPosition = false;
             int attempts = 0;
 
-            while (!validPosition && attempts < 6) { //10 attempt is just estimation
+            while (!validPosition && attempts < 10) { //10 attempt is just estimation
 
                 int lane = rng.nextInt(LANE_COUNT); //which horizontaal lane will the coin be on?
 
@@ -250,6 +250,7 @@ public class LevelManager {
                     }
                     if (!collides) {
                         coins.add(coin);
+                        validPosition = true;
                     }
                 }
 
@@ -305,6 +306,10 @@ public class LevelManager {
         for (Coin c : coins) {
             if (c.isActive())
                 c.draw(g);
+            System.out.println(
+    "Coin at " + c.getX() + "," + c.getY() + 
+    " | attached: " + (c.getAttachedPlatform() != null)
+);
         }
     }
 

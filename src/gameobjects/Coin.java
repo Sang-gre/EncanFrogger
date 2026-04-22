@@ -1,14 +1,13 @@
 package gameobjects;
 
 import java.awt.*;
-import java.awt.Graphics;
-import java.awt.Rectangle;
 
 
 public class Coin extends GameObject {
     private boolean isCollected;
     private Platform attachedPlatform;
     private int offsetX;
+    private int offsetY;
 
     public Coin(int x, int y, int width, int height) {
         super(x, y, width, height, 0);
@@ -22,8 +21,9 @@ public class Coin extends GameObject {
 
     @Override
     public void update() {
-        if (attachedPlatform != null){
+        if (attachedPlatform != null && attachedPlatform.isActive()){
             this.x = attachedPlatform.getX() + offsetX;
+            this.y = attachedPlatform.getY() + offsetY;
         }
     }
 
@@ -32,6 +32,7 @@ public class Coin extends GameObject {
         if (!isActive()) return;
         g.setColor(Color.YELLOW);
         g.fillRect(x, y, width, height);
+        
     }
 
     @Override
@@ -44,7 +45,13 @@ public class Coin extends GameObject {
 
     public void attachToPlatform(Platform p){
         this.attachedPlatform = p;
-        this.offsetX= x - p.getX(); //get distance from platform
+        this.offsetX= this.x - p.getX(); //get distance from platform
+        this.offsetY = this.y - p.getY();
+    }
+
+    public Platform getAttachedPlatform(){
+        return attachedPlatform;
     }
     public boolean isCollected() { return isCollected;}
+
 }
