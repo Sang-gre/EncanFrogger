@@ -1,7 +1,8 @@
 package characters;
 
-import gameobjects.Player;
 import gameobjects.GameObject;
+import gameobjects.Player;
+import gameobjects.PlayerType;
 import java.awt.*;
 
 public class Adamus extends Player {
@@ -12,7 +13,7 @@ public class Adamus extends Player {
     private static final int COOLDOWN = 60; //can be changed as well
 
     public Adamus(int x, int y) {
-        super(x, y);
+        super(x, y, PlayerType.ADAMUS);
         this.bridgeLane = -1;
         this.bridgeDuration = 120;
         this.bridgeTimer = 0;

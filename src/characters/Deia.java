@@ -1,9 +1,9 @@
 package characters;
 
-import gameobjects.Player;
 import gameobjects.GameObject;
 import gameobjects.Obstacle;
-
+import gameobjects.Player;
+import gameobjects.PlayerType;
 import java.awt.*;
 
 public class Deia extends Player {
@@ -13,7 +13,7 @@ public class Deia extends Player {
     private static final int COOLDOWN = 60; //can be changed
 
     public Deia(int x, int y) {
-        super(x, y);
+        super(x, y, PlayerType.DEIA);
         this.phaseCount = 3;
         this.windShield = false;
     }

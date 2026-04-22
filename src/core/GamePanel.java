@@ -99,7 +99,12 @@ public class GamePanel extends JPanel implements KeyListener {
         int spawnLane = levelManager.getLaneCount() - 1;
         int[] colX = levelManager.getColumnX();
         int[] laneY = levelManager.getLaneY();
-        player.setPosition(colX[spawnCol], laneY[spawnLane]);
+
+        int x = colX[spawnCol] + (levelManager.getColumnWidth() - player.getWidth()) / 2;
+        int y = laneY[spawnLane] + (levelManager.getLaneHeight() - player.getHeight()) / 2;
+
+        y += 25;
+        player.setPosition(x, y);
 
         removeAll();
         revalidate();

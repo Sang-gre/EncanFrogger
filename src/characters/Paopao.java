@@ -1,13 +1,14 @@
 package characters;
 
-import gameobjects.Player;
 import gameobjects.GameObject;
+import gameobjects.Player;
+import gameobjects.PlayerType;
 import java.awt.*;
 
 public class Paopao extends Player {
 
     public Paopao(int x, int y) {
-        super(x, y);
+        super(x, y, PlayerType.PAOPAO);
     }
 
     @Override

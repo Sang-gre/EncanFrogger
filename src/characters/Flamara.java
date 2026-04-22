@@ -1,7 +1,8 @@
 package characters;
 
-import gameobjects.Player;
 import gameobjects.GameObject;
+import gameobjects.Player;
+import gameobjects.PlayerType;
 import java.awt.*;
 
 public class Flamara extends Player {
@@ -13,7 +14,7 @@ public class Flamara extends Player {
     private static final int COOLDOWN = 60; // can be changed
 
     public Flamara(int x, int y) {
-        super(x, y);
+        super(x, y, PlayerType.FLAMARA);
         this.dashSpeed = 20.0f;
         this.dashDuration = 10;
         this.normalSpeed = speed;
