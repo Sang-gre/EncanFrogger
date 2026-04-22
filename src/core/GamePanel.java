@@ -85,7 +85,7 @@ public class GamePanel extends JPanel implements KeyListener {
         this.state = GameState.PLAYING;
         this.currentMap = map;
 
-        this.levelManager = new LevelManager(getWidth(), getHeight());
+        this.levelManager = new LevelManager(getWidth(), getHeight()); //getWidth() and getHeight() computes the window's
         this.collisionSystem = new CollisionSystem();
 
         levelManager.loadLevel(currentLevel, currentMap);
