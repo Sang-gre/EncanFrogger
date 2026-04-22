@@ -29,11 +29,11 @@ public class MainPanel extends JPanel {
     }
 
     private void loadAssets() {
-        background = new ImageIcon("ASSETS/buttonDashboardBackground.png").getImage();
+        background = new ImageIcon("ASSETS/Backgrounds/buttonDashboardBackground.png").getImage();
 
-        startImg = new ImageIcon("ASSETS/startButton.png").getImage();
-        menuImg  = new ImageIcon("ASSETS/menuButton.png").getImage();
-        exitImg  = new ImageIcon("ASSETS/exitButton.png").getImage();
+        startImg = new ImageIcon("ASSETS/Buttons/startButton.png").getImage();
+        menuImg  = new ImageIcon("ASSETS/Buttons/menuButton.png").getImage();
+        exitImg  = new ImageIcon("ASSETS/Buttons/exitButton.png").getImage();
     }
 
     private void setupButtons() {

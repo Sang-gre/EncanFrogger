@@ -82,7 +82,7 @@ public class MapSelect extends Selection {
     public JPanel createBackground() {
 
         JPanel background = new JPanel(null) {
-            private final Image img = new ImageIcon("assets/mapSelectBackground.png").getImage();
+            private final Image img = new ImageIcon("assets/Backgrounds/mapSelectBackground.png").getImage();
 
             @Override
             protected void paintComponent(Graphics g) {

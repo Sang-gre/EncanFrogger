@@ -13,8 +13,8 @@ public class TitlePanel extends JPanel {
     public TitlePanel(GameLauncher parent){
         this.parent = parent;
 
-        background = new ImageIcon("ASSETS/background.png").getImage();
-        titleFont = new ImageIcon("ASSETS/titleFont.png").getImage();
+        background = new ImageIcon("ASSETS/Backgrounds/background.png").getImage();
+        titleFont = new ImageIcon("ASSETS/Backgrounds/titleFont.png").getImage();
 
         setLayout(null);
         
