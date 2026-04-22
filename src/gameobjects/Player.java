@@ -1,6 +1,8 @@
 package gameobjects;
 
 import java.awt.*;
+
+import assets.AssetManager;
 import level.Direction;
 
 public abstract class Player extends GameObject {
@@ -14,6 +16,7 @@ public abstract class Player extends GameObject {
     private Direction direction;
     private int stepX;
     private int stepY;
+    protected Direction lastDirection = Direction.DOWN;
 
     public Player(int x, int y, PlayerType type) {
         super(x, y, 40, 40, 5);
@@ -23,6 +26,9 @@ public abstract class Player extends GameObject {
         this.level = 1;
         this.abilityReady = true;
         this.type = type;
+
+        this.stepX = 40;
+        this.stepY = 40;
     }
 
     @Override
@@ -61,6 +67,8 @@ public abstract class Player extends GameObject {
 
     @Override
     public void update() {
+        move();
+
         if (!abilityReady) {
             cooldownTimer--;
             if (cooldownTimer <= 0) {
@@ -76,9 +84,16 @@ public abstract class Player extends GameObject {
 
     @Override
     public void draw(Graphics g) {
+
+    Image sprite = AssetManager.getPlayerSprite(type, getLastDirection());
+
+    if (sprite != null) {
+        g.drawImage(sprite, x, y, width, height, null);
+    } else {
         g.setColor(Color.GREEN);
         g.fillRect(x, y, width, height);
     }
+}
 
     @Override
     public void onCollide(GameObject other) {
@@ -88,12 +103,19 @@ public abstract class Player extends GameObject {
     }
 
     public void setDirection(Direction direction) {
-        this.direction = direction;
+    this.direction = direction;
+    if (direction != null) {
+        lastDirection = direction;
     }
+}
 
     public Direction getDirection() {
         return direction;
     }
+
+    public Direction getLastDirection() {
+    return lastDirection;
+}
 
     public int getLives() {
         return lives;

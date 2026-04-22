@@ -7,17 +7,17 @@ import java.util.Map;
 
 import gameobjects.PlayerType;
 import level.Direction;
-// ichachange pa kasi dapat hiwalay-hiwalay ang png for fron, back, etc.
+
 public class AssetManager {
-/*
+
     private static final Map<PlayerType, Map<Direction, Image>> playerSprites = new HashMap<>();
 
     static {
-        loadPlayerSprites(PlayerType.PAOPAO, "assets/spritesheets/paopao/");
-        loadPlayerSprites(PlayerType.DEIA, "assets/spritesheets/deia/");
-        loadPlayerSprites(PlayerType.FLAMARA, "assets/spritesheets/flammara/");
-        loadPlayerSprites(PlayerType.TERRA, "assets/spritesheets/terra/");
-        loadPlayerSprites(PlayerType.ADAMUS, "assets/spritesheets/adamus/");
+        loadPlayerSprites(PlayerType.PAOPAO, "assets/paopao/");
+        loadPlayerSprites(PlayerType.DEIA, "assets/deia/");
+        loadPlayerSprites(PlayerType.FLAMARA, "assets/flamara/");
+        loadPlayerSprites(PlayerType.TERRA, "assets/terra/");
+        loadPlayerSprites(PlayerType.ADAMUS, "assets/adamus/");
     }
 
     private static void loadPlayerSprites(PlayerType type, String path) {
@@ -31,6 +31,7 @@ public class AssetManager {
         playerSprites.put(type, sprites);
     }
 
+    
     public static Image getPlayerSprite(PlayerType type, Direction direction) {
         Map<Direction, Image> sprites = playerSprites.get(type);
 
@@ -38,5 +39,4 @@ public class AssetManager {
 
         return sprites.getOrDefault(direction, sprites.get(Direction.DOWN));
     }
-    */
 }
