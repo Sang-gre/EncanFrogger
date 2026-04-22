@@ -16,22 +16,22 @@ public class AssetManager {
 
     static {
         try {
-            loadCharacter(PlayerType.PAOPAO, "assets/spritesheets/paopaoSpritesheet.png");
-            loadCharacter(PlayerType.DEIA, "assets/spritesheets/deiaSpritesheet.png");
-            loadCharacter(PlayerType.FLAMARA, "assets/spritesheets/flammaraSpritesheet.png");
-            loadCharacter(PlayerType.TERRA, "assets/spritesheets/terraSpritesheet.png");
-            loadCharacter(PlayerType.ADAMUS, "assets/spritesheets/adamusSpritesheet.png");
+          
+            loadCharacter(PlayerType.PAOPAO, "assets/spritesheets/paopaoSpritesheet.png", 7, 4);
+            loadCharacter(PlayerType.DEIA, "assets/spritesheets/deiaSpritesheet.png", 6, 4);
+            loadCharacter(PlayerType.FLAMARA, "assets/spritesheets/flammaraSpritesheet.png", 5, 4);
+            loadCharacter(PlayerType.TERRA, "assets/spritesheets/terraSpritesheet.png", 7, 4);
+            loadCharacter(PlayerType.ADAMUS, "assets/spritesheets/adamusSpritesheet.png", 6, 4);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void loadCharacter(PlayerType type, String path) throws IOException {
+    
+    private static void loadCharacter(PlayerType type, String path, int columns, int rows) throws IOException {
 
         BufferedImage sheet = ImageIO.read(new File(path));
-
-        int columns = 7; // frames per row
-        int rows = 4;    // directions: DOWN, LEFT, RIGHT, UP
 
         int frameWidth = sheet.getWidth() / columns;
         int frameHeight = sheet.getHeight() / rows;
@@ -64,11 +64,19 @@ public class AssetManager {
         playerAnimations.put(type, directionMap);
     }
 
+   
     public static BufferedImage[] getPlayerAnimation(PlayerType type, Direction dir) {
-    Map<Direction, BufferedImage[]> map = playerAnimations.get(type);
 
-    if (map == null) return null;
+        Map<Direction, BufferedImage[]> map = playerAnimations.get(type);
 
-    return map.getOrDefault(dir, map.get(Direction.DOWN));
-}
+        if (map == null) return null;
+
+        BufferedImage[] frames = map.get(dir);
+
+        if (frames == null) {
+            return map.get(Direction.DOWN); 
+        }
+
+        return frames;
+    }
 }
