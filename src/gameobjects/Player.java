@@ -15,13 +15,14 @@ public abstract class Player extends GameObject {
     private int stepX;
     private int stepY;
 
-    public Player(int x, int y) {
+    public Player(int x, int y, PlayerType type) {
         super(x, y, 40, 40, 5);
 
         this.lives = 3;
         this.coins = 0;
         this.level = 1;
         this.abilityReady = true;
+        this.type = type;
     }
 
     @Override
