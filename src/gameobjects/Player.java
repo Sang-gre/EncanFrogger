@@ -5,6 +5,7 @@ import level.Direction;
 
 public abstract class Player extends GameObject {
 
+    protected PlayerType type;
     private int lives;
     private int coins;
     private int level;
