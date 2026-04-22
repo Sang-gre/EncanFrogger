@@ -313,7 +313,6 @@ public class GamePanel extends JPanel implements KeyListener {
         super.paintComponent(g);
 
         if (levelManager != null) {
-            levelManager.resize(getWidth(), getHeight());
             levelManager.draw(g, getWidth(), getHeight());
         }
 
