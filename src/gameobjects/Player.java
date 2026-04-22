@@ -1,5 +1,6 @@
 package gameobjects;
 
+import java.awt.image.BufferedImage;
 import java.awt.*;
 
 import assets.AssetManager;
@@ -7,6 +8,8 @@ import level.Direction;
 
 public abstract class Player extends GameObject {
 
+    private int animationFrame = 0;
+    private int animationCounter = 0;
     protected PlayerType type;
     private int lives;
     private int coins;
@@ -66,16 +69,23 @@ public abstract class Player extends GameObject {
     }
 
     @Override
-    public void update() {
-        move();
+public void update() {
+    move();
 
-        if (!abilityReady) {
-            cooldownTimer--;
-            if (cooldownTimer <= 0) {
-                setAbilityReady(true);
-            }
+    // 🔥 animation speed control
+    animationCounter++;
+    if (animationCounter > 10) {
+        animationFrame++;
+        animationCounter = 0;
+    }
+
+    if (!abilityReady) {
+        cooldownTimer--;
+        if (cooldownTimer <= 0) {
+            setAbilityReady(true);
         }
     }
+}
 
     protected void startCooldown(int frames) {
         setAbilityReady(false);
@@ -83,12 +93,14 @@ public abstract class Player extends GameObject {
     }
 
     @Override
-    public void draw(Graphics g) {
+public void draw(Graphics g) {
 
-    Image sprite = AssetManager.getPlayerSprite(type, getLastDirection());
+    BufferedImage[] frames =
+            AssetManager.getPlayerAnimation(type, getLastDirection());
 
-    if (sprite != null) {
-        g.drawImage(sprite, x, y, width, height, null);
+    if (frames != null) {
+        BufferedImage currentFrame = frames[animationFrame % frames.length];
+        g.drawImage(currentFrame, x, y, width, height, null);
     } else {
         g.setColor(Color.GREEN);
         g.fillRect(x, y, width, height);
