@@ -35,24 +35,32 @@ public abstract class Player extends GameObject {
     }
 
     @Override
-    public void move() {
-        if (direction == null)
-            return;
-        switch (direction) {
-            case UP:
-                y -= stepY;
-                break;
-            case DOWN:
-                y += stepY;
-                break;
-            case LEFT:
-                x -= stepX;
-                break;
-            case RIGHT:
-                x += stepX;
-                break;
-        }
+public void move() {
+    if (direction == null) return;
+
+    lastDirection = direction;
+
+    switch (direction) {
+        case UP:
+            y -= stepY;
+            break;
+        case DOWN:
+            y += stepY;
+            break;
+        case LEFT:
+            x -= stepX;
+            break;
+        case RIGHT:
+            x += stepX;
+            break;
     }
+
+    // boundaries
+    x = Math.max(0, Math.min(x, 800 - width));
+    y = Math.max(0, Math.min(y, 500 - height));
+
+    direction = null;
+}
 
     public abstract void useAbility();
 
@@ -69,14 +77,20 @@ public abstract class Player extends GameObject {
     }
 
     @Override
-public void update() {
+    public void update() {
+
+    boolean isMoving = (direction != null);
+
     move();
 
-    // 🔥 animation speed control
-    animationCounter++;
-    if (animationCounter > 10) {
-        animationFrame++;
-        animationCounter = 0;
+    if (isMoving) {
+        animationCounter++;
+        if (animationCounter > 10) {
+            animationFrame++;
+            animationCounter = 0;
+        }
+    } else {
+        animationFrame = 0;
     }
 
     if (!abilityReady) {
@@ -86,6 +100,7 @@ public void update() {
         }
     }
 }
+
 
     protected void startCooldown(int frames) {
         setAbilityReady(false);
