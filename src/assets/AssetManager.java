@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.*;
+import java.awt.*;
 
 import gameobjects.PlayerType;
 import level.Direction;
@@ -13,6 +15,24 @@ import level.Direction;
 public class AssetManager {
 
     private static final Map<PlayerType, Map<Direction, BufferedImage[]>> playerAnimations = new HashMap<>();
+
+    private static final Map<PlayerType, Image> characterCards = new HashMap<>();
+    private static final Map<PlayerType, Image> infoCards = new HashMap<>();
+
+    static{
+
+    characterCards.put(PlayerType.PAOPAO, new ImageIcon("assets/characterCards/paopaoCard.png").getImage());
+    characterCards.put(PlayerType.DEIA, new ImageIcon("assets/characterCards/deiaCard.png").getImage());
+    characterCards.put(PlayerType.FLAMARA, new ImageIcon("assets/characterCards/flammaraCard.png").getImage());
+    characterCards.put(PlayerType.TERRA, new ImageIcon("assets/characterCards/terraCard.png").getImage());
+    characterCards.put(PlayerType.ADAMUS, new ImageIcon("assets/characterCards/adamusCard.png").getImage());
+
+    infoCards.put(PlayerType.PAOPAO, new ImageIcon("assets/characterInfoCard/paopaoInfoCard.png").getImage());
+    infoCards.put(PlayerType.DEIA, new ImageIcon("assets/characterInfoCard/deiaInfoCard.png").getImage());
+    infoCards.put(PlayerType.FLAMARA, new ImageIcon("assets/characterInfoCard/flammaraInfoCard.png").getImage());
+    infoCards.put(PlayerType.TERRA, new ImageIcon("assets/characterInfoCard/terraInfoCard.png").getImage());
+    infoCards.put(PlayerType.ADAMUS, new ImageIcon("assets/characterInfoCard/adamusInfoCard.png").getImage());
+    }
 
     static {
         try {
@@ -79,4 +99,12 @@ public class AssetManager {
 
         return frames;
     }
+
+    public static Image getCharacterCard(PlayerType type) {
+    return characterCards.get(type);
+}
+
+    public static Image getInfoCard(PlayerType type) {
+    return infoCards.get(type);
+}
 }
