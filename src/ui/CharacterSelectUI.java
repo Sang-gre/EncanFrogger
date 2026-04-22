@@ -236,7 +236,7 @@ public class CharacterSelectUI {
             }
 
             // Calculate info card dimensions
-            int infoH = orig.height - btnH - gap;
+            int infoH = (int)(orig.height * 0.6);
             Image rawInfo = AssetManager.getInfoCard(PLAYER_TYPES[selectedIndex]);
             int infoOrigW = rawInfo.getWidth(null);
             int infoOrigH = rawInfo.getHeight(null);
