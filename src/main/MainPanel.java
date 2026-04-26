@@ -1,5 +1,6 @@
 package main;
 
+import assets.AssetManager;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -29,11 +30,10 @@ public class MainPanel extends JPanel {
     }
 
     private void loadAssets() {
-        background = new ImageIcon("ASSETS/Backgrounds/buttonDashboardBackground.png").getImage();
-
-        startImg = new ImageIcon("ASSETS/Buttons/startButton.png").getImage();
-        menuImg  = new ImageIcon("ASSETS/Buttons/menuButton.png").getImage();
-        exitImg  = new ImageIcon("ASSETS/Buttons/exitButton.png").getImage();
+        background = AssetManager.getBackground("menu");
+        startImg = AssetManager.getButton("start");
+        menuImg = AssetManager.getButton("menu");
+        exitImg = AssetManager.getButton("exit");
     }
 
     private void setupButtons() {
@@ -42,8 +42,8 @@ public class MainPanel extends JPanel {
         buttonPanel.setOpaque(false);
 
         startBttn = createButton(startImg);
-        menuBttn  = createButton(menuImg);
-        exitBttn  = createButton(exitImg);
+        menuBttn = createButton(menuImg);
+        exitBttn = createButton(exitImg);
 
         buttonPanel.add(startBttn);
         buttonPanel.add(menuBttn);
@@ -91,16 +91,16 @@ public class MainPanel extends JPanel {
     public void doLayout() {
         super.doLayout();
 
-        int panelW = (int)(getWidth() * 0.30);
-        int panelH = (int)(getHeight() * 0.50);
+        int panelW = (int) (getWidth() * 0.30);
+        int panelH = (int) (getHeight() * 0.50);
 
         int x = (getWidth() - panelW) / 2;
-        int y = (int)(getHeight() * 0.30);
+        int y = (int) (getHeight() * 0.30);
 
         buttonPanel.setBounds(x, y, panelW, panelH);
 
-        int gap = (int)(panelH * 0.02);
-        int btnW = (int)(panelW * 0.70);
+        int gap = (int) (panelH * 0.02);
+        int btnW = (int) (panelW * 0.70);
         int btnH = (panelH - (gap * 4)) / 3;
 
         int centerX = (panelW - btnW) / 2;

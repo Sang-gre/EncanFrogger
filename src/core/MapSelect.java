@@ -1,5 +1,6 @@
 package core;
 
+import assets.AssetManager;
 import gameobjects.Player;
 import java.awt.*;
 import java.awt.event.*;
@@ -19,13 +20,13 @@ public class MapSelect extends Selection {
     @Override
     public JPanel createSelectionButtons() {
 
-        lireo   = createBtn("assets/flags/lireoFlagMap.png");
-        hathoria = createBtn("assets/flags/hathoriaFlagMap.png");
-        adamya  = createBtn("assets/flags/adamyaFlagMap.png");
-        sapiro  = createBtn("assets/flags/sapiroFlagMap.png");
-        mineave = createBtn("assets/flags/mineaveFlagMap.png");
+        lireo = createBtn(GameMap.LIREO);
+        hathoria = createBtn(GameMap.HATHORIA);
+        adamya = createBtn(GameMap.ADAMYA);
+        sapiro = createBtn(GameMap.SAPIRO);
+        mineave = createBtn(GameMap.MINEAVE);
 
-        JRadioButton[] buttons = {lireo, hathoria, adamya, sapiro, mineave};
+        JRadioButton[] buttons = { lireo, hathoria, adamya, sapiro, mineave };
 
         ButtonGroup group = new ButtonGroup();
         for (JRadioButton b : buttons) {
@@ -43,10 +44,11 @@ public class MapSelect extends Selection {
         return panel;
     }
 
-    private JRadioButton createBtn(String path) {
+    private JRadioButton createBtn(GameMap map) {
         JRadioButton btn = new JRadioButton();
-
-        btn.putClientProperty("img", new ImageIcon(path).getImage());
+        btn.putClientProperty("img", AssetManager.getMapFlag(map));
+        btn.putClientProperty("originalImg", AssetManager.getMapFlag(map));
+        btn.putClientProperty("map", map);
 
         btn.setOpaque(false);
         btn.setBorderPainted(false);
@@ -61,12 +63,13 @@ public class MapSelect extends Selection {
 
             Image img = (Image) btn.getClientProperty("img");
 
-            int scale = selected ? 110 : 100; 
+            int scale = selected ? 110 : 100;
 
             int width = btn.getWidth();
             int height = btn.getHeight();
 
-            if (width <= 0 || height <= 0) return;
+            if (width <= 0 || height <= 0)
+                return;
 
             int newW = width * scale / 100;
             int newH = height * scale / 100;
@@ -82,7 +85,7 @@ public class MapSelect extends Selection {
     public JPanel createBackground() {
 
         JPanel background = new JPanel(null) {
-            private final Image img = new ImageIcon("assets/Backgrounds/mapSelectBackground.png").getImage();
+            private final Image img = AssetManager.getBackground("mapSelect");
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -121,11 +124,11 @@ public class MapSelect extends Selection {
         int cardWidth = panelWidth / count;
         int cardHeight = panelHeight - 100;
 
-        JRadioButton[] buttons = {lireo, hathoria, adamya, sapiro, mineave};
+        JRadioButton[] buttons = { lireo, hathoria, adamya, sapiro, mineave };
 
         for (JRadioButton btn : buttons) {
 
-            Image img = (Image) btn.getClientProperty("img");
+             Image img = (Image) btn.getClientProperty("originalImg");
 
             Image scaled = img.getScaledInstance(cardWidth, cardHeight, Image.SCALE_SMOOTH);
 
@@ -135,24 +138,31 @@ public class MapSelect extends Selection {
 
     @Override
     protected void onNext() {
+        JRadioButton[] buttons = { lireo, hathoria, adamya, sapiro, mineave };
 
         GameMap selectedMap = null;
+        for (JRadioButton btn : buttons) {
+            if (btn.isSelected()) {
+                selectedMap = (GameMap) btn.getClientProperty("map");
+                break;
+            }
+        }
 
-        if (lireo.isSelected()) selectedMap = GameMap.LIREO;
-        else if (hathoria.isSelected()) selectedMap = GameMap.HATHORIA;
-        else if (adamya.isSelected()) selectedMap = GameMap.ADAMYA;
-        else if (sapiro.isSelected()) selectedMap = GameMap.SAPIRO;
-        else if (mineave.isSelected()) selectedMap = GameMap.MINEAVE;
-
-        // ✅ prevent crash
-        if (selectedMap == null) return;
+        if (selectedMap == null)
+            return;
 
         getGamePanel().startLevel(selectedPlayer, selectedMap);
     }
 
     @Override
     public boolean validateSelection() {
-        return lireo.isSelected() || hathoria.isSelected() || adamya.isSelected() || sapiro.isSelected() || mineave.isSelected();
+        JRadioButton[] buttons = { lireo, hathoria, adamya, sapiro, mineave };
+        for (JRadioButton btn : buttons) {
+            if (btn.isSelected()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -225,7 +225,7 @@ public class CharacterSelectUI {
             //Calculate select button dimensions based on image aspect ratio
             Rectangle orig = cardBounds[selectedIndex];
 
-            Image selectImg = new ImageIcon("assets/Buttons/selectButton.png").getImage();
+            Image selectImg = AssetManager.getButton("select");
             int selectOrigW = selectImg.getWidth(null);
             int selectOrigH = selectImg.getHeight(null);
             int btnW = (int) (W * 0.13);

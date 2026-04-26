@@ -1,5 +1,6 @@
 package core;
 
+import assets.AssetManager;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -21,7 +22,7 @@ public abstract class Selection extends JPanel {
 
     public JPanel createBackground() {
         JPanel background = new JPanel(new BorderLayout()) {
-            private final Image img = new ImageIcon("assets/Backgrounds/chooseCharacterBackground.png").getImage();
+            private final Image img = AssetManager.getBackground("characterSelect");
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -49,12 +50,12 @@ public abstract class Selection extends JPanel {
         JButton backBtn = null;
 
         if (onBack != null) {
-            backBtn = createImageButton("assets/Buttons/backButton.png", btnWidth, btnHeight);
+            backBtn = createImageButton(AssetManager.getButton("back"), btnWidth, btnHeight);
             backBtn.addActionListener(e -> onBack.run());
             panel.add(backBtn);
         }
 
-        final JButton nextBtn = createImageButton("assets/Buttons/nextButton.png", btnWidth, btnHeight);
+        final JButton nextBtn = createImageButton(AssetManager.getButton("next"), btnWidth, btnHeight);
         nextBtn.addActionListener((ActionEvent e) -> {
             if (!validateSelection()) {
                 JOptionPane.showMessageDialog(Selection.this, "Please select a character!");
@@ -97,10 +98,10 @@ public abstract class Selection extends JPanel {
 
     protected abstract void onNext();
 
-    public JButton createImageButton(String path, int width, int height) {
-
-        ImageIcon icon = new ImageIcon(path);
-        Image scaled = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+    public JButton createImageButton(Image img, int width, int height) {
+        
+        if (img == null) return new JButton("?");
+        Image scaled = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 
         JButton button = new JButton(new ImageIcon(scaled));
 

@@ -1,11 +1,11 @@
 package main;
 
+import assets.AssetManager;
 import core.GamePanel;
-import ui.CursorGlassPane;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import ui.CursorGlassPane;
 
 public class GameLauncher extends JFrame {
 
@@ -42,7 +42,7 @@ public class GameLauncher extends JFrame {
     }
 
     private void setupCursor() {
-        Image customCursor = new ImageIcon("ASSETS/customCursor.png").getImage();
+        Image customCursor = AssetManager.getCustomCursor();
         CursorGlassPane glassPane = new CursorGlassPane(customCursor, mainPanel);
         setGlassPane(glassPane);
         glassPane.setVisible(true);

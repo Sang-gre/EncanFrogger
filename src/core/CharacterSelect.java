@@ -1,5 +1,6 @@
 package core;
 
+import assets.AssetManager;
 import characters.Adamus;
 import characters.Deia;
 import characters.Flamara;
@@ -59,7 +60,7 @@ public class CharacterSelect extends Selection {
     @Override
     public JPanel createBackground() {
         JPanel background = new JPanel(null) {
-            private final Image img = new ImageIcon("assets/Backgrounds/chooseCharacterBackground.png").getImage();
+            private final Image img = AssetManager.getBackground("characterSelect");
 
             @Override
             protected void paintComponent(Graphics g) {

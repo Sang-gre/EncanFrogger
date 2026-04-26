@@ -1,5 +1,6 @@
 package level;
 
+import assets.AssetManager;
 import core.GameMap;
 import gameobjects.Coin;
 import gameobjects.Obstacle;
@@ -8,8 +9,6 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import javax.swing.ImageIcon;
 
 public class LevelManager {
 
@@ -115,23 +114,7 @@ public class LevelManager {
         spawnPlatforms();
         spawnCoins();
 
-        switch (map) {
-            case LIREO:
-                background = new ImageIcon("assets/maps/lireoMap.png").getImage();
-                break;
-            case HATHORIA:
-                background = new ImageIcon("assets/maps/hathoriaMap.png").getImage();
-                break;
-            case ADAMYA:
-                background = new ImageIcon("assets/maps/adamyaMap.png").getImage();
-                break;
-            case SAPIRO:
-                background = new ImageIcon("assets/maps/sapiroMap.png").getImage();
-                break;
-            case MINEAVE:
-                background = new ImageIcon("assets/maps/mineaveMap.png").getImage();
-                break;
-        }
+        background = AssetManager.getMapBackground(map);
     }
 
     private void initPlatformLanes() {
