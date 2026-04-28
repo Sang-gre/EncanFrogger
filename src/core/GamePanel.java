@@ -1,15 +1,12 @@
 package core;
 
 import assets.AssetManager;
-import gameobjects.Coin;
-import gameobjects.Obstacle;
 import gameobjects.Platform;
 import gameobjects.Player;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.swing.*;
 import level.Direction;
 import level.LevelManager;
@@ -85,7 +82,8 @@ public class GamePanel extends JPanel implements KeyListener {
         this.state = GameState.PLAYING;
         this.currentMap = map;
 
-        this.levelManager = new LevelManager(getWidth(), getHeight()); //getWidth() and getHeight() computes the window's
+        this.levelManager = new LevelManager(getWidth(), getHeight()); // getWidth() and getHeight() computes the
+                                                                       // window's
         this.collisionSystem = new CollisionSystem();
 
         levelManager.loadLevel(currentLevel, currentMap);

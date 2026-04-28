@@ -91,7 +91,18 @@ public class GameLauncher extends JFrame {
         SwingUtilities.invokeLater(() -> getGlassPane().requestFocusInWindow());
     }
 
+    // To remove in final
+    public GamePanel getGamePanel() {
+        return gamePanel;
+    }
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(GameLauncher::new);
+        boolean testMode = args.length > 0 && args[0].equals("--test");
+
+        if (testMode) {
+            SwingUtilities.invokeLater(() -> GameTester.launch());
+        } else {
+            SwingUtilities.invokeLater(GameLauncher::new);
+        }
     }
 }
