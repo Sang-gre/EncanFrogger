@@ -95,14 +95,29 @@ public class GamePanel extends JPanel implements KeyListener {
         repaint();
 
         // handle window resize
-        addComponentListener(new java.awt.event.ComponentAdapter() {
+        addComponentListener(new ComponentAdapter() {
             @Override
-            public void componentResized(java.awt.event.ComponentEvent e) {
-                if (levelManager != null && player != null) {
-                    levelManager.resize(getWidth(), getHeight());
-                    player.setSize(levelManager.getColumnWidth(), levelManager.getLaneHeight());
-                    player.setStepSize(levelManager.getColumnWidth(), levelManager.getLaneHeight());
-                }
+            public void componentResized(ComponentEvent e) {
+                if (levelManager == null || player == null)
+                    return;
+
+                // Remember which lane and column the player is on BEFORE resize
+                int currentLane = levelManager.getLaneIndex(player.getY());
+                int currentCol = player.getX() / levelManager.getColumnWidth();
+
+                // Recompute the grid
+                levelManager.resize(getWidth(), getHeight());
+                player.setSize(levelManager.getColumnWidth(), levelManager.getLaneHeight());
+                player.setStepSize(levelManager.getColumnWidth(), levelManager.getLaneHeight());
+
+                // Clamp in case grid shrunk
+                currentLane = Math.max(0, Math.min(currentLane, levelManager.getLaneCount() - 1));
+                currentCol = Math.max(0, Math.min(currentCol, levelManager.getColumnCount() - 1));
+
+                // Snap player back to the same logical cell in the new grid
+                player.setPosition(
+                        levelManager.getColumnX()[currentCol],
+                        levelManager.getLaneY()[currentLane]);
             }
         });
 
