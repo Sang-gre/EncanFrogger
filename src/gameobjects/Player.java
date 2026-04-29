@@ -19,6 +19,7 @@ public abstract class Player extends GameObject {
     private int stepX;
     private int stepY;
     protected Direction lastDirection = Direction.DOWN;
+    private int invincibilityFrames = 0;
 
     public Player(int x, int y, PlayerType type) {
         super(x, y, 40, 40, 5);
@@ -34,37 +35,37 @@ public abstract class Player extends GameObject {
     }
 
     @Override
-public void move() {
-    if (direction == null) return;
+    public void move() {
+        if (direction == null)
+            return;
 
-    lastDirection = direction;
+        lastDirection = direction;
 
-    switch (direction) {
-        case UP:
-            y -= stepY;
-            break;
-        case DOWN:
-            y += stepY;
-            break;
-        case LEFT:
-            x -= stepX;
-            break;
-        case RIGHT:
-            x += stepX;
-            break;
+        switch (direction) {
+            case UP:
+                y -= stepY;
+                break;
+            case DOWN:
+                y += stepY;
+                break;
+            case LEFT:
+                x -= stepX;
+                break;
+            case RIGHT:
+                x += stepX;
+                break;
+        }
+
+        direction = null;
     }
-
-    // boundaries
-    x = Math.max(0, Math.min(x, 800 - width));
-    y = Math.max(0, Math.min(y, 500 - height));
-
-    direction = null;
-}
 
     public abstract void useAbility();
 
     public void loseLife() {
+        if (invincibilityFrames > 0)
+            return;
         lives--;
+        invincibilityFrames = 60;
     }
 
     public boolean isAlive() {
@@ -77,29 +78,28 @@ public void move() {
 
     @Override
     public void update() {
+        if (invincibilityFrames > 0) invincibilityFrames--;
+        boolean isMoving = (direction != null);
 
-    boolean isMoving = (direction != null);
+        move();
 
-    move();
-
-    if (isMoving) {
-        animationCounter++;
-        if (animationCounter > 10) {
-            animationFrame++;
-            animationCounter = 0;
+        if (isMoving) {
+            animationCounter++;
+            if (animationCounter > 10) {
+                animationFrame++;
+                animationCounter = 0;
+            }
+        } else {
+            animationFrame = 0;
         }
-    } else {
-        animationFrame = 0;
-    }
 
-    if (!abilityReady) {
-        cooldownTimer--;
-        if (cooldownTimer <= 0) {
-            setAbilityReady(true);
+        if (!abilityReady) {
+            cooldownTimer--;
+            if (cooldownTimer <= 0) {
+                setAbilityReady(true);
+            }
         }
     }
-}
-
 
     protected void startCooldown(int frames) {
         setAbilityReady(false);
@@ -107,41 +107,43 @@ public void move() {
     }
 
     @Override
-public void draw(Graphics g) {
+    public void draw(Graphics g) {
 
-    BufferedImage[] frames =
-            AssetManager.getPlayerAnimation(type, getLastDirection());
+        BufferedImage[] frames = AssetManager.getPlayerAnimation(type, getLastDirection());
 
-    if (frames != null) {
-        BufferedImage currentFrame = frames[animationFrame % frames.length];
-        g.drawImage(currentFrame, x, y, width, height, null);
-    } else {
-        g.setColor(Color.GREEN);
-        g.fillRect(x, y, width, height);
+        if (frames != null) {
+            BufferedImage currentFrame = frames[animationFrame % frames.length];
+            g.drawImage(currentFrame, x, y, width, height, null);
+        } else {
+            g.setColor(Color.GREEN);
+            g.fillRect(x, y, width, height);
+        }
     }
-}
 
     @Override
     public void onCollide(GameObject other) {
-        // TODO: handle different collision types (obstacles, coins)
-        System.out.println("Player collided with: " + other.getClass().getSimpleName());
-        loseLife();
+        if (other instanceof Obstacle) {
+            loseLife();
+        } else if (other instanceof Coin) {
+            addCoins(1);
+            other.setActive(false);
+        }
     }
 
     public void setDirection(Direction direction) {
-    this.direction = direction;
-    if (direction != null) {
-        lastDirection = direction;
+        this.direction = direction;
+        if (direction != null) {
+            lastDirection = direction;
+        }
     }
-}
 
     public Direction getDirection() {
         return direction;
     }
 
     public Direction getLastDirection() {
-    return lastDirection;
-}
+        return lastDirection;
+    }
 
     public int getLives() {
         return lives;

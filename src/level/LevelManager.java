@@ -27,11 +27,9 @@ public class LevelManager {
 
     private int screenWidth;
     private int screenHeight;
-    // vertical grid (for the up and down movement)
-    private int[] laneY; // y-position of each lane
-    private int laneHeight;// height of each lane
-    // horizontal grid (for the left/right movement)
-    private int[] columnX; // x-positions of each column
+    private int[] laneY;
+    private int laneHeight;
+    private int[] columnX;
     private int columnWidth;
 
     private int currentLevel;
@@ -300,9 +298,6 @@ public class LevelManager {
         for (Coin c : coins) {
             if (c.isActive())
                 c.draw(g);
-            System.out.println(
-                    "Coin at " + c.getX() + "," + c.getY() +
-                            " | attached: " + (c.getAttachedPlatform() != null));
         }
     }
 

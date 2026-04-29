@@ -5,7 +5,6 @@ import gameobjects.GameObject;
 import gameobjects.Obstacle;
 import gameobjects.Platform;
 import gameobjects.Player;
-
 import java.awt.Rectangle;
 import java.util.List;
 
@@ -45,7 +44,6 @@ public class CollisionSystem {
         // player + obstacle
         if (a instanceof Player && b instanceof Obstacle) {
             a.onCollide(b);
-            b.onCollide(a);
             return;
         }
 

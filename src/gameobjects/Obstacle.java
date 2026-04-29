@@ -51,12 +51,7 @@ public class Obstacle extends GameObject {
     }
 
     @Override
-    public void onCollide(GameObject other) {
-        if (other instanceof Player) {
-            setActive(false);
-            System.out.println("Obstacle hit the player!");
-        }
-    }
+    public void onCollide(GameObject other) {}
 
     public void reset(int x, int y, float speed, Direction dir) {
         this.x = x;

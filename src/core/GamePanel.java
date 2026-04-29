@@ -28,7 +28,6 @@ public class GamePanel extends JPanel implements KeyListener {
 
     private boolean levelTransitioning = false;
     private int currentLevel = 1;
-    private float platformOffsetAccumulator = 0f;
 
     private GameMap currentMap;
     private final Set<Integer> heldKeys = new HashSet<>();
@@ -70,8 +69,7 @@ public class GamePanel extends JPanel implements KeyListener {
         this.state = GameState.PLAYING;
         this.currentMap = map;
 
-        this.levelManager = new LevelManager(getWidth(), getHeight()); // getWidth() and getHeight() computes the
-                                                                       // window's
+        this.levelManager = new LevelManager(getWidth(), getHeight());
         this.collisionSystem = new CollisionSystem();
 
         levelManager.loadLevel(currentLevel, currentMap);
@@ -145,12 +143,17 @@ public class GamePanel extends JPanel implements KeyListener {
     private void checkGameConditions() {
         if (player == null || levelManager == null)
             return;
+        int livesBefore = player.getLives();
 
         collisionSystem.checkAll(player, levelManager.getObstacles(),
                 levelManager.getPlatforms(),
                 levelManager.getCoins());
+        
+        if (player.getLives() < livesBefore) {
+            resetPlayerPosition();
+        }
 
-        // move player along with platform if standing on one
+        // move player along with platform
         boolean onPlatform = false;
         for (Platform p : levelManager.getPlatforms()) {
             if (p.isActive() && p.isPlayerOn(player)) {
@@ -158,10 +161,6 @@ public class GamePanel extends JPanel implements KeyListener {
                 player.setX(player.getX() + p.getDeltaX());
                 break;
             }
-        }
-
-        if (!onPlatform) {
-            platformOffsetAccumulator = 0f;
         }
 
         // water lane death — only if in platform zone but not on a log
@@ -195,7 +194,7 @@ public class GamePanel extends JPanel implements KeyListener {
         int spawnCol = levelManager.getColumnCount() / 2;
         int spawnLane = levelManager.getLaneCount() - 1;
         int x = levelManager.getColumnX()[spawnCol];
-        int y = levelManager.getLaneY()[spawnLane]; // ← make sure this is laneY not laneY + offset
+        int y = levelManager.getLaneY()[spawnLane];
         player.setPosition(x, y);
         levelTransitioning = false;
     }
@@ -217,11 +216,6 @@ public class GamePanel extends JPanel implements KeyListener {
         if (state != GameState.PLAYING || player == null)
             return;
 
-        int px = player.getX();
-        int py = player.getY();
-        int stepX = levelManager.getColumnWidth();
-        int stepY = levelManager.getLaneHeight();
-
         switch (key) {
             case KeyEvent.VK_UP:
             case KeyEvent.VK_W:
@@ -241,7 +235,6 @@ public class GamePanel extends JPanel implements KeyListener {
 
             case KeyEvent.VK_LEFT:
             case KeyEvent.VK_A:
-                int currentCol = levelManager.getLaneIndex(player.getX()); // reuse for column
                 if (player.getX() - levelManager.getColumnWidth() >= 0) {
                     player.setPosition(player.getX() - levelManager.getColumnWidth(), player.getY());
                 }
