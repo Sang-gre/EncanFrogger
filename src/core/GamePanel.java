@@ -8,7 +8,6 @@ import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.*;
-import level.Direction;
 import level.LevelManager;
 import main.GameLauncher;
 import threads.GameLogicThread;
@@ -56,17 +55,6 @@ public class GamePanel extends JPanel implements KeyListener {
         repaint();
     }
 
-    // Mid-game character selection
-    public void showCharacterSelectMidGame() {
-        stopThreads();
-        this.state = GameState.CHARACTER_SELECT;
-        removeAll();
-        setLayout(new BorderLayout());
-        add(new CharacterSelect(this, null), BorderLayout.CENTER);
-        revalidate();
-        repaint();
-    }
-
     public void showMapSelect(Player selectedPlayer) {
         this.state = GameState.MAP_SELECT;
         removeAll();
@@ -98,10 +86,8 @@ public class GamePanel extends JPanel implements KeyListener {
         int[] colX = levelManager.getColumnX();
         int[] laneY = levelManager.getLaneY();
 
-        int x = colX[spawnCol] + (levelManager.getColumnWidth() - player.getWidth()) / 2;
-        int y = laneY[spawnLane] + (levelManager.getLaneHeight() - player.getHeight()) / 2;
-
-        y += 25;
+        int x = colX[spawnCol];
+        int y = laneY[spawnLane];
         player.setPosition(x, y);
 
         removeAll();
@@ -191,7 +177,11 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     private void resetPlayerPosition() {
-        player.setPosition(getWidth() / 2, (int) (getHeight() * 0.85f));
+        int spawnCol = levelManager.getColumnCount() / 2;
+        int spawnLane = levelManager.getLaneCount() - 1;
+        int x = levelManager.getColumnX()[spawnCol];
+        int y = levelManager.getLaneY()[spawnLane]; // ← make sure this is laneY not laneY + offset
+        player.setPosition(x, y);
         levelTransitioning = false;
     }
 
@@ -220,34 +210,32 @@ public class GamePanel extends JPanel implements KeyListener {
         switch (key) {
             case KeyEvent.VK_UP:
             case KeyEvent.VK_W:
-                if (py - stepY >= 0) {
-                    player.setDirection(Direction.UP);
-                    player.move();
-                    player.setDirection(null);
+                int currentLaneUp = levelManager.getLaneIndex(player.getY());
+                if (currentLaneUp > 0) {
+                    player.setPosition(player.getX(), levelManager.getLaneY()[currentLaneUp - 1]);
                 }
                 break;
+
             case KeyEvent.VK_DOWN:
             case KeyEvent.VK_S:
-                if (py + stepY + player.getHeight() <= getHeight()) {
-                    player.setDirection(Direction.DOWN);
-                    player.move();
-                    player.setDirection(null);
+                int currentLaneDown = levelManager.getLaneIndex(player.getY());
+                if (currentLaneDown < levelManager.getLaneCount() - 1) {
+                    player.setPosition(player.getX(), levelManager.getLaneY()[currentLaneDown + 1]);
                 }
                 break;
+
             case KeyEvent.VK_LEFT:
             case KeyEvent.VK_A:
-                if (px - stepX >= 0) {
-                    player.setDirection(Direction.LEFT);
-                    player.move();
-                    player.setDirection(null);
+                int currentCol = levelManager.getLaneIndex(player.getX()); // reuse for column
+                if (player.getX() - levelManager.getColumnWidth() >= 0) {
+                    player.setPosition(player.getX() - levelManager.getColumnWidth(), player.getY());
                 }
                 break;
+
             case KeyEvent.VK_RIGHT:
             case KeyEvent.VK_D:
-                if (px + stepX + player.getWidth() <= getWidth()) {
-                    player.setDirection(Direction.RIGHT);
-                    player.move();
-                    player.setDirection(null);
+                if (player.getX() + levelManager.getColumnWidth() + player.getWidth() <= getWidth()) {
+                    player.setPosition(player.getX() + levelManager.getColumnWidth(), player.getY());
                 }
                 break;
             case KeyEvent.VK_SPACE:
@@ -312,6 +300,17 @@ public class GamePanel extends JPanel implements KeyListener {
 
         if (levelManager != null) {
             levelManager.draw(g, getWidth(), getHeight());
+
+            // To be removed
+            g.setColor(Color.YELLOW);
+            int[] laneY = levelManager.getLaneY();
+            int laneH = levelManager.getLaneHeight();
+            for (int i = 0; i < laneY.length; i++) {
+                g.drawLine(0, laneY[i], getWidth(), laneY[i]);
+                g.drawString("Lane " + i, 5, laneY[i] + 15);
+            }
+            g.drawLine(0, laneY[laneY.length - 1] + laneH,
+                    getWidth(), laneY[laneY.length - 1] + laneH);
         }
 
         if (player != null) {

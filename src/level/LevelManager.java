@@ -13,8 +13,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class LevelManager {
 
     private static final int LANE_COUNT = 10;
-    private static final float LANE_TOP_MARGIN = 0.05f; //diri included an 5% of the top in computing the screen's heigth
-    private static final float LANE_BOTTOM_MARGIN = 0.05f;
     private static final int OBSTACLE_WIDTH = 60;
     private static final int OBSTACLE_HEIGHT = 30;
     private static final int PLATFORM_WIDTH = 120;
@@ -29,23 +27,26 @@ public class LevelManager {
 
     private int screenWidth;
     private int screenHeight;
-    //vertical grid (for the up and down movement)
-    private int[] laneY; //y-position of each lane
-    private int laneHeight;//height of each lane
-    //horizontal grid (for the left/right movement)
-    private int[] columnX; //x-positions of each column
-    private int columnWidth; 
+    // vertical grid (for the up and down movement)
+    private int[] laneY; // y-position of each lane
+    private int laneHeight;// height of each lane
+    // horizontal grid (for the left/right movement)
+    private int[] columnX; // x-positions of each column
+    private int columnWidth;
 
     private int currentLevel;
     private float obstacleSpeed;
     private boolean[] isPlatformLane;
+    private boolean[] isObstacleLane;
+    private boolean[] isSafeLane;
+    private static final int SAFE_LANE = 5;
 
     private final Map<Obstacle, Integer> obstacleLanes = new HashMap<>();
     private final Map<Platform, Integer> platformLanes = new HashMap<>();
     private final List<Obstacle> obstacles = new CopyOnWriteArrayList<>();
     private final List<Platform> platforms = new CopyOnWriteArrayList<>();
     private final List<Coin> coins = new CopyOnWriteArrayList<>();
-    private final Random rng = new Random(); //random coin position
+    private final Random rng = new Random(); // random coin position
 
     private Image background;
 
@@ -63,14 +64,15 @@ public class LevelManager {
     }
 
     private void computeLanes() {
-        int topY = (int) (screenHeight * LANE_TOP_MARGIN);
-        int bottomY = (int) (screenHeight * (1f - LANE_BOTTOM_MARGIN));
-        int usable = bottomY - topY;
+        int lane0Height = screenHeight / 6;
+        int remainingHeight = screenHeight - lane0Height;
+        int normalLaneHeight = remainingHeight / (LANE_COUNT - 1); // split rest evenly among lanes 1-9
 
-        laneHeight = usable / LANE_COUNT;
+        laneHeight = normalLaneHeight;
         laneY = new int[LANE_COUNT];
-        for (int i = 0; i < LANE_COUNT; i++) {
-            laneY[i] = topY + i * laneHeight;
+        laneY[0] = 0;
+        for (int i = 1; i < LANE_COUNT; i++) {
+            laneY[i] = lane0Height + (i - 1) * normalLaneHeight;
         }
 
         columnWidth = screenWidth / COLUMN_COUNT;
@@ -80,7 +82,7 @@ public class LevelManager {
         }
     }
 
-    private void repositionEntities() { //for the objects position when window resizes
+    private void repositionEntities() { // for the objects position when window resizes
         for (Obstacle o : obstacles) {
             Integer lane = obstacleLanes.get(o);
             if (lane != null) {
@@ -119,8 +121,13 @@ public class LevelManager {
 
     private void initPlatformLanes() {
         isPlatformLane = new boolean[LANE_COUNT];
+        isObstacleLane = new boolean[LANE_COUNT];
+        isSafeLane = new boolean[LANE_COUNT];
+
         for (int i = 0; i < LANE_COUNT; i++) {
-            isPlatformLane[i] = i >= 1 && i <= PLATFORM_LANE_COUNT;
+            isPlatformLane[i] = i >= 1 && i <= 3;
+            isSafeLane[i] = i == 4 || i == 5;
+            isObstacleLane[i] = i >= 6 && i <= 8; 
         }
     }
 
@@ -128,9 +135,13 @@ public class LevelManager {
         int countPerLane = BASE_OBSTACLE_COUNT + (currentLevel - 1);
 
         for (int lane = 0; lane < LANE_COUNT; lane++) {
-            if (isPlatformLane[lane])//check if nasa platform lane, then go out
+            if (isPlatformLane[lane])
                 continue;
-            if (lane == 0 || lane == LANE_COUNT - 1) //check if it is the first and last lane, go out
+            if (lane == 0)
+                continue;
+            if (lane == 4)
+                continue;
+            if (lane == 9)
                 continue;
 
             Direction dir = (lane % 2 == 0) ? Direction.RIGHT : Direction.LEFT;
@@ -184,17 +195,17 @@ public class LevelManager {
             boolean validPosition = false;
             int attempts = 0;
 
-            while (!validPosition && attempts < 10) { //10 attempt is just estimation
+            while (!validPosition && attempts < 10) { // 10 attempt is just estimation
 
-                int lane = rng.nextInt(LANE_COUNT); //which horizontaal lane will the coin be on?
+                int lane = rng.nextInt(LANE_COUNT); // which horizontaal lane will the coin be on?
 
-                //PLATFORM LANE
+                // PLATFORM LANE
                 if (isPlatformLane(lane)) {
 
-                    //get platforms in this lane
+                    // get platforms in this lane
                     List<Platform> candidates = new ArrayList<>();
-                    for (Platform p : platforms){
-                        if (platformLanes.get(p) == lane){
+                    for (Platform p : platforms) {
+                        if (platformLanes.get(p) == lane) {
                             candidates.add(p);
                         }
                     }
@@ -216,9 +227,10 @@ public class LevelManager {
                     coins.add(coin);
                     validPosition = true;
 
-                } else { //LAND/OBSTACLE LANE
-                    int x = rng.nextInt(Math.max(1, screenWidth - COIN_SIZE)); //random horiz position such that it wont go off screen
-                    int y = centeredY(lane, COIN_SIZE); //to place the coin inside the lane, cnetered vertically
+                } else { // LAND/OBSTACLE LANE
+                    int x = rng.nextInt(Math.max(1, screenWidth - COIN_SIZE)); // random horiz position such that it
+                                                                               // wont go off screen
+                    int y = centeredY(lane, COIN_SIZE); // to place the coin inside the lane, cnetered vertically
 
                     Coin coin = new Coin(x, y, COIN_SIZE, COIN_SIZE);
 
@@ -242,7 +254,6 @@ public class LevelManager {
         }
     }
 
-
     public void update() {
         List<Obstacle> toRespawn = new CopyOnWriteArrayList<>();
         for (Obstacle o : obstacles) {
@@ -260,7 +271,7 @@ public class LevelManager {
             if (!p.isActive())
                 continue;
             p.update();
-            
+
             if (p.isOffScreen(screenWidth))
                 toRespawnPlatforms.add(p);
         }
@@ -290,9 +301,8 @@ public class LevelManager {
             if (c.isActive())
                 c.draw(g);
             System.out.println(
-    "Coin at " + c.getX() + "," + c.getY() + 
-    " | attached: " + (c.getAttachedPlatform() != null)
-);
+                    "Coin at " + c.getX() + "," + c.getY() +
+                            " | attached: " + (c.getAttachedPlatform() != null));
         }
     }
 
@@ -313,7 +323,7 @@ public class LevelManager {
     }
 
     private int centeredY(int lane, int entityHeight) {
-        return laneY[lane] + (laneHeight - entityHeight) / 2;
+        return laneY[lane];
     }
 
     public boolean isPlayerOnPlatform(gameobjects.Player player) {
@@ -325,12 +335,16 @@ public class LevelManager {
     }
 
     public int getLaneIndex(int y) {
-        for (int i = 0; i < LANE_COUNT; i++) {
+        int lane0Height = screenHeight / 6;
+        if (y < lane0Height)
+            return 0;
+        for (int i = 1; i < LANE_COUNT; i++) {
             if (y >= laneY[i] && y < laneY[i] + laneHeight) {
                 return i;
             }
         }
-        return -1;
+        // if it falls below last lane, clamp to lane 9
+        return LANE_COUNT - 1;
     }
 
     public List<Obstacle> getObstacles() {

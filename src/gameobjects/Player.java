@@ -1,9 +1,8 @@
 package gameobjects;
 
-import java.awt.image.BufferedImage;
-import java.awt.*;
-
 import assets.AssetManager;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import level.Direction;
 
 public abstract class Player extends GameObject {
