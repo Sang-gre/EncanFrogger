@@ -151,10 +151,20 @@ public class LevelManager {
                         ? -OBSTACLE_WIDTH - i * spread
                         : screenWidth + i * spread;
 
+                String[] obstacleTypes = {"rock", "ball", "log"};
+                String type = obstacleTypes[rng.nextInt(obstacleTypes.length)];
+
                 Obstacle o = new Obstacle(
-                        startX, y,
-                        columnWidth, laneHeight,
-                        lane, obstacleSpeed, dir);
+                        startX,
+                        y,
+                        columnWidth,
+                        laneHeight,
+                        lane,
+                        obstacleSpeed,
+                        dir,
+                        type
+                );
+
                 obstacles.add(o);
                 obstacleLanes.put(o, lane);
             }

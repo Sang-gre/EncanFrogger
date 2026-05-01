@@ -1,5 +1,6 @@
 package gameobjects;
 
+import assets.AssetManager;
 import java.awt.*;
 import level.Direction;
 
@@ -7,12 +8,14 @@ public class Obstacle extends GameObject {
 
     private int lane;
     private Direction direction;
+    private String obstacleType;
 
-    public Obstacle(int x, int y, int width, int height, int lane, float speed, Direction direction) {
+    public Obstacle(int x, int y, int width, int height, int lane, float speed, Direction direction, String obstacleType) {
         super(x, y, width, height, speed);
 
         this.lane = lane;
         this.direction = direction;
+        this.obstacleType = obstacleType;
     }
 
     @Override
@@ -45,9 +48,15 @@ public class Obstacle extends GameObject {
 
     @Override
     public void draw(Graphics g) {
-        g.setColor(Color.RED);
-        g.fillRect(x, y, width, height);
-        // TODO: replace with AssetManager sprite
+
+        Image sprite = AssetManager.getObstacle(obstacleType);
+
+        if (sprite != null) {
+            g.drawImage(sprite, x, y, width, height, null);
+        } else {
+            g.setColor(Color.RED);
+            g.fillRect(x, y, width, height);
+        }
     }
 
     @Override

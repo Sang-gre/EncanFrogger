@@ -31,6 +31,9 @@ public class AssetManager {
     /* BUTTONS */
     private static final Map<String, Image> buttons = new HashMap<>();
 
+    /* OBSTACLES */
+    private static final Map<String, Image> obstacles = new HashMap<>();
+
     /* CURSOR */
     private static Image customCursor;
 
@@ -42,6 +45,7 @@ public class AssetManager {
         loadInfoCards();
         loadMapBackgrounds();
         loadMapFlags();
+        loadObstacles();
         loadAllSpritesheets();
     }
 
@@ -63,6 +67,12 @@ public class AssetManager {
         buttons.put("back",     loadImage("assets/Buttons/backButton.png"));
         buttons.put("next",     loadImage("assets/Buttons/nextButton.png"));
         buttons.put("select",   loadImage("assets/Buttons/selectButton.png"));
+    }
+
+    private static void loadObstacles() {
+        obstacles.put("rock", loadImage("assets/obstacles/adamyaObstacles/adamyaRock.png"));
+        obstacles.put("ball",  loadImage("assets/obstacles/adamyaObstacles/adamyaBallLeaves.png"));
+        obstacles.put("log",  loadImage("assets/obstacles/adamyaObstacles/adamyaLog.png"));
     }
 
     private static void loadCursor() {
@@ -180,6 +190,10 @@ public class AssetManager {
     public static Image getButton(String key) {
         return buttons.get(key);
     }
+
+    public static Image getObstacle(String key) {
+        return obstacles.get(key);
+    }   
 
     public static Image getCustomCursor() {
         return customCursor;
