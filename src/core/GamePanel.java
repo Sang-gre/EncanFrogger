@@ -46,6 +46,9 @@ public class GamePanel extends JPanel implements KeyListener {
     // Has back button on first character select
     public void showCharacterSelect() {
         stopThreads();
+        for (ComponentListener cl : getComponentListeners()) {
+            removeComponentListener(cl);
+        }
         this.state = GameState.CHARACTER_SELECT;
         removeAll();
         setLayout(new BorderLayout());
@@ -148,7 +151,7 @@ public class GamePanel extends JPanel implements KeyListener {
         collisionSystem.checkAll(player, levelManager.getObstacles(),
                 levelManager.getPlatforms(),
                 levelManager.getCoins());
-        
+
         if (player.getLives() < livesBefore) {
             resetPlayerPosition();
         }
@@ -175,9 +178,9 @@ public class GamePanel extends JPanel implements KeyListener {
             levelTransitioning = true;
             currentLevel = levelManager.getCurrentLevel() + 1;
             stopThreads();
-            showCharacterSelect();
+            SwingUtilities.invokeLater(() -> showCharacterSelect());
         }
-
+        
         // player falls off side of screen while on log
         if (player.getX() + player.getWidth() < 0 || player.getX() > getWidth()) {
             player.loseLife();
