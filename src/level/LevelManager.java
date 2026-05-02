@@ -45,12 +45,17 @@ public class LevelManager {
     private final List<Platform> platforms = new CopyOnWriteArrayList<>();
     private final List<Coin> coins = new CopyOnWriteArrayList<>();
     private final Random rng = new Random(); // random coin position
+    private final Map<GameMap, String[]> mapObstacleTypes = new HashMap<>();
 
     private Image background;
+    private GameMap currentMap;
 
     public LevelManager(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
+        computeLanes();
+
+        initObstaclePools();
         computeLanes();
     }
 
@@ -100,6 +105,9 @@ public class LevelManager {
     }
 
     public void loadLevel(int n, GameMap map) {
+
+        currentMap = map;
+
         currentLevel = n;
         obstacleSpeed = BASE_SPEED + (n - 1) * SPEED_INCREMENT;
 
@@ -129,6 +137,26 @@ public class LevelManager {
         }
     }
 
+    private void initObstaclePools() {
+
+        mapObstacleTypes.put(GameMap.ADAMYA,
+                new String[]{"adamyaRock", "ball", "log", "lily", "lily2"});
+
+        mapObstacleTypes.put(GameMap.HATHORIA,
+                new String[]{"lava", "hathoriaPlatform", "hathoriaPlatform2", "hathoriaRock"});
+
+        mapObstacleTypes.put(GameMap.LIREO,
+                new String[]{"cloud", "lireoPlatform", "island", "storm", "wind"});
+
+        mapObstacleTypes.put(GameMap.SAPIRO,
+                new String[]{"hole", "sapiroRock", "ssapiroSpike", "tumblweed"});
+
+        mapObstacleTypes.put(GameMap.MINEAVE,
+                new String[]{"glacier", "mineavePlatform", "snowball", "mineaveSpike"});
+    }
+
+
+
     private void spawnObstacles() {
         int countPerLane = BASE_OBSTACLE_COUNT + (currentLevel - 1);
 
@@ -151,7 +179,7 @@ public class LevelManager {
                         ? -OBSTACLE_WIDTH - i * spread
                         : screenWidth + i * spread;
 
-                String[] obstacleTypes = {"rock", "ball", "log"};
+                String[] obstacleTypes = mapObstacleTypes.get(currentMap);
                 String type = obstacleTypes[rng.nextInt(obstacleTypes.length)];
 
                 Obstacle o = new Obstacle(

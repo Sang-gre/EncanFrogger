@@ -70,9 +70,76 @@ public class AssetManager {
     }
 
     private static void loadObstacles() {
-        obstacles.put("rock", loadImage("assets/obstacles/adamyaObstacles/adamyaRock.png"));
-        obstacles.put("ball",  loadImage("assets/obstacles/adamyaObstacles/adamyaBallLeaves.png"));
-        obstacles.put("log",  loadImage("assets/obstacles/adamyaObstacles/adamyaLog.png"));
+
+        // ADAMYA
+        obstacles.put("adamyaRock",
+            loadImage("assets/obstacles/adamyaObstacles/adamyaRock.png"));
+
+        obstacles.put("ball",
+            loadImage("assets/obstacles/adamyaObstacles/adamyaBallLeaves.png"));
+
+        obstacles.put("log",
+            loadImage("assets/obstacles/adamyaObstacles/adamyaLog.png"));
+
+        obstacles.put("lily",
+            loadImage("assets/obstacles/adamyaObstacles/adamyaLily.png"));
+
+        obstacles.put("lily2",
+            loadImage("assets/obstacles/adamyaObstacles/adamyaLily2.png"));
+
+        obstacles.put("lava",
+            loadImage("assets/obstacles/hathoriaObstacles/hathoriaLava.png"));
+
+        obstacles.put("HathoriaPlatform",
+            loadImage("assets/obstacles/hathoriaObstacles/hathoriaPlatform.png"));
+
+        obstacles.put("hathoriaPlatform2",
+            loadImage("assets/obstacles/hathoriaObstacles/hathoriaPlatform2.png"));
+
+        obstacles.put("HathoriaRock",
+            loadImage("assets/obstacles/hathoriaObstacles/hathoriaRock.png"));
+
+        obstacles.put("cloud",
+            loadImage("assets/obstacles/lireoObstacles/lireoCloud.png"));
+
+        obstacles.put("lireoPlatform",
+            loadImage("assets/obstacles/lireoObstacles/lireoDisappearingPlatform.png"));
+
+        obstacles.put("island",
+            loadImage("assets/obstacles/lireoObstacles/lireoIsland.png"));
+
+        obstacles.put("storm",
+            loadImage("assets/obstacles/lireoObstacles/lireoStormCloud.png"));
+
+        obstacles.put("wind",
+            loadImage("assets/obstacles/lireoObstacles/lireoWind.png"));
+
+        obstacles.put("glacier",
+            loadImage("assets/obstacles/mineaveObstacles/mineaveGlacier.png"));
+        
+        obstacles.put("mineavePlatform",
+            loadImage("assets/obstacles/mineaveObstacles/mineaveIcePlatform.png"));
+
+        obstacles.put("snowball",
+            loadImage("assets/obstacles/mineaveObstacles/mineaveSnowball.png"));
+        
+        obstacles.put("mineaveSpike",
+            loadImage("assets/obstacles/mineaveObstacles/mineaveSpikes.png"));
+
+        obstacles.put("hole",
+            loadImage("assets/obstacles/sapiroObstacles/sapiroHole.png"));
+
+        obstacles.put("quicksand",
+            loadImage("assets/obstacles/sapiroObstacles/sapiroQuicksand.png"));
+
+        obstacles.put("sapiroRock",
+            loadImage("assets/obstacles/sapiroObstacles/sapiroRock.png"));
+
+        obstacles.put("sapiroSpike",
+            loadImage("assets/obstacles/sapiroObstacles/sapiroSpikes.png"));
+
+        obstacles.put("tumbleweed",
+            loadImage("assets/obstacles/sapiroObstacles/sapiroTumbleweed.png"));
     }
 
     private static void loadCursor() {
