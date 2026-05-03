@@ -37,6 +37,8 @@ public class GamePanel extends JPanel implements KeyListener {
     private static final long MOVE_DELAY = 140; 
     private ui.HUDpane hud;
 
+    
+
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
         this.assetManager = new AssetManager();
@@ -154,49 +156,49 @@ public class GamePanel extends JPanel implements KeyListener {
         checkGameConditions();
     }
 
-    private void handleHeldKeys() {
+ private void handleHeldKeys() {
     if (player == null || levelManager == null) return;
 
     long now = System.currentTimeMillis();
 
-    // cooldown check
     if (now - lastMoveTime < MOVE_DELAY) return;
 
     int stepX = levelManager.getColumnWidth();
-    int stepY = levelManager.getLaneHeight();
 
-    // LEFT
+    boolean moved = false;
+
     if (heldKeys.contains(KeyEvent.VK_LEFT) || heldKeys.contains(KeyEvent.VK_A)) {
         if (player.getX() - stepX >= 0) {
             player.setPosition(player.getX() - stepX, player.getY());
-            lastMoveTime = now;
+            moved = true;
         }
     }
 
-    // RIGHT
     else if (heldKeys.contains(KeyEvent.VK_RIGHT) || heldKeys.contains(KeyEvent.VK_D)) {
         if (player.getX() + stepX + player.getWidth() <= getWidth()) {
             player.setPosition(player.getX() + stepX, player.getY());
-            lastMoveTime = now;
+            moved = true;
         }
     }
 
-    // UP
     else if (heldKeys.contains(KeyEvent.VK_UP) || heldKeys.contains(KeyEvent.VK_W)) {
         int lane = levelManager.getLaneIndex(player.getY());
         if (lane > 0) {
             player.setPosition(player.getX(), levelManager.getLaneY()[lane - 1]);
-            lastMoveTime = now;
+            moved = true;
         }
     }
 
-    // DOWN
     else if (heldKeys.contains(KeyEvent.VK_DOWN) || heldKeys.contains(KeyEvent.VK_S)) {
         int lane = levelManager.getLaneIndex(player.getY());
         if (lane < levelManager.getLaneCount() - 1) {
             player.setPosition(player.getX(), levelManager.getLaneY()[lane + 1]);
-            lastMoveTime = now;
+            moved = true;
         }
+    }
+
+    if (moved) {
+        lastMoveTime = now;
     }
 }
 
@@ -273,7 +275,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
     @Override
 public void keyPressed(KeyEvent e) {
-    heldKeys.add(e.getKeyCode()); // needed for hold detection
+    heldKeys.add(e.getKeyCode());
 
     int key = e.getKeyCode();
 
@@ -298,8 +300,10 @@ public void keyPressed(KeyEvent e) {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        heldKeys.remove(e.getKeyCode());
-    }
+    heldKeys.remove(e.getKeyCode());
+
+
+}
 
     public void stopThreads() {
         if (logicThread != null) {
