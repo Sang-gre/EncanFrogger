@@ -5,6 +5,7 @@ import gameobjects.Platform;
 import gameobjects.Player;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.*;
@@ -46,9 +47,6 @@ public class GamePanel extends JPanel implements KeyListener {
     // Has back button on first character select
     public void showCharacterSelect() {
         stopThreads();
-        for (ComponentListener cl : getComponentListeners()) {
-            removeComponentListener(cl);
-        }
         this.state = GameState.CHARACTER_SELECT;
         removeAll();
         setLayout(new BorderLayout());
@@ -84,12 +82,15 @@ public class GamePanel extends JPanel implements KeyListener {
         // spawn player at bottom center cell
         int spawnCol = levelManager.getColumnCount() / 2;
         int spawnLane = levelManager.getLaneCount() - 1;
-        int[] colX = levelManager.getColumnX();
-        int[] laneY = levelManager.getLaneY();
+        //int[] colX = levelManager.getColumnX();
+        //int[] laneY = levelManager.getLaneY();
 
-        int x = colX[spawnCol];
-        int y = laneY[spawnLane];
-        player.setPosition(x, y);
+        //int x = colX[spawnCol];
+        //int y = laneY[spawnLane];
+         player.setPosition(
+                levelManager.getColumnX()[spawnCol],
+                levelManager.getLaneY()[spawnLane]
+        );
 
         removeAll();
         revalidate();
@@ -131,24 +132,42 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     public void updateGame() {
-        if (state != GameState.PLAYING)
-            return;
+        if (state != GameState.PLAYING) return;
 
-        if (player != null) {
-            player.update();
-        }
-        if (levelManager != null)
-            levelManager.update();
+        handleHeldKeys(); 
+
+        if (player != null) player.update();
+        if (levelManager != null) levelManager.update();
 
         checkGameConditions();
     }
 
+    private void handleHeldKeys() {
+        if (player == null || levelManager == null) return;
+
+        int stepX = levelManager.getColumnWidth();
+
+        if (heldKeys.contains(KeyEvent.VK_LEFT) || heldKeys.contains(KeyEvent.VK_A)) {
+            if (player.getX() - stepX >= 0) {
+                player.setPosition(player.getX() - stepX, player.getY());
+            }
+        }
+
+        if (heldKeys.contains(KeyEvent.VK_RIGHT) || heldKeys.contains(KeyEvent.VK_D)) {
+            if (player.getX() + stepX + player.getWidth() <= getWidth()) {
+                player.setPosition(player.getX() + stepX, player.getY());
+            }
+        }
+    }
+
+
     private void checkGameConditions() {
-        if (player == null || levelManager == null)
-            return;
+        if (player == null || levelManager == null) return;
+
         int livesBefore = player.getLives();
 
-        collisionSystem.checkAll(player, levelManager.getObstacles(),
+        collisionSystem.checkAll(player,
+                levelManager.getObstacles(),
                 levelManager.getPlatforms(),
                 levelManager.getCoins());
 
@@ -158,16 +177,23 @@ public class GamePanel extends JPanel implements KeyListener {
 
         // move player along with platform
         boolean onPlatform = false;
+        
         for (Platform p : levelManager.getPlatforms()) {
             if (p.isActive() && p.isPlayerOn(player)) {
                 onPlatform = true;
-                player.setX(player.getX() + p.getDeltaX());
+
+                // prevent drift
+                player.setPosition(
+                        (int) Math.round(player.getX() + p.getDeltaX()),
+                        player.getY()
+                );
                 break;
             }
         }
 
         // water lane death — only if in platform zone but not on a log
         int playerLane = levelManager.getLaneIndex(player.getY());
+
         if (levelManager.isPlatformLane(playerLane) && !onPlatform) {
             player.loseLife();
             resetPlayerPosition();
@@ -176,11 +202,11 @@ public class GamePanel extends JPanel implements KeyListener {
         // player reaches top lane
         if (!levelTransitioning && playerLane == 0) {
             levelTransitioning = true;
-            currentLevel = levelManager.getCurrentLevel() + 1;
+            currentLevel++;
             stopThreads();
-            SwingUtilities.invokeLater(() -> showCharacterSelect());
+            showCharacterSelect();
         }
-        
+
         // player falls off side of screen while on log
         if (player.getX() + player.getWidth() < 0 || player.getX() > getWidth()) {
             player.loseLife();
@@ -194,16 +220,21 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     private void resetPlayerPosition() {
-        int spawnCol = levelManager.getColumnCount() / 2;
-        int spawnLane = levelManager.getLaneCount() - 1;
-        int x = levelManager.getColumnX()[spawnCol];
-        int y = levelManager.getLaneY()[spawnLane];
-        player.setPosition(x, y);
+        int col = levelManager.getColumnCount() / 2;
+        int lane = levelManager.getLaneCount() - 1;
+
+        player.setPosition(
+                levelManager.getColumnX()[col],
+                levelManager.getLaneY()[lane]
+        );
+
         levelTransitioning = false;
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        heldKeys.add(e.getKeyCode()); 
+
         int key = e.getKeyCode();
 
         if (state == GameState.PLAYING && key == KeyEvent.VK_ESCAPE) {
@@ -216,42 +247,8 @@ public class GamePanel extends JPanel implements KeyListener {
             return;
         }
 
-        if (state != GameState.PLAYING || player == null)
-            return;
-
-        switch (key) {
-            case KeyEvent.VK_UP:
-            case KeyEvent.VK_W:
-                int currentLaneUp = levelManager.getLaneIndex(player.getY());
-                if (currentLaneUp > 0) {
-                    player.setPosition(player.getX(), levelManager.getLaneY()[currentLaneUp - 1]);
-                }
-                break;
-
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_S:
-                int currentLaneDown = levelManager.getLaneIndex(player.getY());
-                if (currentLaneDown < levelManager.getLaneCount() - 1) {
-                    player.setPosition(player.getX(), levelManager.getLaneY()[currentLaneDown + 1]);
-                }
-                break;
-
-            case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_A:
-                if (player.getX() - levelManager.getColumnWidth() >= 0) {
-                    player.setPosition(player.getX() - levelManager.getColumnWidth(), player.getY());
-                }
-                break;
-
-            case KeyEvent.VK_RIGHT:
-            case KeyEvent.VK_D:
-                if (player.getX() + levelManager.getColumnWidth() + player.getWidth() <= getWidth()) {
-                    player.setPosition(player.getX() + levelManager.getColumnWidth(), player.getY());
-                }
-                break;
-            case KeyEvent.VK_SPACE:
-                player.useAbility();
-                break;
+        if (key == KeyEvent.VK_SPACE && player != null) {
+            player.useAbility();
         }
     }
 
@@ -305,27 +302,28 @@ public class GamePanel extends JPanel implements KeyListener {
         return collisionSystem;
     }
 
-    @Override
+     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         if (levelManager != null) {
             levelManager.draw(g, getWidth(), getHeight());
-
-            // To be removed
-            g.setColor(Color.YELLOW);
-            int[] laneY = levelManager.getLaneY();
-            int laneH = levelManager.getLaneHeight();
-            for (int i = 0; i < laneY.length; i++) {
-                g.drawLine(0, laneY[i], getWidth(), laneY[i]);
-                g.drawString("Lane " + i, 5, laneY[i] + 15);
-            }
-            g.drawLine(0, laneY[laneY.length - 1] + laneH,
-                    getWidth(), laneY[laneY.length - 1] + laneH);
         }
 
         if (player != null) {
-            player.draw(g);
+            Graphics2D g2 = (Graphics2D) g;
+
+            // remove subpixel jitter
+            AffineTransform old = g2.getTransform();
+
+            g2.translate(
+                    Math.round(player.getX()) - player.getX(),
+                    Math.round(player.getY()) - player.getY()
+            );
+
+            player.draw(g2);
+
+            g2.setTransform(old); // restore
         }
     }
 }
