@@ -236,9 +236,10 @@ public class LevelManager {
 
             for (int i = 0; i < countPerLane; i++) {
 
+                int jitter = rng.nextInt(100);
                 int startX = (dir == Direction.RIGHT)
-                        ? -OBSTACLE_WIDTH - i * spread
-                        : screenWidth + i * spread;
+                        ? -OBSTACLE_WIDTH - (i * spread + jitter)
+                        : screenWidth + (i * spread + jitter);
 
                 String[] obstacleTypes = mapObstacleTypes.get(currentMap);
 
@@ -279,7 +280,7 @@ public class LevelManager {
 
                 int jitter = rng.nextInt(100);
                 int startX = (dir == Direction.RIGHT)
-                        ? -OBSTACLE_WIDTH - (i * spread + jitter)
+                        ? -PLATFORM_WIDTH - (i * spread + jitter)
                         : screenWidth + (i * spread + jitter);
 
                 String[] platformTypes = mapPlatformTypes.get(currentMap);
@@ -463,7 +464,7 @@ public class LevelManager {
 
         Direction dir = o.getDirection();
 
-        int jitter = rng.nextInt(10);
+        int jitter = rng.nextInt(200);
         int x = (dir == Direction.RIGHT)
                 ? -OBSTACLE_WIDTH - jitter
                 : screenWidth + jitter;
