@@ -17,25 +17,25 @@ public class GameLogicThread extends Thread {
     @Override
     public void run() {
 
-        while (running) {
-            long startTime = System.currentTimeMillis();
+        long start;
+long frameTime = 1000 / 60;
 
-            panel.updateGame();
+while (running) {
+    start = System.currentTimeMillis();
 
-            long elapsed = System.currentTimeMillis() - startTime;
-            long sleepTime = FRAME_TIME - elapsed;
+    panel.updateGame();
 
-            if (sleepTime > 0) {
-                try {
-                    Thread.sleep(sleepTime);
-                } catch (InterruptedException e) {
-                    break;
-                }
-            } else {
-                Thread.yield();
-            }
+    long elapsed = System.currentTimeMillis() - start;
+    long sleep = frameTime - elapsed;
+
+    if (sleep > 0) {
+        try {
+            Thread.sleep(sleep);
+        } catch (InterruptedException e) {
+            break;
         }
     }
+} }
 
     public void stopThread() {
         running = false;
