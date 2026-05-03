@@ -35,6 +35,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
     private long lastMoveTime = 0;
     private static final long MOVE_DELAY = 140; 
+    private ui.HUDpane hud;
 
     private int platformDeltaX = 0;
 
@@ -74,6 +75,7 @@ public class GamePanel extends JPanel implements KeyListener {
         this.player = selectedPlayer;
         this.state = GameState.PLAYING;
         this.currentMap = map;
+        hud = new ui.HUDpane();
 
         this.levelManager = new LevelManager(getWidth(), getHeight());
         this.collisionSystem = new CollisionSystem();
@@ -100,6 +102,13 @@ public class GamePanel extends JPanel implements KeyListener {
         removeAll();
         revalidate();
         repaint();
+
+        setLayout(null);
+
+        hud = new ui.HUDpane();
+        hud.setBounds(0, 0, 800, 60);
+        add(hud);
+        setComponentZOrder(hud, 0);
 
         // handle window resize
         addComponentListener(new ComponentAdapter() {
