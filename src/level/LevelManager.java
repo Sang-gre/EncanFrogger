@@ -38,6 +38,7 @@ public class LevelManager {
     private boolean[] isObstacleLane;
     private boolean[] isSafeLane;
     private static final int SAFE_LANE = 5;
+    private static final int MIN_GAP = 120;
 
     private final Map<Obstacle, Integer> obstacleLanes = new HashMap<>();
     private final Map<Platform, Integer> platformLanes = new HashMap<>();
@@ -48,7 +49,7 @@ public class LevelManager {
 
     private final Map<GameMap, String[]> mapObstacleTypes = new HashMap<>();
     private final Map<GameMap, String[]> mapPlatformTypes = new HashMap<>();
-
+    
     private Image background;
     private GameMap currentMap;
 
@@ -276,9 +277,10 @@ public class LevelManager {
 
             for (int i = 0; i < PLATFORM_COUNT; i++) {
 
+                int jitter = rng.nextInt(100);
                 int startX = (dir == Direction.RIGHT)
-                        ? -PLATFORM_WIDTH - i * spread
-                        : screenWidth + i * spread;
+                        ? -OBSTACLE_WIDTH - (i * spread + jitter)
+                        : screenWidth + (i * spread + jitter);
 
                 String[] platformTypes = mapPlatformTypes.get(currentMap);
 
@@ -362,7 +364,7 @@ public class LevelManager {
                                     screenWidth - COIN_SIZE)
                     );
 
-                    int y = centeredY(lane, COIN_SIZE);
+                    int y = centeredY(lane, COIN_SIZE) + (laneHeight - COIN_SIZE) / 2; 
 
                     Coin coin = new Coin(
                             x,
@@ -461,9 +463,10 @@ public class LevelManager {
 
         Direction dir = o.getDirection();
 
+        int jitter = rng.nextInt(10);
         int x = (dir == Direction.RIGHT)
-                ? -OBSTACLE_WIDTH
-                : screenWidth;
+                ? -OBSTACLE_WIDTH - jitter
+                : screenWidth + jitter;
 
         Integer lane = obstacleLanes.get(o);
 
@@ -476,9 +479,11 @@ public class LevelManager {
 
         Direction dir = p.getDirection();
 
+        
+        int jitter = rng.nextInt(200);
         int x = (dir == Direction.RIGHT)
-                ? -PLATFORM_WIDTH
-                : screenWidth;
+                ? -OBSTACLE_WIDTH - jitter
+                : screenWidth + jitter;
 
         Integer lane = platformLanes.get(p);
 
