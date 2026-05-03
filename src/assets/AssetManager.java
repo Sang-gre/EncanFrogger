@@ -40,6 +40,9 @@ public class AssetManager {
     /* CURSOR */
     private static Image customCursor;
 
+    /* HUD */
+    private static final Map<String, Image> hud = new HashMap<>();
+
     static {
         loadBackgrounds();
         loadButtons();
@@ -50,6 +53,7 @@ public class AssetManager {
         loadMapFlags();
         loadObstacles();
         loadPlatforms();
+        loadHUD();
         loadAllSpritesheets();
     }
 
@@ -148,6 +152,18 @@ public class AssetManager {
                 loadImage("assets/obstacles/sapiroObstacles/sapiroSpikes.png"));
 
 
+    }
+
+    private static void loadHUD() {
+
+        hud.put("heart",
+            loadImage("assets/heartIcon.png"));
+
+        hud.put("score",
+            loadImage("assets/scoreLabel.png"));
+
+       /* hud.put("menu",
+            loadImage("assets/HUD/menuButton.png"));*/
     }
 
     private static void loadCursor() {
@@ -272,6 +288,10 @@ public class AssetManager {
 
     public static Image getPlatform(String key) {
         return platforms.get(key);
+    }
+
+    public static Image getHUD(String key) {
+        return hud.get(key);
     }
 
     public static Image getCustomCursor() {
