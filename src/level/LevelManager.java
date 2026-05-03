@@ -46,6 +46,7 @@ public class LevelManager {
     private final List<Coin> coins = new CopyOnWriteArrayList<>();
     private final Random rng = new Random(); // random coin position
     private final Map<GameMap, String[]> mapObstacleTypes = new HashMap<>();
+    private final Map<GameMap, String[]> mapPlatformTypes = new HashMap<>();
 
     private Image background;
     private GameMap currentMap;
@@ -140,19 +141,34 @@ public class LevelManager {
     private void initObstaclePools() {
 
         mapObstacleTypes.put(GameMap.ADAMYA,
-                new String[]{"adamyaRock", "ball", "log", "lily", "lily2"});
+                new String[]{"adamyaRock", "ball"});
 
         mapObstacleTypes.put(GameMap.HATHORIA,
-                new String[]{"lava", "hathoriaPlatform", "hathoriaPlatform2", "hathoriaRock"});
+                new String[]{"lava", "hathoriaRock"});
 
         mapObstacleTypes.put(GameMap.LIREO,
-                new String[]{"cloud", "lireoPlatform", "island", "storm", "wind"});
+                new String[]{"storm", "wind"});
 
         mapObstacleTypes.put(GameMap.SAPIRO,
-                new String[]{"hole", "sapiroRock", "ssapiroSpike", "tumblweed"});
+                new String[]{"sapiroRock", "tumbleweed"});
 
         mapObstacleTypes.put(GameMap.MINEAVE,
-                new String[]{"glacier", "mineavePlatform", "snowball", "mineaveSpike"});
+                new String[]{"snowball", "mineaveSpike"});
+
+        mapPlatformTypes.put(GameMap.ADAMYA,
+                new String[]{"log", "lily", "lily2"});
+
+        mapPlatformTypes.put(GameMap.HATHORIA,
+                new String[]{"hathoriaPlatform", "hathoriaPlatform2"});
+
+        mapPlatformTypes.put(GameMap.LIREO,
+                new String[]{"lireoPlatform", "island", "cloud"});
+
+        mapPlatformTypes.put(GameMap.SAPIRO,
+                new String[]{"hole", "sapiroSpike"});
+
+        mapPlatformTypes.put(GameMap.MINEAVE,
+                new String[]{"mineavePlatform", "glacier"});
     }
 
 
@@ -213,10 +229,14 @@ public class LevelManager {
                         ? -PLATFORM_WIDTH - i * spread
                         : screenWidth + i * spread;
 
+                String[] platformTypes = mapPlatformTypes.get(currentMap);
+                String type = platformTypes[rng.nextInt(platformTypes.length)];
+
                 Platform p = new Platform(
                         startX, y,
                         columnWidth * 2, laneHeight,
-                        lane, obstacleSpeed * 0.7f, dir);
+                        lane, obstacleSpeed * 0.7f, dir,
+                        type);
                 platforms.add(p);
                 platformLanes.put(p, lane);
             }

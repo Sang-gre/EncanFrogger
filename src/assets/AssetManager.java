@@ -34,6 +34,9 @@ public class AssetManager {
     /* OBSTACLES */
     private static final Map<String, Image> obstacles = new HashMap<>();
 
+    /* PLATFORMS */
+    private static final Map<String, Image> platforms = new HashMap<>();
+
     /* CURSOR */
     private static Image customCursor;
 
@@ -46,6 +49,7 @@ public class AssetManager {
         loadMapBackgrounds();
         loadMapFlags();
         loadObstacles();
+        loadPlatforms();
         loadAllSpritesheets();
     }
 
@@ -71,42 +75,17 @@ public class AssetManager {
 
     private static void loadObstacles() {
 
-        // ADAMYA
         obstacles.put("adamyaRock",
             loadImage("assets/obstacles/adamyaObstacles/adamyaRock.png"));
 
         obstacles.put("ball",
             loadImage("assets/obstacles/adamyaObstacles/adamyaBallLeaves.png"));
 
-        obstacles.put("log",
-            loadImage("assets/obstacles/adamyaObstacles/adamyaLog.png"));
-
-        obstacles.put("lily",
-            loadImage("assets/obstacles/adamyaObstacles/adamyaLily.png"));
-
-        obstacles.put("lily2",
-            loadImage("assets/obstacles/adamyaObstacles/adamyaLily2.png"));
-
         obstacles.put("lava",
             loadImage("assets/obstacles/hathoriaObstacles/hathoriaLava.png"));
 
-        obstacles.put("HathoriaPlatform",
-            loadImage("assets/obstacles/hathoriaObstacles/hathoriaPlatform.png"));
-
-        obstacles.put("hathoriaPlatform2",
-            loadImage("assets/obstacles/hathoriaObstacles/hathoriaPlatform2.png"));
-
-        obstacles.put("HathoriaRock",
+        obstacles.put("hathoriaRock",
             loadImage("assets/obstacles/hathoriaObstacles/hathoriaRock.png"));
-
-        obstacles.put("cloud",
-            loadImage("assets/obstacles/lireoObstacles/lireoCloud.png"));
-
-        obstacles.put("lireoPlatform",
-            loadImage("assets/obstacles/lireoObstacles/lireoDisappearingPlatform.png"));
-
-        obstacles.put("island",
-            loadImage("assets/obstacles/lireoObstacles/lireoIsland.png"));
 
         obstacles.put("storm",
             loadImage("assets/obstacles/lireoObstacles/lireoStormCloud.png"));
@@ -114,20 +93,11 @@ public class AssetManager {
         obstacles.put("wind",
             loadImage("assets/obstacles/lireoObstacles/lireoWind.png"));
 
-        obstacles.put("glacier",
-            loadImage("assets/obstacles/mineaveObstacles/mineaveGlacier.png"));
-        
-        obstacles.put("mineavePlatform",
-            loadImage("assets/obstacles/mineaveObstacles/mineaveIcePlatform.png"));
-
         obstacles.put("snowball",
             loadImage("assets/obstacles/mineaveObstacles/mineaveSnowball.png"));
         
         obstacles.put("mineaveSpike",
             loadImage("assets/obstacles/mineaveObstacles/mineaveSpikes.png"));
-
-        obstacles.put("hole",
-            loadImage("assets/obstacles/sapiroObstacles/sapiroHole.png"));
 
         obstacles.put("quicksand",
             loadImage("assets/obstacles/sapiroObstacles/sapiroQuicksand.png"));
@@ -135,11 +105,49 @@ public class AssetManager {
         obstacles.put("sapiroRock",
             loadImage("assets/obstacles/sapiroObstacles/sapiroRock.png"));
 
-        obstacles.put("sapiroSpike",
-            loadImage("assets/obstacles/sapiroObstacles/sapiroSpikes.png"));
-
         obstacles.put("tumbleweed",
             loadImage("assets/obstacles/sapiroObstacles/sapiroTumbleweed.png"));
+    }
+
+    private static void loadPlatforms(){
+
+            platforms.put("log",
+                loadImage("assets/obstacles/adamyaObstacles/adamyaLog.png"));
+
+            platforms.put("lily",
+                loadImage("assets/obstacles/adamyaObstacles/adamyaLily.png"));
+
+            platforms.put("lily2",
+                loadImage("assets/obstacles/adamyaObstacles/adamyaLily2.png"));
+
+            platforms.put("hathoriaPlatform",
+                loadImage("assets/obstacles/hathoriaObstacles/hathoriaPlatform.png"));
+
+            platforms.put("hathoriaPlatform2",
+                loadImage("assets/obstacles/hathoriaObstacles/hathoriaPlatform2.png"));
+
+            platforms.put("cloud",
+                loadImage("assets/obstacles/lireoObstacles/lireoCloud.png"));
+
+            platforms.put("lireoPlatform",
+                loadImage("assets/obstacles/lireoObstacles/lireoDisappearingPlatform.png"));
+
+            platforms.put("island",
+                loadImage("assets/obstacles/lireoObstacles/lireoIsland.png"));
+
+            platforms.put("glacier",
+                loadImage("assets/obstacles/mineaveObstacles/mineaveGlacier.png"));
+            
+            platforms.put("mineavePlatform",
+                loadImage("assets/obstacles/mineaveObstacles/mineaveIcePlatform.png"));
+
+            platforms.put("hole",
+                loadImage("assets/obstacles/sapiroObstacles/sapiroHole.png"));
+
+            platforms.put("sapiroSpike",
+                loadImage("assets/obstacles/sapiroObstacles/sapiroSpikes.png"));
+
+
     }
 
     private static void loadCursor() {
@@ -261,6 +269,10 @@ public class AssetManager {
     public static Image getObstacle(String key) {
         return obstacles.get(key);
     }   
+
+    public static Image getPlatform(String key) {
+        return platforms.get(key);
+    }
 
     public static Image getCustomCursor() {
         return customCursor;

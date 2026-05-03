@@ -1,5 +1,6 @@
 package gameobjects;
 
+import assets.AssetManager;
 import java.awt.*;
 import level.Direction;
 
@@ -9,12 +10,14 @@ public class Platform extends GameObject {
     private Direction direction;
     private float exactX;
     private int previousX;
+    private String platformType;
 
-    public Platform(int x, int y, int width, int height, int lane, float speed, Direction direction) {
+    public Platform(int x, int y, int width, int height, int lane, float speed, Direction direction, String platformType) {
         super(x, y, width, height, speed);
         this.exactX = x;
         this.lane = lane;
         this.direction = direction;
+        this.platformType = platformType;
     }
 
     @Override
@@ -40,9 +43,15 @@ public class Platform extends GameObject {
 
     @Override
     public void draw(Graphics g) {
-        g.setColor(new Color(139, 90, 43));
-        g.fillRect(x, y, width, height);
-        // TODO: replace with AssetManager sprite "platform"
+
+        Image sprite = AssetManager.getPlatform(platformType);
+
+        if (sprite != null) {
+            g.drawImage(sprite, x, y, width, height, null);
+        } else {
+            g.setColor(Color.GRAY);
+            g.fillRect(x, y, width, height);
+        }
     }
 
     @Override
