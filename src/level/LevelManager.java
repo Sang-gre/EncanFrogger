@@ -262,35 +262,24 @@ public class LevelManager {
     }
 
     public void spawnPlatforms() {
-
-<<<<<<< Updated upstream
         for (int lane = 0; lane < LANE_COUNT; lane++) {
 
             if (!isPlatformLane[lane]) continue;
 
-            Direction dir = (lane % 2 == 0)
-                    ? Direction.RIGHT
-                    : Direction.LEFT;
 
-            int y = centeredY(lane, OBSTACLE_HEIGHT);
-
-=======
             Direction dir = (lane % 2 == 0) ? Direction.RIGHT : Direction.LEFT;
             int drift = rng.nextInt(11) - 5;
+
+            
             int y = (centeredY(lane, OBSTACLE_HEIGHT)) + drift;
->>>>>>> Stashed changes
             int spread = screenWidth / PLATFORM_COUNT;
 
 
             for (int i = 0; i < PLATFORM_COUNT; i++) {
-<<<<<<< Updated upstream
-
-=======
                 //int spacing = i * spread;
                 //int randVal = (int) (Math.random() * 201);
 
                 int jitter = rng.nextInt(200);
->>>>>>> Stashed changes
                 int startX = (dir == Direction.RIGHT)
                         ? -OBSTACLE_WIDTH - (i * spread + jitter)
                         : screenWidth + (i * spread + jitter);
@@ -370,30 +359,12 @@ public class LevelManager {
 
                     validPosition = true;
 
-<<<<<<< Updated upstream
-                } else {
-
-                    int x = rng.nextInt(
-                            Math.max(1,
-                                    screenWidth - COIN_SIZE)
-                    );
-
-                    int y = centeredY(lane, COIN_SIZE);
-
-                    Coin coin = new Coin(
-                            x,
-                            y,
-                            COIN_SIZE,
-                            COIN_SIZE
-                    );
-=======
                 } else { // LAND/OBSTACLE LANE
                     int x = rng.nextInt(Math.max(1, screenWidth - COIN_SIZE)); // random horiz position such that it
                                                                                // wont go off screen
-                    int y = centeredY(lane, COIN_SIZE) + (laneHeight - COIN_SIZE)/ 2; // to place the coin inside the lane, cnetered vertically
+                    int y = centeredY(lane, COIN_SIZE); // to place the coin inside the lane, cnetered vertically
                     
                     Coin coin = new Coin(x, y, COIN_SIZE, COIN_SIZE);
->>>>>>> Stashed changes
 
                     boolean collides = false;
 
@@ -484,53 +455,29 @@ public class LevelManager {
     private void respawnObstacle(Obstacle o) {
 
         Direction dir = o.getDirection();
-<<<<<<< Updated upstream
-
-        int x = (dir == Direction.RIGHT)
-                ? -OBSTACLE_WIDTH
-                : screenWidth;
-
-        Integer lane = obstacleLanes.get(o);
-
-        int y = centeredY(lane, OBSTACLE_HEIGHT);
-
-=======
         int jitter = rng.nextInt(200);
-        int x = (dir == Direction.RIGHT) ? -PLATFORM_WIDTH + jitter: screenWidth + jitter;
+        int x = (dir == Direction.RIGHT) ? -OBSTACLE_WIDTH + jitter: screenWidth + jitter;
         
         Integer lane = obstacleLanes.get(o);
         int drift = rng.nextInt(11) - 5;
         int y = (centeredY(lane, OBSTACLE_HEIGHT)) + drift;
->>>>>>> Stashed changes
         o.reset(x, y, obstacleSpeed, dir);
     }
 
     private void respawnPlatform(Platform p) {
 
         Direction dir = p.getDirection();
-<<<<<<< Updated upstream
-
-        int x = (dir == Direction.RIGHT)
-                ? -PLATFORM_WIDTH
-                : screenWidth;
-
-        Integer lane = platformLanes.get(p);
-
-        int y = centeredY(lane, OBSTACLE_HEIGHT);
-
-=======
         int jitter = rng.nextInt(200);
         int x = (dir == Direction.RIGHT) ? -PLATFORM_WIDTH + jitter: screenWidth + jitter;
         
         Integer lane = platformLanes.get(p);
         int drift = rng.nextInt(11) - 5;
-        int y = (centeredY(lane, OBSTACLE_HEIGHT)) + drift;
->>>>>>> Stashed changes
+        int y = centeredY(lane, OBSTACLE_HEIGHT);
         p.reset(x, y, obstacleSpeed * 0.7f, dir);
     }
 
     private int centeredY(int lane, int entityHeight) {
-        return laneY[lane];
+        return laneY[lane] + (laneHeight - entityHeight) / 2;
     }
 
     public boolean isPlayerOnPlatform(gameobjects.Player player) {
