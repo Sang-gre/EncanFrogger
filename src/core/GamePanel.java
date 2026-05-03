@@ -36,6 +36,8 @@ public class GamePanel extends JPanel implements KeyListener {
     private long lastMoveTime = 0;
     private static final long MOVE_DELAY = 140; 
 
+    private boolean canMove = true;   // ✅ prevents double move
+
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
         this.assetManager = new AssetManager();
@@ -152,9 +154,14 @@ public class GamePanel extends JPanel implements KeyListener {
 
     // cooldown check
     if (now - lastMoveTime < MOVE_DELAY) return;
+    if (!canMove) return;
 
     int stepX = levelManager.getColumnWidth();
-    int stepY = levelManager.getLaneHeight();
+    //int stepY = levelManager.getLaneHeight();
+
+    boolean moved = false;
+
+    
 
     // LEFT
     if (heldKeys.contains(KeyEvent.VK_LEFT) || heldKeys.contains(KeyEvent.VK_A)) {
@@ -188,6 +195,10 @@ public class GamePanel extends JPanel implements KeyListener {
             player.setPosition(player.getX(), levelManager.getLaneY()[lane + 1]);
             lastMoveTime = now;
         }
+    }
+    if (moved) {
+        lastMoveTime = now;
+        canMove = false; // lock movement until release
     }
 }
 
@@ -289,8 +300,11 @@ public void keyPressed(KeyEvent e) {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        heldKeys.remove(e.getKeyCode());
-    }
+    heldKeys.remove(e.getKeyCode());
+
+    // unlock movement when key is released
+    canMove = true;
+}
 
     public void stopThreads() {
         if (logicThread != null) {
