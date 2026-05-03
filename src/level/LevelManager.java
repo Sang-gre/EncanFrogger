@@ -98,7 +98,7 @@ public class LevelManager {
             Integer lane = platformLanes.get(p);
             if (lane != null) {
                 p.setPosition(p.getX(), centeredY(lane, laneHeight));
-                p.setSize(columnWidth * 2, laneHeight);
+                p.setSize(columnWidth * 2, 40);
             }
         }
         coins.clear();
@@ -234,7 +234,7 @@ public class LevelManager {
 
                 Platform p = new Platform(
                         startX, y,
-                        columnWidth * 2, laneHeight,
+                        columnWidth * 2, 40,
                         lane, obstacleSpeed * 0.7f, dir,
                         type);
                 platforms.add(p);
@@ -376,7 +376,7 @@ public class LevelManager {
     }
 
     private int centeredY(int lane, int entityHeight) {
-        return laneY[lane];
+        return laneY[lane] + laneHeight - entityHeight;
     }
 
     public boolean isPlayerOnPlatform(gameobjects.Player player) {
