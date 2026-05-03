@@ -1,10 +1,22 @@
 ### 🐸 EncanFrogger Task List
 just trying hehe
-- [ ] Implement assets into objects
-- [ ] Add HUD
-- [ ] Fix object alignment
-- [ ] Improve object behavior
-- [ ] Fix lag. Improve efficiency
+- [ ] Implement assets into objects (game mismo) - denise
+    - [ ] {**VERY IMPORTANT**} **center coins** - mimin
+- [ ] Add HUD (life, menu, score) - denise 
+- [ ] Improve object behavior - mimin
+- [ ] Fix lag. Improve efficiency - jasmine
+- [ ] fix charac select mid game (buttons) - jezrel 
+- [ ] game over screen - mimin or if want niyo hehehe
+    - [ ] initials/name 
+- [ ] leaderboard (data persistence) - 
+- [ ] sounds - lorenz
+
+__________________________________________________________________________
+**OPTIONAL:**
+- [ ] charac ability
+
+
+
 
 For efficiency
 - [ ] Combine GameLogic and Render thread into one (GameLoop)
@@ -15,3 +27,7 @@ For efficiency
 
 Others (like not necessary necessary rn but is part of concepts required)
 - [ ] Turn AssetManager into a singleton
+
+
+
+
