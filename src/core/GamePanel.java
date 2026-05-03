@@ -37,7 +37,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private static final long MOVE_DELAY = 140; 
     private ui.HUDpane hud;
 
-    
+    private int platformDeltaX = 0;
 
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
@@ -146,15 +146,15 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     public void updateGame() {
-        if (state != GameState.PLAYING) return;
+    if (state != GameState.PLAYING) return;
 
-        handleHeldKeys(); 
+    handleHeldKeys();
 
-        if (player != null) player.update();
-        if (levelManager != null) levelManager.update();
+    if (player != null) player.update();
+    if (levelManager != null) levelManager.update();
 
-        checkGameConditions();
-    }
+    checkGameConditions();
+}
 
  private void handleHeldKeys() {
     if (player == null || levelManager == null) return;
@@ -219,19 +219,19 @@ public class GamePanel extends JPanel implements KeyListener {
 
         // move player along with platform
         boolean onPlatform = false;
-        
+        platformDeltaX = 0;
+
         for (Platform p : levelManager.getPlatforms()) {
             if (p.isActive() && p.isPlayerOn(player)) {
                 onPlatform = true;
+                platformDeltaX = p.getDeltaX();
+        break;
+    }
+}
 
-                // prevent drift
-                player.setPosition(
-                        (int) Math.round(player.getX() + p.getDeltaX()),
-                        player.getY()
-                );
-                break;
-            }
-        }
+        if (onPlatform) {
+            player.setPosition(player.getX() + platformDeltaX, player.getY());
+}
 
         // water lane death — only if in platform zone but not on a log
         int playerLane = levelManager.getLaneIndex(player.getY());
