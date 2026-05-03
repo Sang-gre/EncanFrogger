@@ -33,6 +33,9 @@ public class GamePanel extends JPanel implements KeyListener {
     private GameMap currentMap;
     private final Set<Integer> heldKeys = new HashSet<>();
 
+    private long lastMoveTime = 0;
+    private static final long MOVE_DELAY = 140; 
+
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
         this.assetManager = new AssetManager();
@@ -143,22 +146,50 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     private void handleHeldKeys() {
-        if (player == null || levelManager == null) return;
+    if (player == null || levelManager == null) return;
 
-        int stepX = levelManager.getColumnWidth();
+    long now = System.currentTimeMillis();
 
-        if (heldKeys.contains(KeyEvent.VK_LEFT) || heldKeys.contains(KeyEvent.VK_A)) {
-            if (player.getX() - stepX >= 0) {
-                player.setPosition(player.getX() - stepX, player.getY());
-            }
-        }
+    // cooldown check
+    if (now - lastMoveTime < MOVE_DELAY) return;
 
-        if (heldKeys.contains(KeyEvent.VK_RIGHT) || heldKeys.contains(KeyEvent.VK_D)) {
-            if (player.getX() + stepX + player.getWidth() <= getWidth()) {
-                player.setPosition(player.getX() + stepX, player.getY());
-            }
+    int stepX = levelManager.getColumnWidth();
+    int stepY = levelManager.getLaneHeight();
+
+    // LEFT
+    if (heldKeys.contains(KeyEvent.VK_LEFT) || heldKeys.contains(KeyEvent.VK_A)) {
+        if (player.getX() - stepX >= 0) {
+            player.setPosition(player.getX() - stepX, player.getY());
+            lastMoveTime = now;
         }
     }
+
+    // RIGHT
+    else if (heldKeys.contains(KeyEvent.VK_RIGHT) || heldKeys.contains(KeyEvent.VK_D)) {
+        if (player.getX() + stepX + player.getWidth() <= getWidth()) {
+            player.setPosition(player.getX() + stepX, player.getY());
+            lastMoveTime = now;
+        }
+    }
+
+    // UP
+    else if (heldKeys.contains(KeyEvent.VK_UP) || heldKeys.contains(KeyEvent.VK_W)) {
+        int lane = levelManager.getLaneIndex(player.getY());
+        if (lane > 0) {
+            player.setPosition(player.getX(), levelManager.getLaneY()[lane - 1]);
+            lastMoveTime = now;
+        }
+    }
+
+    // DOWN
+    else if (heldKeys.contains(KeyEvent.VK_DOWN) || heldKeys.contains(KeyEvent.VK_S)) {
+        int lane = levelManager.getLaneIndex(player.getY());
+        if (lane < levelManager.getLaneCount() - 1) {
+            player.setPosition(player.getX(), levelManager.getLaneY()[lane + 1]);
+            lastMoveTime = now;
+        }
+    }
+}
 
 
     private void checkGameConditions() {
@@ -232,25 +263,25 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
-        heldKeys.add(e.getKeyCode()); 
+public void keyPressed(KeyEvent e) {
+    heldKeys.add(e.getKeyCode()); // needed for hold detection
 
-        int key = e.getKeyCode();
+    int key = e.getKeyCode();
 
-        if (state == GameState.PLAYING && key == KeyEvent.VK_ESCAPE) {
-            state = GameState.PAUSED;
-            return;
-        }
-
-        if (state == GameState.PAUSED && key == KeyEvent.VK_ESCAPE) {
-            state = GameState.PLAYING;
-            return;
-        }
-
-        if (key == KeyEvent.VK_SPACE && player != null) {
-            player.useAbility();
-        }
+    if (state == GameState.PLAYING && key == KeyEvent.VK_ESCAPE) {
+        state = GameState.PAUSED;
+        return;
     }
+
+    if (state == GameState.PAUSED && key == KeyEvent.VK_ESCAPE) {
+        state = GameState.PLAYING;
+        return;
+    }
+
+    if (key == KeyEvent.VK_SPACE && player != null) {
+        player.useAbility();
+    }
+}
 
     @Override
     public void keyTyped(KeyEvent e) {
