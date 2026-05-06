@@ -49,6 +49,9 @@ public class AssetManager {
     /* COINS */
     private static final Map<String, Image> coins = new HashMap<>();
 
+    /* GAME OVER SCREEN */
+    private static final Map<String, Image> gameover = new HashMap<>();
+
     static {
         loadBackgrounds();
         loadButtons();
@@ -62,6 +65,7 @@ public class AssetManager {
         loadHUD();
         loadAllSpritesheets();
         loadFonts();
+        loadGameOver();
     }
 
     private static void loadBackgrounds() {
@@ -282,6 +286,13 @@ public class AssetManager {
         return (frames != null) ? frames : map.get(Direction.DOWN);
     }
 
+    private static void loadGameOver() {
+        gameover.put("background", loadImage("assets/Backgrounds/gameoverBackground.png"));
+        gameover.put("enterInitials", loadImage("assets/enterInitials.png"));
+        gameover.put("enterInitialsBlank", loadImage("assets/enterInitialsBlank.png"));
+        gameover.put("okButton", loadImage("assets/Buttons/okButton.png"));
+    }
+
     public static Image getCharacterCard(PlayerType type) {
         return characterCards.get(type);
     }
@@ -334,5 +345,9 @@ public class AssetManager {
         if (key.equals("enchantedLand"))
             return enchantedLandFont;
         return null;
+    }
+
+    public static Image getGameOver(String key) {
+        return gameover.get(key);
     }
 }

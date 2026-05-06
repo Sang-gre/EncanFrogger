@@ -37,6 +37,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private long lastMoveTime = 0;
     private static final long MOVE_DELAY = 140;
     private ui.HUDpane hud;
+    private ui.GameOverScreen gameOverScreen;
 
     private int platformDeltaX = 0;
 
@@ -173,7 +174,7 @@ public class GamePanel extends JPanel implements KeyListener {
             resetPlayerPosition();
 
             if (!player.isAlive()) {
-                state = GameState.GAME_OVER;
+                SwingUtilities.invokeLater(this::showGameOver);
                 return;
             }
         }
@@ -312,8 +313,31 @@ public class GamePanel extends JPanel implements KeyListener {
 
         // game over
         if (!player.isAlive()) {
-            state = GameState.GAME_OVER;
+            SwingUtilities.invokeLater(this::showGameOver);
         }
+    }
+
+    public void showGameOver() {
+        stopThreads();
+        state = GameState.GAME_OVER;
+        gameOverScreen = new ui.GameOverScreen();
+
+        // Enable mouse clicks for OK button
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (state == GameState.GAME_OVER && gameOverScreen != null) {
+                    gameOverScreen.isBannerClicked(e.getPoint()); // ← ADD: clicking banner activates typing
+                    if (gameOverScreen.isOkClicked(e.getPoint())) {
+                        // TODO: save initials + score
+                        launcher.menuGame();
+                    }
+                    repaint(); // ← ADD: so banner swaps to blank immediately on click
+                }
+            }
+        });
+
+        repaint();
     }
 
     private void resetPlayerPosition() {
@@ -345,6 +369,16 @@ public class GamePanel extends JPanel implements KeyListener {
 
         if (key == KeyEvent.VK_SPACE && player != null) {
             player.useAbility();
+        }
+
+        if (state == GameState.GAME_OVER && gameOverScreen != null) {
+            boolean handled = gameOverScreen.handleKey(e.getKeyCode(), e.getKeyChar());
+            if (!handled) {
+                // ENTER was pressed — confirm
+                launcher.menuGame();
+            }
+            repaint();
+            return;
         }
     }
 
@@ -402,23 +436,22 @@ public class GamePanel extends JPanel implements KeyListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (levelManager != null) {
+        if (levelManager != null)
             levelManager.draw(g, getWidth(), getHeight());
-        }
 
         if (player != null) {
             Graphics2D g2 = (Graphics2D) g;
-
-            // remove subpixel jitter
             AffineTransform old = g2.getTransform();
-
             g2.translate(
                     Math.round(player.getX()) - player.getX(),
                     Math.round(player.getY()) - player.getY());
-
             player.draw(g2);
+            g2.setTransform(old);
+        }
 
-            g2.setTransform(old); // restore
+        // Draw game over overlay on top of everything
+        if (state == GameState.GAME_OVER && gameOverScreen != null) {
+            gameOverScreen.draw(g, getWidth(), getHeight());
         }
     }
 }
