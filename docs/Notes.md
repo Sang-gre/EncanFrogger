@@ -13,15 +13,11 @@ Refer to the UML diagram
 - **Dependency** ..........>
     - uses-a
     - Class A uses Class B (Temporary)
-    - `public void Method(OtherClass obj){}`
+    - `void do(Otherclass obj)`
 - **Inheritance** ---------->
     - is-a
     - Class A is a Class B
     - `extends`
-- **Aggregation** <>---------
-    - has-a or "Part-of" but independent
-    - Class A has a Class B (Independent)
-    - `public Constructor(OtherClass obj){}`
 </details>
 
 ---

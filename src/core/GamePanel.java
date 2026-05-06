@@ -23,6 +23,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private Player player;
     private LevelManager levelManager;
     private CollisionSystem collisionSystem;
+    private ScoreManager scoreManager = new ScoreManager();
 
     private GameLogicThread logicThread;
     private RenderThread renderThread;
@@ -34,10 +35,13 @@ public class GamePanel extends JPanel implements KeyListener {
     private final Set<Integer> heldKeys = new HashSet<>();
 
     private long lastMoveTime = 0;
-    private static final long MOVE_DELAY = 140; 
+    private static final long MOVE_DELAY = 140;
     private ui.HUDpane hud;
 
     private int platformDeltaX = 0;
+
+    // for delta time calculation fed into the timer
+    private long lastUpdateTime = System.currentTimeMillis();
 
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
@@ -53,7 +57,7 @@ public class GamePanel extends JPanel implements KeyListener {
     // Has back button on first character select
     public void showCharacterSelect() {
         stopThreads();
-         for (ComponentListener cl : getComponentListeners()) {
+        for (ComponentListener cl : getComponentListeners()) {
             removeComponentListener(cl);
         }
         this.state = GameState.CHARACTER_SELECT;
@@ -78,10 +82,10 @@ public class GamePanel extends JPanel implements KeyListener {
         this.player = selectedPlayer;
         this.state = GameState.PLAYING;
         this.currentMap = map;
-        hud = new ui.HUDpane();
 
         this.levelManager = new LevelManager(getWidth(), getHeight());
         this.collisionSystem = new CollisionSystem();
+        scoreManager.resetCrossing();
 
         levelManager.loadLevel(currentLevel, currentMap);
 
@@ -92,15 +96,14 @@ public class GamePanel extends JPanel implements KeyListener {
         // spawn player at bottom center cell
         int spawnCol = levelManager.getColumnCount() / 2;
         int spawnLane = levelManager.getLaneCount() - 1;
-        //int[] colX = levelManager.getColumnX();
-        //int[] laneY = levelManager.getLaneY();
+        // int[] colX = levelManager.getColumnX();
+        // int[] laneY = levelManager.getLaneY();
 
-        //int x = colX[spawnCol];
-        //int y = laneY[spawnLane];
-         player.setPosition(
+        // int x = colX[spawnCol];
+        // int y = laneY[spawnLane];
+        player.setPosition(
                 levelManager.getColumnX()[spawnCol],
-                levelManager.getLaneY()[spawnLane]
-        );
+                levelManager.getLaneY()[spawnLane]);
 
         removeAll();
         revalidate();
@@ -112,6 +115,11 @@ public class GamePanel extends JPanel implements KeyListener {
         hud.setBounds(0, 0, 800, 60);
         add(hud);
         setComponentZOrder(hud, 0);
+
+        // sync HUD with starting state
+        hud.updateScore(scoreManager.getScore());
+        hud.updateLives(player.getLives());
+        lastUpdateTime = System.currentTimeMillis();
 
         // handle window resize
         addComponentListener(new ComponentAdapter() {
@@ -149,74 +157,112 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     public void updateGame() {
-    if (state != GameState.PLAYING) return;
+        if (state != GameState.PLAYING)
+            return;
 
-    handleHeldKeys();
+        // compute delta time for the countdown timer
+        long now = System.currentTimeMillis();
+        float delta = (now - lastUpdateTime) / 1000f;
+        lastUpdateTime = now;
 
-    if (player != null) player.update();
-    if (levelManager != null) levelManager.update();
+        // time's up — treat like a death
+        if (scoreManager.isTimeUp()) {
+            player.loseLife();
+            hud.updateLives(player.getLives());
+            scoreManager.onPlayerDied();
+            resetPlayerPosition();
 
-    checkGameConditions();
-}
+            if (!player.isAlive()) {
+                state = GameState.GAME_OVER;
+                return;
+            }
+        }
 
- private void handleHeldKeys() {
-    if (player == null || levelManager == null) return;
+        handleHeldKeys();
 
-    long now = System.currentTimeMillis();
+        if (player != null)
+            player.update();
+        if (levelManager != null)
+            levelManager.update();
 
-    if (now - lastMoveTime < MOVE_DELAY) return;
+        checkGameConditions();
+    }
 
-    int stepX = levelManager.getColumnWidth();
+    private void handleHeldKeys() {
+        if (player == null || levelManager == null)
+            return;
 
-    boolean moved = false;
+        long now = System.currentTimeMillis();
 
-    if (heldKeys.contains(KeyEvent.VK_LEFT) || heldKeys.contains(KeyEvent.VK_A)) {
-        if (player.getX() - stepX >= 0) {
-            player.setPosition(player.getX() - stepX, player.getY());
-            moved = true;
+        if (now - lastMoveTime < MOVE_DELAY)
+            return;
+
+        int stepX = levelManager.getColumnWidth();
+
+        boolean moved = false;
+
+        if (heldKeys.contains(KeyEvent.VK_LEFT) || heldKeys.contains(KeyEvent.VK_A)) {
+            if (player.getX() - stepX >= 0) {
+                player.setPosition(player.getX() - stepX, player.getY());
+                moved = true;
+            }
+        }
+
+        else if (heldKeys.contains(KeyEvent.VK_RIGHT) || heldKeys.contains(KeyEvent.VK_D)) {
+            if (player.getX() + stepX + player.getWidth() <= getWidth()) {
+                player.setPosition(player.getX() + stepX, player.getY());
+                moved = true;
+            }
+        }
+
+        else if (heldKeys.contains(KeyEvent.VK_UP) || heldKeys.contains(KeyEvent.VK_W)) {
+            int lane = levelManager.getLaneIndex(player.getY());
+            if (lane > 0) {
+                player.setPosition(player.getX(), levelManager.getLaneY()[lane - 1]);
+                scoreManager.onPlayerMovedToLane(lane - 1); // award hop points if new furthest lane
+                moved = true;
+            }
+        }
+
+        else if (heldKeys.contains(KeyEvent.VK_DOWN) || heldKeys.contains(KeyEvent.VK_S)) {
+            int lane = levelManager.getLaneIndex(player.getY());
+            if (lane < levelManager.getLaneCount() - 1) {
+                player.setPosition(player.getX(), levelManager.getLaneY()[lane + 1]);
+                moved = true; // no points for moving backward
+            }
+        }
+
+        if (moved) {
+            hud.updateScore(scoreManager.getScore());
+            lastMoveTime = now;
         }
     }
-
-    else if (heldKeys.contains(KeyEvent.VK_RIGHT) || heldKeys.contains(KeyEvent.VK_D)) {
-        if (player.getX() + stepX + player.getWidth() <= getWidth()) {
-            player.setPosition(player.getX() + stepX, player.getY());
-            moved = true;
-        }
-    }
-
-    else if (heldKeys.contains(KeyEvent.VK_UP) || heldKeys.contains(KeyEvent.VK_W)) {
-        int lane = levelManager.getLaneIndex(player.getY());
-        if (lane > 0) {
-            player.setPosition(player.getX(), levelManager.getLaneY()[lane - 1]);
-            moved = true;
-        }
-    }
-
-    else if (heldKeys.contains(KeyEvent.VK_DOWN) || heldKeys.contains(KeyEvent.VK_S)) {
-        int lane = levelManager.getLaneIndex(player.getY());
-        if (lane < levelManager.getLaneCount() - 1) {
-            player.setPosition(player.getX(), levelManager.getLaneY()[lane + 1]);
-            moved = true;
-        }
-    }
-
-    if (moved) {
-        lastMoveTime = now;
-    }
-}
-
 
     private void checkGameConditions() {
-        if (player == null || levelManager == null) return;
+        if (player == null || levelManager == null)
+            return;
 
         int livesBefore = player.getLives();
+        int coinsBefore = collisionSystem.getCoinsCollected();
 
         collisionSystem.checkAll(player,
                 levelManager.getObstacles(),
                 levelManager.getPlatforms(),
                 levelManager.getCoins());
 
+        // update score if a new coin was collected
+        int coinsAfter = collisionSystem.getCoinsCollected();
+        if (coinsAfter > coinsBefore) {
+            for (int i = 0; i < (coinsAfter - coinsBefore); i++) {
+                scoreManager.onCoinCollected();
+            }
+            hud.updateScore(scoreManager.getScore());
+        }
+
+        // update lives HUD if player was hit
         if (player.getLives() < livesBefore) {
+            hud.updateLives(player.getLives());
+            scoreManager.onPlayerDied();
             resetPlayerPosition();
         }
 
@@ -228,25 +274,29 @@ public class GamePanel extends JPanel implements KeyListener {
             if (p.isActive() && p.isPlayerOn(player)) {
                 onPlatform = true;
                 platformDeltaX = p.getDeltaX();
-        break;
-    }
-}
+                break;
+            }
+        }
 
         if (onPlatform) {
             player.setPosition(player.getX() + platformDeltaX, player.getY());
-}
+        }
 
         // water lane death — only if in platform zone but not on a log
         int playerLane = levelManager.getLaneIndex(player.getY());
 
         if (levelManager.isPlatformLane(playerLane) && !onPlatform) {
             player.loseLife();
+            hud.updateLives(player.getLives());
+            scoreManager.onPlayerDied();
             resetPlayerPosition();
         }
 
-        // player reaches top lane
+        // player reaches top lane — award completion bonus then advance
         if (!levelTransitioning && playerLane == 0) {
             levelTransitioning = true;
+            scoreManager.onReachedTop(currentLevel);
+            hud.updateScore(scoreManager.getScore());
             currentLevel++;
             stopThreads();
             SwingUtilities.invokeLater(() -> showCharacterSelect());
@@ -255,6 +305,8 @@ public class GamePanel extends JPanel implements KeyListener {
         // player falls off side of screen while on log
         if (player.getX() + player.getWidth() < 0 || player.getX() > getWidth()) {
             player.loseLife();
+            hud.updateLives(player.getLives());
+            scoreManager.onPlayerDied();
             resetPlayerPosition();
         }
 
@@ -270,32 +322,31 @@ public class GamePanel extends JPanel implements KeyListener {
 
         player.setPosition(
                 levelManager.getColumnX()[col],
-                levelManager.getLaneY()[lane]
-        );
+                levelManager.getLaneY()[lane]);
 
         levelTransitioning = false;
     }
 
     @Override
-public void keyPressed(KeyEvent e) {
-    heldKeys.add(e.getKeyCode());
+    public void keyPressed(KeyEvent e) {
+        heldKeys.add(e.getKeyCode());
 
-    int key = e.getKeyCode();
+        int key = e.getKeyCode();
 
-    if (state == GameState.PLAYING && key == KeyEvent.VK_ESCAPE) {
-        state = GameState.PAUSED;
-        return;
+        if (state == GameState.PLAYING && key == KeyEvent.VK_ESCAPE) {
+            state = GameState.PAUSED;
+            return;
+        }
+
+        if (state == GameState.PAUSED && key == KeyEvent.VK_ESCAPE) {
+            state = GameState.PLAYING;
+            return;
+        }
+
+        if (key == KeyEvent.VK_SPACE && player != null) {
+            player.useAbility();
+        }
     }
-
-    if (state == GameState.PAUSED && key == KeyEvent.VK_ESCAPE) {
-        state = GameState.PLAYING;
-        return;
-    }
-
-    if (key == KeyEvent.VK_SPACE && player != null) {
-        player.useAbility();
-    }
-}
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -303,10 +354,8 @@ public void keyPressed(KeyEvent e) {
 
     @Override
     public void keyReleased(KeyEvent e) {
-    heldKeys.remove(e.getKeyCode());
-
-
-}
+        heldKeys.remove(e.getKeyCode());
+    }
 
     public void stopThreads() {
         if (logicThread != null) {
@@ -349,7 +398,7 @@ public void keyPressed(KeyEvent e) {
         return collisionSystem;
     }
 
-     @Override
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -365,8 +414,7 @@ public void keyPressed(KeyEvent e) {
 
             g2.translate(
                     Math.round(player.getX()) - player.getX(),
-                    Math.round(player.getY()) - player.getY()
-            );
+                    Math.round(player.getY()) - player.getY());
 
             player.draw(g2);
 
