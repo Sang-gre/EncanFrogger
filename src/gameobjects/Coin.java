@@ -1,5 +1,6 @@
 package gameobjects;
 
+import assets.AssetManager;
 import java.awt.*;
 
 
@@ -30,10 +31,19 @@ public class Coin extends GameObject {
     @Override
     public void draw(Graphics g) {
         if (!isActive()) return;
-        g.setColor(Color.YELLOW);
-        g.fillRect(x, y, width, height);
-        
+
+        Image coinImage = AssetManager.getCoin("coin");
+        int scaledWidth = 30; 
+        int scaledHeight = 30;
+
+        if (coinImage != null) {
+            g.drawImage(coinImage, x, y, scaledWidth, scaledHeight, null);
+        } else {
+            g.setColor(Color.YELLOW);
+            g.fillOval(x, y, scaledWidth, scaledHeight);
+        }
     }
+
 
     @Override
     public void onCollide(GameObject other) {

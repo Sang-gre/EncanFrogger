@@ -43,6 +43,9 @@ public class AssetManager {
     /* HUD */
     private static final Map<String, Image> hud = new HashMap<>();
 
+    /* COINS */
+    private static final Map<String, Image> coins = new HashMap<>();
+
     static {
         loadBackgrounds();
         loadButtons();
@@ -55,6 +58,7 @@ public class AssetManager {
         loadPlatforms();
         loadHUD();
         loadAllSpritesheets();
+        loadCoins();
     }
 
     private static void loadBackgrounds() {
@@ -163,6 +167,10 @@ public class AssetManager {
 
        /* hud.put("menu",
             loadImage("assets/HUD/menuButton.png"));*/
+    }
+
+    private static void loadCoins() {
+        coins.put("coin", loadImage("assets/coins/coin.png"));
     }
 
     private static void loadCursor() {
@@ -291,6 +299,10 @@ public class AssetManager {
 
     public static Image getHUD(String key) {
         return hud.get(key);
+    }
+
+    public static Image getCoin(String key) {
+        return coins.get(key);
     }
 
     public static Image getCustomCursor() {
