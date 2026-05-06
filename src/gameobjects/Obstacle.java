@@ -1,6 +1,5 @@
 package gameobjects;
 
-import assets.AssetManager;
 import java.awt.*;
 import level.Direction;
 
@@ -9,10 +8,10 @@ public class Obstacle extends GameObject {
     private int lane;
     private Direction direction;
     private String obstacleType;
+    private Image image;
 
     public Obstacle(int x, int y, int width, int height, int lane, float speed, Direction direction, String obstacleType) {
         super(x, y, width, height, speed);
-
         this.lane = lane;
         this.direction = direction;
         this.obstacleType = obstacleType;
@@ -47,19 +46,6 @@ public class Obstacle extends GameObject {
     }
 
     @Override
-    public void draw(Graphics g) {
-
-        Image sprite = AssetManager.getObstacle(obstacleType);
-
-        if (sprite != null) {
-            g.drawImage(sprite, x, y, width, height, null);
-        } else {
-            g.setColor(Color.RED);
-            g.fillRect(x, y, width, height);
-        }
-    }
-
-    @Override
     public void onCollide(GameObject other) {}
 
     public void reset(int x, int y, float speed, Direction dir) {
@@ -70,9 +56,14 @@ public class Obstacle extends GameObject {
         setActive(true);
     }
 
+    private static final int OFFSCREEN_MARGIN = 60;
+
     public boolean isOffScreen(int screenWidth) {
-        return x > screenWidth + width || x + width < 0;
+        int margin = Math.max(width, OFFSCREEN_MARGIN);
+        return x > screenWidth + margin || x + margin < 0;
     }
+
+
 
     public int getLane() {
         return lane;
@@ -80,5 +71,27 @@ public class Obstacle extends GameObject {
 
     public Direction getDirection() {
         return direction;
+    }
+
+    public String getType() {
+        return obstacleType;
+    }
+
+    public void setImage(Image img) {
+        this.image = img;
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        if (!isActive()) return;
+        if (image != null) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.drawImage(image, x, y, width, height, null);
+        } else {
+            g.setColor(Color.RED);
+            g.fillRect(x, y, width, height);
+        }
     }
 }

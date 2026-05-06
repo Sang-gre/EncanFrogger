@@ -103,9 +103,6 @@ public class AssetManager {
         obstacles.put("mineaveSpike",
             loadImage("assets/obstacles/mineaveObstacles/mineaveSpikes.png"));
 
-        obstacles.put("quicksand",
-            loadImage("assets/obstacles/sapiroObstacles/sapiroQuicksand.png"));
-
         obstacles.put("sapiroRock",
             loadImage("assets/obstacles/sapiroObstacles/sapiroRock.png"));
 
@@ -136,23 +133,25 @@ public class AssetManager {
             platforms.put("lireoPlatform",
                 loadImage("assets/obstacles/lireoObstacles/lireoDisappearingPlatform.png"));
 
-            platforms.put("island",
-                loadImage("assets/obstacles/lireoObstacles/lireoIsland.png"));
-
             platforms.put("glacier",
                 loadImage("assets/obstacles/mineaveObstacles/mineaveGlacier.png"));
             
             platforms.put("mineavePlatform",
                 loadImage("assets/obstacles/mineaveObstacles/mineaveIcePlatform.png"));
 
-            platforms.put("hole",
-                loadImage("assets/obstacles/sapiroObstacles/sapiroHole.png"));
+            platforms.put("sand",
+                loadImage("assets/obstacles/sapiroObstacles/sapiroSand.png"));
 
-            platforms.put("sapiroSpike",
-                loadImage("assets/obstacles/sapiroObstacles/sapiroSpikes.png"));
+            platforms.put("sapiroPlatform",
+                loadImage("assets/obstacles/sapiroObstacles/sapiroPlatform.png"));
 
 
     }
+
+        public static Image getObstacleImage(String type) {
+            return obstacles.get(type);
+        }
+
 
     private static void loadHUD() {
 
@@ -297,4 +296,9 @@ public class AssetManager {
     public static Image getCustomCursor() {
         return customCursor;
     }
+
+    public static Image getPlatformImage(String type) {
+        return platforms.get(type);
+    }
+
 }

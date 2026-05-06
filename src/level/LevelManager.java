@@ -24,6 +24,9 @@ public class LevelManager {
     private static final int PLATFORM_LANE_COUNT = 4;
     private static final int PLATFORM_COUNT = 2;
     private static final int COLUMN_COUNT = 10;
+    private static final int LANE_TOP_PADDING = 5;
+    private final String[] laneObstacleType = new String[LANE_COUNT];
+    private final String[] lanePlatformType = new String[LANE_COUNT];
 
     private int screenWidth;
     private int screenHeight;
@@ -49,6 +52,9 @@ public class LevelManager {
 
     private final Map<GameMap, String[]> mapObstacleTypes = new HashMap<>();
     private final Map<GameMap, String[]> mapPlatformTypes = new HashMap<>();
+
+    private final Map<Integer, List<List<Obstacle>>> obstacleGroups = new HashMap<>();
+    private final Map<Integer, List<List<Platform>>> platformGroups = new HashMap<>();
     
     private Image background;
     private GameMap currentMap;
@@ -60,6 +66,17 @@ public class LevelManager {
         computeLanes();
         initObstaclePools();
     }
+
+    private static final int GROUP_GAP = 4;
+
+    private int[] computeGroupOffsets(int itemWidth, int groupSize, int gap, Direction dir) {
+        int[] offsets = new int[groupSize];
+        for (int i = 0; i < groupSize; i++) {
+            offsets[i] = i * (itemWidth + gap);
+        }
+        return offsets;
+    }
+
 
     public void resize(int newWidth, int newHeight) {
         this.screenWidth = newWidth;
@@ -95,25 +112,55 @@ public class LevelManager {
         }
     }
 
+    private Dimension scaleToFitLane(Image img, int maxWidth, int maxHeight) {
+        if (img == null) {
+            return new Dimension(Math.max(1, maxWidth), Math.max(1, maxHeight));
+        }
+
+        int origW = img.getWidth(null);
+        int origH = img.getHeight(null);
+        if (origW <= 0 || origH <= 0) {
+            return new Dimension(Math.max(1, maxWidth), Math.max(1, maxHeight));
+        }
+
+        float scale = (float) maxHeight / origH;
+        int newW = Math.round(origW * scale);
+        int newH = Math.round(origH * scale);
+
+        if (newW > maxWidth) {
+            scale = (float) maxWidth / origW;
+            newW = Math.round(origW * scale);
+            newH = Math.round(origH * scale);
+        }
+
+        return new Dimension(newW, newH);
+    }
+
     private void repositionEntities() {
 
         for (Obstacle o : obstacles) {
-
             Integer lane = obstacleLanes.get(o);
-
             if (lane != null) {
-                o.setPosition(o.getX(), centeredY(lane, laneHeight));
-                o.setSize(columnWidth, laneHeight);
+                Image img = AssetManager.getObstacleImage(o.getType());
+                Dimension d = scaleToFitLane(img, columnWidth, laneHeight);
+                int y = centeredY(lane, laneHeight) + (laneHeight - d.height) / 2;
+                o.setPosition(o.getX(), y);
+                o.setSize(d.width, d.height);
+                o.setImage(img);
             }
         }
 
         for (Platform p : platforms) {
-
             Integer lane = platformLanes.get(p);
-
             if (lane != null) {
-                p.setPosition(p.getX(), centeredY(lane, laneHeight));
-                p.setSize(columnWidth * 2, laneHeight);
+                Image img = AssetManager.getPlatformImage(p.getType());
+                int availableHeight = Math.max(1, laneHeight - LANE_TOP_PADDING);
+                Dimension d = scaleToFitLane(img, columnWidth * 2, availableHeight);
+                int laneTop = centeredY(lane, laneHeight);
+                int y = laneTop + LANE_TOP_PADDING + (availableHeight - d.height) / 2;
+                p.setPosition(p.getX(), y);
+                p.setSize(d.width, d.height);
+                p.setImage(img);
             }
         }
 
@@ -139,11 +186,35 @@ public class LevelManager {
 
         initPlatformLanes();
 
+        assignLaneTypesForMap(currentMap);
+
         spawnObstacles();
         spawnPlatforms();
         spawnCoins();
 
         background = AssetManager.getMapBackground(map);
+    }
+
+    private void assignLaneTypesForMap(GameMap map) {
+        Arrays.fill(laneObstacleType, null);
+        Arrays.fill(lanePlatformType, null);
+
+        for (int lane = 0; lane < LANE_COUNT; lane++) {
+            if (!isPlatformLane[lane] && lane != 0 && lane != 9 && !isSafeLane[lane]) {
+                String[] obstacleTypes = mapObstacleTypes.get(map);
+                if (obstacleTypes != null && obstacleTypes.length > 0) {
+                    laneObstacleType[lane] = obstacleTypes[rng.nextInt(obstacleTypes.length)];
+                }
+            }
+
+            if (isPlatformLane[lane]) {
+                String[] platformTypes = mapPlatformTypes.get(map);
+                if (platformTypes != null && platformTypes.length > 0) {
+                    lanePlatformType[lane] = platformTypes[rng.nextInt(platformTypes.length)];
+                }
+            }
+        }
+
     }
 
     private void initPlatformLanes() {
@@ -156,9 +227,9 @@ public class LevelManager {
 
             isPlatformLane[i] = i >= 1 && i <= 3;
 
-            isSafeLane[i] = i == 4 || i == 5;
+            isSafeLane[i] = i == 4;
 
-            isObstacleLane[i] = i >= 6 && i <= 8;
+            isObstacleLane[i] = i >= 5 && i <= 8;
         }
     }
 
@@ -201,12 +272,12 @@ public class LevelManager {
 
         mapPlatformTypes.put(
                 GameMap.LIREO,
-                new String[]{"lireoPlatform", "island", "cloud"}
+                new String[]{"lireoPlatform", "cloud"}
         );
 
         mapPlatformTypes.put(
                 GameMap.SAPIRO,
-                new String[]{"hole", "sapiroSpike"}
+                new String[]{"sand", "sapiroPlatform"}
         );
 
         mapPlatformTypes.put(
@@ -216,97 +287,115 @@ public class LevelManager {
     }
 
     private void spawnObstacles() {
-
-        int countPerLane = BASE_OBSTACLE_COUNT + (currentLevel - 1);
-
         for (int lane = 0; lane < LANE_COUNT; lane++) {
-
             if (isPlatformLane[lane]) continue;
-            if (lane == 0) continue;
-            if (lane == 4) continue;
-            if (lane == 9) continue;
+            if (lane == 0 || lane == 9) continue;
+            if (isSafeLane[lane]) continue;
 
-            Direction dir = (lane % 2 == 0)
-                    ? Direction.RIGHT
-                    : Direction.LEFT;
+            Direction dir = (lane % 2 == 0) ? Direction.RIGHT : Direction.LEFT;
 
-            int y = centeredY(lane, OBSTACLE_HEIGHT);
+            int groupsPerLane = 2;   // fixed number of groups
+            int groupSize = 3;       // items per group
 
-            int spread = screenWidth / countPerLane;
+            List<List<Obstacle>> laneGroups = new ArrayList<>();
 
-            for (int i = 0; i < countPerLane; i++) {
+            for (int g = 0; g < groupsPerLane; g++) {
+                List<Obstacle> group = new ArrayList<>();
 
-                int jitter = rng.nextInt(100);
-                int startX = (dir == Direction.RIGHT)
-                        ? -OBSTACLE_WIDTH - (i * spread + jitter)
-                        : screenWidth + (i * spread + jitter);
+                String assignedType = laneObstacleType[lane];
+                Image img = AssetManager.getObstacleImage(assignedType);
+                Dimension d = scaleToFitLane(img, columnWidth, laneHeight);
 
-                String[] obstacleTypes = mapObstacleTypes.get(currentMap);
+                int itemW = d.width;
+                int itemH = d.height;
 
-                String type = obstacleTypes[rng.nextInt(obstacleTypes.length)];
+                // Align groups to fixed columns (every 3rd column for spacing)
+                int baseX = columnX[(g * 3) % COLUMN_COUNT];
 
-                Obstacle o = new Obstacle(
-                        startX,
-                        y,
-                        columnWidth,
-                        laneHeight,
-                        lane,
-                        obstacleSpeed,
-                        dir,
-                        type
-                );
+                for (int j = 0; j < groupSize; j++) {
+                    int x = baseX + j * (itemW + GROUP_GAP);
+                    int y = centeredY(lane, laneHeight) + (laneHeight - itemH) / 2;
 
-                obstacles.add(o);
-                obstacleLanes.put(o, lane);
+                    Obstacle o = new Obstacle(
+                            x, y,
+                            itemW, itemH,
+                            lane,
+                            obstacleSpeed,
+                            dir,
+                            assignedType
+                    );
+                    o.setImage(img);
+
+                    obstacles.add(o);
+                    obstacleLanes.put(o, lane);
+                    group.add(o);
+                }
+
+                laneGroups.add(group);
             }
+            obstacleGroups.put(lane, laneGroups);
         }
     }
 
     public void spawnPlatforms() {
-
         for (int lane = 0; lane < LANE_COUNT; lane++) {
-
             if (!isPlatformLane[lane]) continue;
 
-            Direction dir = (lane % 2 == 0)
-                    ? Direction.RIGHT
-                    : Direction.LEFT;
+            Direction dir = (lane % 2 == 0) ? Direction.RIGHT : Direction.LEFT;
 
-            int y = centeredY(lane, OBSTACLE_HEIGHT);
+            int groupsPerLane = 2;   // fixed number of groups
+            int groupSize = 2;       // items per group
 
-            int spread = screenWidth / PLATFORM_COUNT;
+            List<List<Platform>> laneGroups = new ArrayList<>();
 
-            for (int i = 0; i < PLATFORM_COUNT; i++) {
+            for (int g = 0; g < groupsPerLane; g++) {
+                List<Platform> group = new ArrayList<>();
 
-                int jitter = rng.nextInt(100);
-                int startX = (dir == Direction.RIGHT)
-                        ? -PLATFORM_WIDTH - (i * spread + jitter)
-                        : screenWidth + (i * spread + jitter);
+                String assignedType = lanePlatformType[lane];
+                Image img = AssetManager.getPlatformImage(assignedType);
 
-                String[] platformTypes = mapPlatformTypes.get(currentMap);
+                int availableHeight = Math.max(1, laneHeight - LANE_TOP_PADDING);
+                Dimension d = scaleToFitLane(img, columnWidth * 2, availableHeight);
 
-                String type = platformTypes[rng.nextInt(platformTypes.length)];
+                int itemW = d.width;
+                int itemH = d.height;
 
-                Platform p = new Platform(
-                        startX,
-                        y,
-                        columnWidth * 2,
-                        laneHeight,
-                        lane,
-                        obstacleSpeed * 0.7f,
-                        dir,
-                        type
-                );
+                // Align groups to fixed columns (every 3rd column for spacing)
+                int baseX = columnX[(g * 3) % COLUMN_COUNT];
 
-                platforms.add(p);
-                platformLanes.put(p, lane);
+                for (int j = 0; j < groupSize; j++) {
+                    int x = baseX + j * (itemW + GROUP_GAP);
+                    int y = centeredY(lane, laneHeight)
+                            + LANE_TOP_PADDING
+                            + (availableHeight - itemH) / 2;
+
+                    Platform p = new Platform(
+                            x, y,
+                            itemW, itemH,
+                            lane,
+                            obstacleSpeed * 0.7f,
+                            dir,
+                            assignedType
+                    );
+                    p.setImage(img);
+
+                    platforms.add(p);
+                    platformLanes.put(p, lane);
+                    group.add(p);
+                }
+
+                laneGroups.add(group);
             }
+            platformGroups.put(lane, laneGroups);
         }
     }
 
+
+
+
     public void spawnCoins() {
 
-        int count = BASE_COIN_COUNT + (currentLevel - 1);
+        int count = BASE_COIN_COUNT + Math.max(0, (currentLevel - 1));
 
         for (int i = 0; i < count; i++) {
 
@@ -397,6 +486,79 @@ public class LevelManager {
         }
     }
 
+    private void respawnObstacleGroup(List<Obstacle> group) {
+
+        if (group.isEmpty()) return;
+
+        Obstacle first = group.get(0);
+        Direction dir = first.getDirection();
+        int lane = obstacleLanes.get(first);
+
+        int jitter = rng.nextInt(200);
+
+        Image img = AssetManager.getObstacleImage(first.getType());
+        Dimension d = scaleToFitLane(img, columnWidth, laneHeight);
+
+        int itemW = d.width;
+        int itemH = d.height;
+
+        int baseX = (dir == Direction.RIGHT)
+                ? -itemW - jitter
+                : screenWidth + jitter;
+
+        for (int i = 0; i < group.size(); i++) {
+
+            int x = (dir == Direction.RIGHT)
+                    ? baseX - i * (itemW + GROUP_GAP)
+                    : baseX + i * (itemW + GROUP_GAP);
+
+            int y = centeredY(lane, laneHeight) + (laneHeight - itemH) / 2;
+
+            Obstacle o = group.get(i);
+            o.reset(x, y, obstacleSpeed, dir);
+            o.setSize(itemW, itemH);
+            o.setImage(img);
+        }
+    }
+
+    private void respawnPlatformGroup(List<Platform> group) {
+
+        if (group.isEmpty()) return;
+
+        Platform first = group.get(0);
+        Direction dir = first.getDirection();
+        int lane = platformLanes.get(first);
+
+        int jitter = rng.nextInt(200);
+
+        Image img = AssetManager.getPlatformImage(first.getType());
+        int availableHeight = Math.max(1, laneHeight - LANE_TOP_PADDING);
+        Dimension d = scaleToFitLane(img, columnWidth * 2, availableHeight);
+
+        int itemW = d.width;
+        int itemH = d.height;
+
+        int baseX = (dir == Direction.RIGHT)
+                ? -itemW - jitter
+                : screenWidth + jitter;
+
+        for (int i = 0; i < group.size(); i++) {
+
+            int x = (dir == Direction.RIGHT)
+                    ? baseX - i * (itemW + GROUP_GAP)
+                    : baseX + i * (itemW + GROUP_GAP);
+
+            int y = centeredY(lane, laneHeight)
+                    + LANE_TOP_PADDING
+                    + (availableHeight - itemH) / 2;
+
+            Platform p = group.get(i);
+            p.reset(x, y, obstacleSpeed * 0.7f, dir);
+            p.setSize(itemW, itemH);
+            p.setImage(img);
+        }
+    }
+
     public void update() {
 
         List<Obstacle> toRespawn = new CopyOnWriteArrayList<>();
@@ -412,8 +574,22 @@ public class LevelManager {
             }
         }
 
-        for (Obstacle o : toRespawn) {
-            respawnObstacle(o);
+        for (Map.Entry<Integer, List<List<Obstacle>>> entry : obstacleGroups.entrySet()) {
+            for (List<Obstacle> group : entry.getValue()) {
+
+                boolean allOffScreen = true;
+
+                for (Obstacle o : group) {
+                    if (!o.isOffScreen(screenWidth)) {
+                        allOffScreen = false;
+                        break;
+                    }
+                }
+
+                if (allOffScreen) {
+                    respawnObstacleGroup(group);
+                }
+            }
         }
 
         List<Platform> toRespawnPlatforms = new CopyOnWriteArrayList<>();
@@ -429,8 +605,22 @@ public class LevelManager {
             }
         }
 
-        for (Platform p : toRespawnPlatforms) {
-            respawnPlatform(p);
+        for (Map.Entry<Integer, List<List<Platform>>> entry : platformGroups.entrySet()) {
+            for (List<Platform> group : entry.getValue()) {
+
+                boolean allOffScreen = true;
+
+                for (Platform p : group) {
+                    if (!p.isOffScreen(screenWidth)) {
+                        allOffScreen = false;
+                        break;
+                    }
+                }
+
+                if (allOffScreen) {
+                    respawnPlatformGroup(group);
+                }
+            }
         }
 
         for (Coin c : coins) {
@@ -461,36 +651,40 @@ public class LevelManager {
     }
 
     private void respawnObstacle(Obstacle o) {
-
         Direction dir = o.getDirection();
-
         int jitter = rng.nextInt(200);
         int x = (dir == Direction.RIGHT)
                 ? -OBSTACLE_WIDTH - jitter
                 : screenWidth + jitter;
 
         Integer lane = obstacleLanes.get(o);
-
-        int y = centeredY(lane, OBSTACLE_HEIGHT);
+        Image img = AssetManager.getObstacleImage(o.getType());
+        Dimension d = scaleToFitLane(img, columnWidth, laneHeight);
+        int y = centeredY(lane, laneHeight) + (laneHeight - d.height) / 2;
 
         o.reset(x, y, obstacleSpeed, dir);
+        o.setSize(d.width, d.height);
+        o.setImage(img);
     }
 
     private void respawnPlatform(Platform p) {
 
         Direction dir = p.getDirection();
 
-        
         int jitter = rng.nextInt(200);
         int x = (dir == Direction.RIGHT)
-                ? -OBSTACLE_WIDTH - jitter
+                ? -PLATFORM_WIDTH - jitter
                 : screenWidth + jitter;
 
         Integer lane = platformLanes.get(p);
-
-        int y = centeredY(lane, OBSTACLE_HEIGHT);
+        Image img = AssetManager.getPlatformImage(p.getType());
+        int availableHeight = Math.max(1, laneHeight - LANE_TOP_PADDING);
+        Dimension d = scaleToFitLane(img, columnWidth * 2, availableHeight);
+        int y = centeredY(lane, laneHeight) + LANE_TOP_PADDING + (availableHeight - d.height) / 2;
 
         p.reset(x, y, obstacleSpeed * 0.7f, dir);
+        p.setSize(d.width, d.height);
+        p.setImage(img);
     }
 
     private int centeredY(int lane, int entityHeight) {

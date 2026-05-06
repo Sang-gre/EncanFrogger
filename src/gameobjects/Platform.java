@@ -1,6 +1,5 @@
 package gameobjects;
 
-import assets.AssetManager;
 import java.awt.*;
 import level.Direction;
 
@@ -11,6 +10,9 @@ public class Platform extends GameObject {
     private float exactX;
     private int previousX;
     private String platformType;
+    private Image image;
+
+    private static final int OFFSCREEN_MARGIN = 120;
 
     public Platform(
             int x,
@@ -60,36 +62,20 @@ public class Platform extends GameObject {
 
     @Override
     public void draw(Graphics g) {
-
-        Image sprite = AssetManager.getPlatform(platformType);
-
-        if (sprite != null) {
-
-            g.drawImage(
-                    sprite,
-                    x,
-                    y,
-                    width,
-                    height,
-                    null
-            );
-
+        if (!isActive()) return;
+        if (image != null) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2.drawImage(image, x, y, width, height, null);
         } else {
-
             g.setColor(Color.GRAY);
-
-            g.fillRect(
-                    x,
-                    y,
-                    width,
-                    height
-            );
+            g.fillRect(x, y, width, height);
         }
     }
 
     @Override
     public void onCollide(GameObject other) {
-        // player safe on platform
     }
 
     public void reset(
@@ -109,9 +95,8 @@ public class Platform extends GameObject {
     }
 
     public boolean isOffScreen(int screenWidth) {
-
-        return x > screenWidth + width
-                || x + width < 0;
+        int margin = Math.max(width, OFFSCREEN_MARGIN);
+        return x > screenWidth + margin || x + margin < 0;
     }
 
     public boolean isPlayerOn(GameObject obj) {
@@ -128,5 +113,13 @@ public class Platform extends GameObject {
 
     public int getDeltaX() {
         return x - previousX;
+    }
+
+    public String getType() {
+        return platformType;
+    }
+
+    public void setImage(Image img) {
+        this.image = img;
     }
 }
