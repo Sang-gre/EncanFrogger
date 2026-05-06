@@ -61,6 +61,7 @@ public class AssetManager {
         loadPlatforms();
         loadHUD();
         loadAllSpritesheets();
+        loadFonts();
     }
 
     private static void loadBackgrounds() {
