@@ -74,6 +74,7 @@ public class AssetManager {
         backgrounds.put("menu", loadImage("ASSETS/Backgrounds/buttonDashboardBackground.png"));
         backgrounds.put("characterSelect", loadImage("assets/Backgrounds/chooseCharacterBackground.png"));
         backgrounds.put("mapSelect", loadImage("assets/Backgrounds/mapSelectBackground.png"));
+        backgrounds.put("leaderboard", loadImage("assets/Backgrounds/leaderboardPanel.png"));
     }
 
     private static void loadButtons() {
@@ -86,6 +87,9 @@ public class AssetManager {
         buttons.put("back", loadImage("assets/Buttons/backButton.png"));
         buttons.put("next", loadImage("assets/Buttons/nextButton.png"));
         buttons.put("select", loadImage("assets/Buttons/selectButton.png"));
+    
+        // Play again
+        buttons.put("playAgain", loadImage("assets/Buttons/playAgainButton.png"));
     }
 
     private static void loadObstacles() {

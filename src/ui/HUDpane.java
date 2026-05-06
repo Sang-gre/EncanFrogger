@@ -7,7 +7,7 @@ import javax.swing.*;
 public class HUDpane extends JPanel {
 
     private JLabel[] hearts;
-    private JLabel scoreValue; // kept as field so updateScore() can reach it
+    private JLabel scoreValue;
 
     public HUDpane() {
 

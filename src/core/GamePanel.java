@@ -11,6 +11,8 @@ import java.util.Set;
 import javax.swing.*;
 import level.LevelManager;
 import main.GameLauncher;
+import persistence.LeaderboardManager;
+import persistence.ScoreEntry;
 import threads.GameLogicThread;
 import threads.RenderThread;
 
@@ -38,10 +40,11 @@ public class GamePanel extends JPanel implements KeyListener {
     private static final long MOVE_DELAY = 140;
     private ui.HUDpane hud;
     private ui.GameOverScreen gameOverScreen;
+    private ui.LeaderboardScreen leaderboardScreen;
 
+    private boolean showingLeaderboard = false;
     private int platformDeltaX = 0;
 
-    // for delta time calculation fed into the timer
     private long lastUpdateTime = System.currentTimeMillis();
 
     public GamePanel(GameLauncher launcher) {
@@ -52,11 +55,50 @@ public class GamePanel extends JPanel implements KeyListener {
         setFocusable(true);
         addKeyListener(this);
 
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (state == GameState.GAME_OVER && gameOverScreen != null && !showingLeaderboard) {
+                    gameOverScreen.isBannerClicked(e.getPoint());
+                    if (gameOverScreen.isOkClicked(e.getPoint())) {
+                        String initials = gameOverScreen.getInitials();
+                        LeaderboardManager.saveEntry(new ScoreEntry(initials, scoreManager.getScore()));
+                        leaderboardScreen = new ui.LeaderboardScreen();
+                        showingLeaderboard = true;
+                        requestFocusInWindow();
+                        repaint();
+                    }
+                    repaint();
+                }
+
+                if (showingLeaderboard && leaderboardScreen != null) {
+                    if (leaderboardScreen.isPlayAgainClicked(e.getPoint())) {
+                        showingLeaderboard = false;
+                        leaderboardScreen = null;
+                        showCharacterSelect();
+                    }
+                }
+            }
+        });
         showCharacterSelect();
     }
 
     // Has back button on first character select
     public void showCharacterSelect() {
+        stopThreads();
+        for (ComponentListener cl : getComponentListeners()) {
+            removeComponentListener(cl);
+        }
+        scoreManager = new ScoreManager();
+        this.state = GameState.CHARACTER_SELECT;
+        removeAll();
+        setLayout(new BorderLayout());
+        add(new CharacterSelect(this, () -> launcher.menuGame()), BorderLayout.CENTER);
+        revalidate();
+        repaint();
+    }
+
+    public void showCharacterSelectNextLevel() {
         stopThreads();
         for (ComponentListener cl : getComponentListeners()) {
             removeComponentListener(cl);
@@ -165,19 +207,6 @@ public class GamePanel extends JPanel implements KeyListener {
         long now = System.currentTimeMillis();
         float delta = (now - lastUpdateTime) / 1000f;
         lastUpdateTime = now;
-
-        // time's up — treat like a death
-        if (scoreManager.isTimeUp()) {
-            player.loseLife();
-            hud.updateLives(player.getLives());
-            scoreManager.onPlayerDied();
-            resetPlayerPosition();
-
-            if (!player.isAlive()) {
-                SwingUtilities.invokeLater(this::showGameOver);
-                return;
-            }
-        }
 
         handleHeldKeys();
 
@@ -300,7 +329,7 @@ public class GamePanel extends JPanel implements KeyListener {
             hud.updateScore(scoreManager.getScore());
             currentLevel++;
             stopThreads();
-            SwingUtilities.invokeLater(() -> showCharacterSelect());
+            SwingUtilities.invokeLater(() -> showCharacterSelectNextLevel());
         }
 
         // player falls off side of screen while on log
@@ -321,22 +350,9 @@ public class GamePanel extends JPanel implements KeyListener {
         stopThreads();
         state = GameState.GAME_OVER;
         gameOverScreen = new ui.GameOverScreen();
-
-        // Enable mouse clicks for OK button
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (state == GameState.GAME_OVER && gameOverScreen != null) {
-                    gameOverScreen.isBannerClicked(e.getPoint()); // ← ADD: clicking banner activates typing
-                    if (gameOverScreen.isOkClicked(e.getPoint())) {
-                        // TODO: save initials + score
-                        launcher.menuGame();
-                    }
-                    repaint(); // ← ADD: so banner swaps to blank immediately on click
-                }
-            }
-        });
-
+        if (hud != null)
+            hud.setVisible(false);
+        requestFocusInWindow();
         repaint();
     }
 
@@ -371,11 +387,27 @@ public class GamePanel extends JPanel implements KeyListener {
             player.useAbility();
         }
 
-        if (state == GameState.GAME_OVER && gameOverScreen != null) {
+        if (state == GameState.GAME_OVER && showingLeaderboard && leaderboardScreen != null) {
+            if (key == KeyEvent.VK_UP) {
+                leaderboardScreen.scroll(-1);
+                repaint();
+                return;
+            }
+            if (key == KeyEvent.VK_DOWN) {
+                leaderboardScreen.scroll(1);
+                repaint();
+                return;
+            }
+        }
+
+        if (state == GameState.GAME_OVER && gameOverScreen != null && !showingLeaderboard) {
             boolean handled = gameOverScreen.handleKey(e.getKeyCode(), e.getKeyChar());
             if (!handled) {
-                // ENTER was pressed — confirm
-                launcher.menuGame();
+                String initials = gameOverScreen.getInitials();
+                LeaderboardManager.saveEntry(new ScoreEntry(initials, scoreManager.getScore())); // ← remove this line
+                leaderboardScreen = new ui.LeaderboardScreen();
+                showingLeaderboard = true;
+                requestFocusInWindow();
             }
             repaint();
             return;
@@ -449,9 +481,14 @@ public class GamePanel extends JPanel implements KeyListener {
             g2.setTransform(old);
         }
 
-        // Draw game over overlay on top of everything
-        if (state == GameState.GAME_OVER && gameOverScreen != null) {
+        // Game over overlay
+        if (state == GameState.GAME_OVER && gameOverScreen != null && !showingLeaderboard) {
             gameOverScreen.draw(g, getWidth(), getHeight());
+        }
+
+        // Leaderboard overlay
+        if (showingLeaderboard && leaderboardScreen != null) {
+            leaderboardScreen.draw(g, getWidth(), getHeight());
         }
     }
 }
