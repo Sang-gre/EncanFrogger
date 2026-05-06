@@ -10,6 +10,8 @@ import java.util.List;
 
 public class CollisionSystem {
 
+    private int coinsCollected = 0; // running total, read by GamePanel to detect new pickups
+
     public boolean checkAABB(GameObject a, GameObject b) {
         if (a == null || b == null)
             return false;
@@ -37,6 +39,7 @@ public class CollisionSystem {
             if (!coin.isCollected()) {
                 ((Player) a).addCoins(1);
                 coin.onCollide(a);
+                coinsCollected++; // increment so GamePanel can detect the pickup
             }
             return;
         }
@@ -70,5 +73,9 @@ public class CollisionSystem {
             if (checkAABB(player, c))
                 handleCollision(player, c);
         }
+    }
+
+    public int getCoinsCollected() {
+        return coinsCollected;
     }
 }
