@@ -141,7 +141,7 @@ public class LevelManager {
         for (Obstacle o : obstacles) {
             Integer lane = obstacleLanes.get(o);
             if (lane != null) {
-                Image img = AssetManager.getObstacleImage(o.getType());
+                Image img = AssetManager.getInstance().getObstacleImage(o.getType());
                 Dimension d = scaleToFitLane(img, columnWidth, laneHeight);
                 int y = centeredY(lane, laneHeight) + (laneHeight - d.height) / 2;
                 o.setPosition(o.getX(), y);
@@ -153,7 +153,7 @@ public class LevelManager {
         for (Platform p : platforms) {
             Integer lane = platformLanes.get(p);
             if (lane != null) {
-                Image img = AssetManager.getPlatformImage(p.getType());
+                Image img = AssetManager.getInstance().getPlatformImage(p.getType());
                 int availableHeight = Math.max(1, laneHeight - LANE_TOP_PADDING);
                 Dimension d = scaleToFitLane(img, columnWidth * 2, availableHeight);
                 int laneTop = centeredY(lane, laneHeight);
@@ -192,7 +192,7 @@ public class LevelManager {
         spawnPlatforms();
         spawnCoins();
 
-        background = AssetManager.getMapBackground(map);
+        background = AssetManager.getInstance().getMapBackground(map);
     }
 
     private void assignLaneTypesForMap(GameMap map) {
@@ -303,7 +303,7 @@ public class LevelManager {
                 List<Obstacle> group = new ArrayList<>();
 
                 String assignedType = laneObstacleType[lane];
-                Image img = AssetManager.getObstacleImage(assignedType);
+                Image img = AssetManager.getInstance().getObstacleImage(assignedType);
                 Dimension d = scaleToFitLane(img, columnWidth, laneHeight);
 
                 int itemW = d.width;
@@ -352,7 +352,7 @@ public class LevelManager {
                 List<Platform> group = new ArrayList<>();
 
                 String assignedType = lanePlatformType[lane];
-                Image img = AssetManager.getPlatformImage(assignedType);
+                Image img = AssetManager.getInstance().getPlatformImage(assignedType);
 
                 int availableHeight = Math.max(1, laneHeight - LANE_TOP_PADDING);
                 Dimension d = scaleToFitLane(img, columnWidth * 2, availableHeight);
@@ -487,7 +487,7 @@ public class LevelManager {
 
         int jitter = rng.nextInt(200);
 
-        Image img = AssetManager.getObstacleImage(first.getType());
+        Image img = AssetManager.getInstance().getObstacleImage(first.getType());
         Dimension d = scaleToFitLane(img, columnWidth, laneHeight);
 
         int itemW = d.width;
@@ -522,7 +522,7 @@ public class LevelManager {
 
         int jitter = rng.nextInt(200);
 
-        Image img = AssetManager.getPlatformImage(first.getType());
+        Image img = AssetManager.getInstance().getPlatformImage(first.getType());
         int availableHeight = Math.max(1, laneHeight - LANE_TOP_PADDING);
         Dimension d = scaleToFitLane(img, columnWidth * 2, availableHeight);
 
@@ -649,7 +649,7 @@ public class LevelManager {
                 : screenWidth + jitter;
 
         Integer lane = obstacleLanes.get(o);
-        Image img = AssetManager.getObstacleImage(o.getType());
+        Image img = AssetManager.getInstance().getObstacleImage(o.getType());
         Dimension d = scaleToFitLane(img, columnWidth, laneHeight);
         int y = centeredY(lane, d.height);
 
@@ -668,7 +668,7 @@ public class LevelManager {
                 : screenWidth + jitter;
 
         Integer lane = platformLanes.get(p);
-        Image img = AssetManager.getPlatformImage(p.getType());
+        Image img = AssetManager.getInstance().getPlatformImage(p.getType());
         int availableHeight = Math.max(1, laneHeight - LANE_TOP_PADDING);
         Dimension d = scaleToFitLane(img, columnWidth * 2, availableHeight);
         int y = centeredY(lane, laneHeight) + LANE_TOP_PADDING + (availableHeight - d.height) / 2;

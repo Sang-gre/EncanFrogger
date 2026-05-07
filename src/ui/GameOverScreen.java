@@ -3,7 +3,6 @@ package ui;
 import assets.AssetManager;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 
 public class GameOverScreen {
 
@@ -20,10 +19,10 @@ public class GameOverScreen {
     private Rectangle bannerBounds = new Rectangle(); // ← track banner too
 
     public GameOverScreen() {
-        bgImage     = AssetManager.getGameOver("background");
-        blankImage  = AssetManager.getGameOver("enterInitialsBlank");
-        activeImage = AssetManager.getGameOver("enterInitials");
-        okImage     = AssetManager.getGameOver("okButton");
+        bgImage     = AssetManager.getInstance().getGameOver("background");
+        blankImage  = AssetManager.getInstance().getGameOver("enterInitialsBlank");
+        activeImage = AssetManager.getInstance().getGameOver("enterInitials");
+        okImage     = AssetManager.getInstance().getGameOver("okButton");
     }
 
     public void draw(Graphics g, int w, int h) {
@@ -47,7 +46,7 @@ public class GameOverScreen {
 
         /* TYPED INITIALS */
         if (initials.length() > 0) {
-            Font font = AssetManager.getFont("enchantedLand");
+            Font font = AssetManager.getInstance().getFont("enchantedLand");
             g2.setFont(font != null
                     ? font.deriveFont(Font.BOLD, bannerH * 0.23f)
                     : new Font("Segoe UI", Font.BOLD, 30));

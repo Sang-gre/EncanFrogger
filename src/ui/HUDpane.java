@@ -16,7 +16,7 @@ public class HUDpane extends JPanel {
         setPreferredSize(new Dimension(800, 60));
         
         /* Score Label */
-        Image scoreImg = AssetManager.getHUD("score");
+        Image scoreImg = AssetManager.getInstance().getHUD("score");
         JLabel score = new JLabel(
                 new ImageIcon(
                         scoreImg.getScaledInstance(180, 50, Image.SCALE_SMOOTH)));
@@ -25,7 +25,7 @@ public class HUDpane extends JPanel {
 
         /* Score Text */
         scoreValue = new JLabel("0");
-        scoreValue.setFont(AssetManager.getFont("enchantedLand").deriveFont(24f));
+        scoreValue.setFont(AssetManager.getInstance().getFont("enchantedLand").deriveFont(24f));
         scoreValue.setForeground(new Color(246, 242, 195));
         scoreValue.setBounds(105, 4, 140, 50);
         scoreValue.setHorizontalAlignment(SwingConstants.LEFT);
@@ -37,7 +37,7 @@ public class HUDpane extends JPanel {
 
         hearts = new JLabel[3];
 
-        Image heartImg = AssetManager.getHUD("heart");
+        Image heartImg = AssetManager.getInstance().getHUD("heart");
 
         for (int i = 0; i < hearts.length; i++) {
 
@@ -52,7 +52,7 @@ public class HUDpane extends JPanel {
         }
 
         /*
-         * Image menuImg = AssetManager.getHUD("menu");
+         * Image menuImg = AssetManager.getInstance().getHUD("menu");
          * 
          * JButton menuButton = new JButton(
          * new ImageIcon(

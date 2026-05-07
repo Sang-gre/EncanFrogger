@@ -35,7 +35,7 @@ public class Terra extends Player {
         this.slowDuration = 180;
 
         // Load default frames
-        frames = AssetManager.getPlayerAnimation(PlayerType.TERRA, Direction.DOWN);
+        frames = AssetManager.getInstance().getPlayerAnimation(PlayerType.TERRA, Direction.DOWN);
         if (frames == null) {
             System.err.println("[Terra] WARNING: animation frames not found.");
         }
@@ -57,36 +57,36 @@ public class Terra extends Player {
     public void startMoveLeft() {
         movingLeft = true; movingRight = false; facingBack = false;
         vx = -moveSpeed;
-        BufferedImage[] left = AssetManager.getPlayerAnimation(PlayerType.TERRA, Direction.LEFT);
+        BufferedImage[] left = AssetManager.getInstance().getPlayerAnimation(PlayerType.TERRA, Direction.LEFT);
         if (left != null) { frames = left; frameIndex = 0; frameTimer = 0; }
     }
 
     public void stopMoveLeft() {
         movingLeft = false; vx = 0;
-        BufferedImage[] down = AssetManager.getPlayerAnimation(PlayerType.TERRA, Direction.DOWN);
+        BufferedImage[] down = AssetManager.getInstance().getPlayerAnimation(PlayerType.TERRA, Direction.DOWN);
         if (down != null) { frames = down; frameIndex = 0; frameTimer = 0; }
     }
 
     public void startMoveRight() {
         movingRight = true; movingLeft = false; facingBack = false;
         vx = moveSpeed;
-        BufferedImage[] right = AssetManager.getPlayerAnimation(PlayerType.TERRA, Direction.RIGHT);
+        BufferedImage[] right = AssetManager.getInstance().getPlayerAnimation(PlayerType.TERRA, Direction.RIGHT);
         if (right != null) { frames = right; frameIndex = 0; frameTimer = 0; }
     }
 
     public void stopMoveRight() {
         movingRight = false; vx = 0;
-        BufferedImage[] down = AssetManager.getPlayerAnimation(PlayerType.TERRA, Direction.DOWN);
+        BufferedImage[] down = AssetManager.getInstance().getPlayerAnimation(PlayerType.TERRA, Direction.DOWN);
         if (down != null) { frames = down; frameIndex = 0; frameTimer = 0; }
     }
 
     public void setFacingBack(boolean b) {
         facingBack = b;
         if (facingBack) {
-            BufferedImage[] back = AssetManager.getPlayerAnimation(PlayerType.TERRA, Direction.UP);
+            BufferedImage[] back = AssetManager.getInstance().getPlayerAnimation(PlayerType.TERRA, Direction.UP);
             if (back != null) { frames = back; frameIndex = 0; frameTimer = 0; }
         } else if (!movingLeft && !movingRight) {
-            BufferedImage[] down = AssetManager.getPlayerAnimation(PlayerType.TERRA, Direction.DOWN);
+            BufferedImage[] down = AssetManager.getInstance().getPlayerAnimation(PlayerType.TERRA, Direction.DOWN);
             if (down != null) { frames = down; frameIndex = 0; frameTimer = 0; }
         }
     }
@@ -104,7 +104,7 @@ public class Terra extends Player {
 
         // Animation update
         Direction dir = chooseDirection();
-        BufferedImage[] desired = AssetManager.getPlayerAnimation(PlayerType.TERRA, dir);
+        BufferedImage[] desired = AssetManager.getInstance().getPlayerAnimation(PlayerType.TERRA, dir);
         if (desired != null && desired != frames) {
             frames = desired;
             frameIndex = 0;

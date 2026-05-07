@@ -14,45 +14,49 @@ import level.Direction;
 
 public class AssetManager {
 
+    private static AssetManager instance;
+
+    // TODO: turn into singleton. Needs to change all call sites so best done when nobody else is working
+
     /* PLAYER ANIMATIONS */
-    private static final Map<PlayerType, Map<Direction, BufferedImage[]>> playerAnimations = new HashMap<>();
+    private final Map<PlayerType, Map<Direction, BufferedImage[]>> playerAnimations = new HashMap<>();
 
     /* CHARACTER SELECT UI */
-    private static final Map<PlayerType, Image> characterCards = new HashMap<>();
-    private static final Map<PlayerType, Image> infoCards = new HashMap<>();
+    private final Map<PlayerType, Image> characterCards = new HashMap<>();
+    private final Map<PlayerType, Image> infoCards = new HashMap<>();
 
     /* MAP SELECT UI */
-    private static final Map<GameMap, Image> mapBackgrounds = new HashMap<>();
-    private static final Map<GameMap, Image> mapFlags = new HashMap<>();
+    private final Map<GameMap, Image> mapBackgrounds = new HashMap<>();
+    private final Map<GameMap, Image> mapFlags = new HashMap<>();
 
     /* SCREEN BACKGROUNDS */
-    private static final Map<String, Image> backgrounds = new HashMap<>();
+    private final Map<String, Image> backgrounds = new HashMap<>();
 
     /* BUTTONS */
-    private static final Map<String, Image> buttons = new HashMap<>();
+    private final Map<String, Image> buttons = new HashMap<>();
 
     /* OBSTACLES */
-    private static final Map<String, Image> obstacles = new HashMap<>();
+    private final Map<String, Image> obstacles = new HashMap<>();
 
     /* PLATFORMS */
-    private static final Map<String, Image> platforms = new HashMap<>();
+    private final Map<String, Image> platforms = new HashMap<>();
 
     /* CURSOR */
-    private static Image customCursor;
+    private Image customCursor;
 
     /* HUD */
-    private static final Map<String, Image> hud = new HashMap<>();
+    private final Map<String, Image> hud = new HashMap<>();
 
     /* FONTS */
-    private static Font enchantedLandFont;
+    private Font enchantedLandFont;
 
     /* COINS */
-    private static final Map<String, Image> coins = new HashMap<>();
+    private final Map<String, Image> coins = new HashMap<>();
 
     /* GAME OVER SCREEN */
-    private static final Map<String, Image> gameover = new HashMap<>();
+    private final Map<String, Image> gameover = new HashMap<>();
 
-    static {
+    private AssetManager() {
         loadBackgrounds();
         loadButtons();
         loadCursor();
@@ -68,7 +72,14 @@ public class AssetManager {
         loadGameOver();
     }
 
-    private static void loadBackgrounds() {
+    public static AssetManager getInstance() {
+        if (instance == null) {
+            instance = new AssetManager();
+        }
+        return instance;
+    }
+
+    private void loadBackgrounds() {
         backgrounds.put("title", loadImage("ASSETS/Backgrounds/background.png"));
         backgrounds.put("titleFont", loadImage("ASSETS/Backgrounds/titleFont.png"));
         backgrounds.put("menu", loadImage("ASSETS/Backgrounds/buttonDashboardBackground.png"));
@@ -77,7 +88,7 @@ public class AssetManager {
         backgrounds.put("leaderboard", loadImage("assets/Backgrounds/leaderboardPanel.png"));
     }
 
-    private static void loadButtons() {
+    private void loadButtons() {
         // Main menu
         buttons.put("start", loadImage("ASSETS/Buttons/startButton.png"));
         buttons.put("menu", loadImage("ASSETS/Buttons/menuButton.png"));
@@ -92,7 +103,7 @@ public class AssetManager {
         buttons.put("playAgain", loadImage("assets/Buttons/playAgainButton.png"));
     }
 
-    private static void loadObstacles() {
+    private void loadObstacles() {
 
         obstacles.put("adamyaRock",
                 loadImage("assets/obstacles/adamyaObstacles/adamyaRock.png"));
@@ -125,7 +136,7 @@ public class AssetManager {
                 loadImage("assets/obstacles/sapiroObstacles/sapiroTumbleweed.png"));
     }
 
-    private static void loadPlatforms() {
+    private void loadPlatforms() {
 
         platforms.put("log",
                 loadImage("assets/obstacles/adamyaObstacles/adamyaLog.png"));
@@ -162,11 +173,11 @@ public class AssetManager {
 
     }
 
-    public static Image getObstacleImage(String type) {
+    public Image getObstacleImage(String type) {
         return obstacles.get(type);
     }
 
-    private static void loadHUD() {
+    private void loadHUD() {
 
         hud.put("heart",
                 loadImage("assets/heartIcon.png"));
@@ -180,15 +191,15 @@ public class AssetManager {
          */
     }
 
-    private static void loadCoins() {
+    private void loadCoins() {
         coins.put("coin", loadImage("assets/coins/coin.png"));
     }
 
-    private static void loadCursor() {
+    private void loadCursor() {
         customCursor = loadImage("ASSETS/customCursor.png");
     }
 
-    private static void loadCharacterCards() {
+    private void loadCharacterCards() {
         characterCards.put(PlayerType.PAOPAO, loadImage("assets/characterCards/paopaoCard.png"));
         characterCards.put(PlayerType.DEIA, loadImage("assets/characterCards/deiaCard.png"));
         characterCards.put(PlayerType.FLAMARA, loadImage("assets/characterCards/flammaraCard.png"));
@@ -196,7 +207,7 @@ public class AssetManager {
         characterCards.put(PlayerType.ADAMUS, loadImage("assets/characterCards/adamusCard.png"));
     }
 
-    private static void loadInfoCards() {
+    private void loadInfoCards() {
         infoCards.put(PlayerType.PAOPAO, loadImage("assets/characterInfoCard/paopaoInfoCard.png"));
         infoCards.put(PlayerType.DEIA, loadImage("assets/characterInfoCard/deiaInfoCard.png"));
         infoCards.put(PlayerType.FLAMARA, loadImage("assets/characterInfoCard/flammaraInfoCard.png"));
@@ -204,7 +215,7 @@ public class AssetManager {
         infoCards.put(PlayerType.ADAMUS, loadImage("assets/characterInfoCard/adamusInfoCard.png"));
     }
 
-    private static void loadMapBackgrounds() {
+    private void loadMapBackgrounds() {
         mapBackgrounds.put(GameMap.LIREO, loadImage("assets/maps/lireoMap.png"));
         mapBackgrounds.put(GameMap.HATHORIA, loadImage("assets/maps/hathoriaMap.png"));
         mapBackgrounds.put(GameMap.ADAMYA, loadImage("assets/maps/adamyaMap.png"));
@@ -212,7 +223,7 @@ public class AssetManager {
         mapBackgrounds.put(GameMap.MINEAVE, loadImage("assets/maps/mineaveMap.png"));
     }
 
-    private static void loadMapFlags() {
+    private void loadMapFlags() {
         mapFlags.put(GameMap.LIREO, loadImage("assets/flags/lireoFlagMap.png"));
         mapFlags.put(GameMap.HATHORIA, loadImage("assets/flags/hathoriaFlagMap.png"));
         mapFlags.put(GameMap.ADAMYA, loadImage("assets/flags/adamyaFlagMap.png"));
@@ -220,7 +231,7 @@ public class AssetManager {
         mapFlags.put(GameMap.MINEAVE, loadImage("assets/flags/mineaveFlagMap.png"));
     }
 
-    private static void loadAllSpritesheets() {
+    private void loadAllSpritesheets() {
         try {
             // columns = frames per row, rows = 4 directions (DOWN, LEFT, RIGHT, UP)
             loadSpritesheet(PlayerType.PAOPAO, "assets/spritesheets/paopaoSpritesheet.png", 9, 4);
@@ -238,7 +249,7 @@ public class AssetManager {
      * Slices a spritesheet into per-direction frame arrays.
      * Row order assumed: DOWN=0, LEFT=1, RIGHT=2, UP=3
      */
-    private static void loadSpritesheet(PlayerType type, String path, int columns, int rows)
+    private void loadSpritesheet(PlayerType type, String path, int columns, int rows)
             throws IOException {
 
         BufferedImage sheet = ImageIO.read(new File(path));
@@ -261,7 +272,7 @@ public class AssetManager {
     }
 
     // Convenience loader: returns null and prints a warning instead of throwing.
-    private static Image loadImage(String path) {
+    private Image loadImage(String path) {
         File f = new File(path);
         if (!f.exists()) {
             System.err.printf("[AssetManager] WARNING: asset not found: %s%n", path);
@@ -270,7 +281,7 @@ public class AssetManager {
         return new ImageIcon(path).getImage();
     }
 
-    private static void loadFonts() {
+    private void loadFonts() {
         try {
             enchantedLandFont = Font.createFont(
                     Font.TRUETYPE_FONT,
@@ -282,7 +293,7 @@ public class AssetManager {
     }
 
     // Returns the animation frames for the given player and direction.
-    public static BufferedImage[] getPlayerAnimation(PlayerType type, Direction dir) {
+    public BufferedImage[] getPlayerAnimation(PlayerType type, Direction dir) {
         Map<Direction, BufferedImage[]> map = playerAnimations.get(type);
         if (map == null)
             return null;
@@ -290,68 +301,68 @@ public class AssetManager {
         return (frames != null) ? frames : map.get(Direction.DOWN);
     }
 
-    private static void loadGameOver() {
+    private void loadGameOver() {
         gameover.put("background", loadImage("assets/Backgrounds/gameoverBackground.png"));
         gameover.put("enterInitials", loadImage("assets/enterInitials.png"));
         gameover.put("enterInitialsBlank", loadImage("assets/enterInitialsBlank.png"));
         gameover.put("okButton", loadImage("assets/Buttons/okButton.png"));
     }
 
-    public static Image getCharacterCard(PlayerType type) {
+    public Image getCharacterCard(PlayerType type) {
         return characterCards.get(type);
     }
 
-    public static Image getInfoCard(PlayerType type) {
+    public Image getInfoCard(PlayerType type) {
         return infoCards.get(type);
     }
 
-    public static Image getMapBackground(GameMap map) {
+    public Image getMapBackground(GameMap map) {
         return mapBackgrounds.get(map);
     }
 
-    public static Image getMapFlag(GameMap map) {
+    public Image getMapFlag(GameMap map) {
         return mapFlags.get(map);
     }
 
-    public static Image getBackground(String key) {
+    public Image getBackground(String key) {
         return backgrounds.get(key);
     }
 
-    public static Image getButton(String key) {
+    public Image getButton(String key) {
         return buttons.get(key);
     }
 
-    public static Image getObstacle(String key) {
+    public Image getObstacle(String key) {
         return obstacles.get(key);
     }
 
-    public static Image getPlatform(String key) {
+    public Image getPlatform(String key) {
         return platforms.get(key);
     }
 
-    public static Image getHUD(String key) {
+    public Image getHUD(String key) {
         return hud.get(key);
     }
 
-    public static Image getCoin(String key) {
+    public Image getCoin(String key) {
         return coins.get(key);
     }
 
-    public static Image getCustomCursor() {
+    public Image getCustomCursor() {
         return customCursor;
     }
 
-    public static Image getPlatformImage(String type) {
+    public Image getPlatformImage(String type) {
         return platforms.get(type);
     }
 
-    public static Font getFont(String key) {
+    public Font getFont(String key) {
         if (key.equals("enchantedLand"))
             return enchantedLandFont;
         return null;
     }
 
-    public static Image getGameOver(String key) {
+    public Image getGameOver(String key) {
         return gameover.get(key);
     }
 }

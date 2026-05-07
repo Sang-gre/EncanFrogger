@@ -1,11 +1,9 @@
 package core;
 
-import assets.AssetManager;
 import gameobjects.Platform;
 import gameobjects.Player;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.*;
@@ -19,7 +17,6 @@ import threads.RenderThread;
 public class GamePanel extends JPanel implements KeyListener {
 
     private final GameLauncher launcher;
-    private final AssetManager assetManager;
 
     private GameState state;
     private Player player;
@@ -49,7 +46,6 @@ public class GamePanel extends JPanel implements KeyListener {
 
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
-        this.assetManager = new AssetManager();
 
         // game starts at character select
         this.state = GameState.CHARACTER_SELECT;
@@ -580,10 +576,6 @@ player.setStepSize(
 
     public void setPlayer(Player player) {
         this.player = player;
-    }
-
-    public AssetManager getAssetManager() {
-        return assetManager;
     }
 
     public LevelManager getLevelManager() {

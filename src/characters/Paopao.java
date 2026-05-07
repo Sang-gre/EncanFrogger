@@ -28,7 +28,7 @@ public class Paopao extends Player {
         super(x, y, PlayerType.PAOPAO);
 
         // Load default (standing/down) frames
-        frames = AssetManager.getPlayerAnimation(PlayerType.PAOPAO, Direction.DOWN);
+        frames = AssetManager.getInstance().getPlayerAnimation(PlayerType.PAOPAO, Direction.DOWN);
         if (frames == null) {
             System.err.println("[Paopao] WARNING: animation frames not found.");
         }
@@ -43,37 +43,37 @@ public class Paopao extends Player {
     public void startMoveLeft() {
         movingLeft = true; movingRight = false; facingBack = false;
         vx = -moveSpeed;
-        BufferedImage[] leftFrames = AssetManager.getPlayerAnimation(PlayerType.PAOPAO, Direction.LEFT);
+        BufferedImage[] leftFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.PAOPAO, Direction.LEFT);
         if (leftFrames != null) { frames = leftFrames; frameIndex = 0; frameTimer = 0; }
     }
 
     public void stopMoveLeft() {
         movingLeft = false; vx = 0;
-        BufferedImage[] downFrames = AssetManager.getPlayerAnimation(PlayerType.PAOPAO, Direction.DOWN);
+        BufferedImage[] downFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.PAOPAO, Direction.DOWN);
         if (downFrames != null) { frames = downFrames; frameIndex = 0; frameTimer = 0; }
     }
 
     public void startMoveRight() {
         movingRight = true; movingLeft = false; facingBack = false;
         vx = moveSpeed;
-        BufferedImage[] rightFrames = AssetManager.getPlayerAnimation(PlayerType.PAOPAO, Direction.RIGHT);
+        BufferedImage[] rightFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.PAOPAO, Direction.RIGHT);
         if (rightFrames != null) { frames = rightFrames; frameIndex = 0; frameTimer = 0; }
     }
 
     public void stopMoveRight() {
         movingRight = false; vx = 0;
-        BufferedImage[] downFrames = AssetManager.getPlayerAnimation(PlayerType.PAOPAO, Direction.DOWN);
+        BufferedImage[] downFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.PAOPAO, Direction.DOWN);
         if (downFrames != null) { frames = downFrames; frameIndex = 0; frameTimer = 0; }
     }
 
     public void setFacingBack(boolean b) {
         facingBack = b;
         if (facingBack) {
-            BufferedImage[] backFrames = AssetManager.getPlayerAnimation(PlayerType.PAOPAO, Direction.UP);
+            BufferedImage[] backFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.PAOPAO, Direction.UP);
             if (backFrames != null) { frames = backFrames; frameIndex = 0; frameTimer = 0; }
         } else {
             if (!movingLeft && !movingRight) {
-                BufferedImage[] downFrames = AssetManager.getPlayerAnimation(PlayerType.PAOPAO, Direction.DOWN);
+                BufferedImage[] downFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.PAOPAO, Direction.DOWN);
                 if (downFrames != null) { frames = downFrames; frameIndex = 0; frameTimer = 0; }
             }
         }
@@ -91,7 +91,7 @@ public class Paopao extends Player {
         super.update();
 
         Direction dir = chooseDirection();
-        BufferedImage[] desiredFrames = AssetManager.getPlayerAnimation(PlayerType.PAOPAO, dir);
+        BufferedImage[] desiredFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.PAOPAO, dir);
         if (desiredFrames != null && desiredFrames != frames) {
             frames = desiredFrames;
             frameIndex = 0;

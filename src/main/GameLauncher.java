@@ -42,7 +42,7 @@ public class GameLauncher extends JFrame {
     }
 
     private void setupCursor() {
-        Image customCursor = AssetManager.getCustomCursor();
+        Image customCursor = AssetManager.getInstance().getCustomCursor();
         CursorGlassPane glassPane = new CursorGlassPane(customCursor, mainPanel);
         setGlassPane(glassPane);
         glassPane.setVisible(true);

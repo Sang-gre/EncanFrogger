@@ -22,7 +22,7 @@ public abstract class Selection extends JPanel {
 
     public JPanel createBackground() {
         JPanel background = new JPanel(new BorderLayout()) {
-            private final Image img = AssetManager.getBackground("characterSelect");
+            private final Image img = AssetManager.getInstance().getBackground("characterSelect");
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -50,12 +50,12 @@ public abstract class Selection extends JPanel {
         JButton backBtn = null;
 
         if (onBack != null) {
-            backBtn = createImageButton(AssetManager.getButton("back"), btnWidth, btnHeight);
+            backBtn = createImageButton(AssetManager.getInstance().getButton("back"), btnWidth, btnHeight);
             backBtn.addActionListener(e -> onBack.run());
             panel.add(backBtn);
         }
 
-        final JButton nextBtn = createImageButton(AssetManager.getButton("next"), btnWidth, btnHeight);
+        final JButton nextBtn = createImageButton(AssetManager.getInstance().getButton("next"), btnWidth, btnHeight);
         nextBtn.addActionListener((ActionEvent e) -> {
             if (!validateSelection()) {
                 JOptionPane.showMessageDialog(Selection.this, "Please select a character!");

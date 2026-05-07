@@ -39,7 +39,7 @@ public class Flamara extends Player {
         this.dashTimer = 0;
 
         // Load default frames
-        frames = AssetManager.getPlayerAnimation(PlayerType.FLAMARA, Direction.DOWN);
+        frames = AssetManager.getInstance().getPlayerAnimation(PlayerType.FLAMARA, Direction.DOWN);
         if (frames == null) {
             System.err.println("[Flammara] WARNING: animation frames not found.");
         }
@@ -67,36 +67,36 @@ public class Flamara extends Player {
     public void startMoveLeft() {
         movingLeft = true; movingRight = false; facingBack = false;
         vx = -moveSpeed;
-        BufferedImage[] left = AssetManager.getPlayerAnimation(PlayerType.FLAMARA, Direction.LEFT);
+        BufferedImage[] left = AssetManager.getInstance().getPlayerAnimation(PlayerType.FLAMARA, Direction.LEFT);
         if (left != null) { frames = left; frameIndex = 0; frameTimer = 0; }
     }
 
     public void stopMoveLeft() {
         movingLeft = false; vx = 0;
-        BufferedImage[] down = AssetManager.getPlayerAnimation(PlayerType.FLAMARA, Direction.DOWN);
+        BufferedImage[] down = AssetManager.getInstance().getPlayerAnimation(PlayerType.FLAMARA, Direction.DOWN);
         if (down != null) { frames = down; frameIndex = 0; frameTimer = 0; }
     }
 
     public void startMoveRight() {
         movingRight = true; movingLeft = false; facingBack = false;
         vx = moveSpeed;
-        BufferedImage[] right = AssetManager.getPlayerAnimation(PlayerType.FLAMARA, Direction.RIGHT);
+        BufferedImage[] right = AssetManager.getInstance().getPlayerAnimation(PlayerType.FLAMARA, Direction.RIGHT);
         if (right != null) { frames = right; frameIndex = 0; frameTimer = 0; }
     }
 
     public void stopMoveRight() {
         movingRight = false; vx = 0;
-        BufferedImage[] down = AssetManager.getPlayerAnimation(PlayerType.FLAMARA, Direction.DOWN);
+        BufferedImage[] down = AssetManager.getInstance().getPlayerAnimation(PlayerType.FLAMARA, Direction.DOWN);
         if (down != null) { frames = down; frameIndex = 0; frameTimer = 0; }
     }
 
     public void setFacingBack(boolean b) {
         facingBack = b;
         if (facingBack) {
-            BufferedImage[] back = AssetManager.getPlayerAnimation(PlayerType.FLAMARA, Direction.UP);
+            BufferedImage[] back = AssetManager.getInstance().getPlayerAnimation(PlayerType.FLAMARA, Direction.UP);
             if (back != null) { frames = back; frameIndex = 0; frameTimer = 0; }
         } else if (!movingLeft && !movingRight) {
-            BufferedImage[] down = AssetManager.getPlayerAnimation(PlayerType.FLAMARA, Direction.DOWN);
+            BufferedImage[] down = AssetManager.getInstance().getPlayerAnimation(PlayerType.FLAMARA, Direction.DOWN);
             if (down != null) { frames = down; frameIndex = 0; frameTimer = 0; }
         }
     }
@@ -122,7 +122,7 @@ public class Flamara extends Player {
 
         // Animation update
         Direction dir = chooseDirection();
-        BufferedImage[] desired = AssetManager.getPlayerAnimation(PlayerType.FLAMARA, dir);
+        BufferedImage[] desired = AssetManager.getInstance().getPlayerAnimation(PlayerType.FLAMARA, dir);
         if (desired != null && desired != frames) {
             frames = desired;
             frameIndex = 0;

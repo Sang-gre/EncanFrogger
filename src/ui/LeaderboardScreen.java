@@ -18,8 +18,8 @@ public class LeaderboardScreen {
     private List<ScoreEntry> entries;
 
     public LeaderboardScreen() {
-        panelImg = AssetManager.getBackground("leaderboard");
-        playAgainImg = AssetManager.getButton("playAgain");
+        panelImg = AssetManager.getInstance().getBackground("leaderboard");
+        playAgainImg = AssetManager.getInstance().getButton("playAgain");
         entries = LeaderboardManager.loadAll();
     }
 
@@ -57,7 +57,7 @@ public class LeaderboardScreen {
         scrollOffset = Math.max(0, Math.min(scrollOffset, maxOffset));
 
         int fontSize = Math.max(16, panelH / 23);
-        Font baseFont = AssetManager.getFont("enchantedLand");
+        Font baseFont = AssetManager.getInstance().getFont("enchantedLand");
         Font font = baseFont.deriveFont((float) fontSize);
         g2.setFont(font);
 

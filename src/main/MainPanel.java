@@ -30,10 +30,10 @@ public class MainPanel extends JPanel {
     }
 
     private void loadAssets() {
-        background = AssetManager.getBackground("menu");
-        startImg = AssetManager.getButton("start");
-        menuImg = AssetManager.getButton("menu");
-        exitImg = AssetManager.getButton("exit");
+        background = AssetManager.getInstance().getBackground("menu");
+        startImg = AssetManager.getInstance().getButton("start");
+        menuImg = AssetManager.getInstance().getButton("menu");
+        exitImg = AssetManager.getInstance().getButton("exit");
     }
 
     private void setupButtons() {

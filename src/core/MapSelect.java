@@ -46,8 +46,8 @@ public class MapSelect extends Selection {
 
     private JRadioButton createBtn(GameMap map) {
         JRadioButton btn = new JRadioButton();
-        btn.putClientProperty("img", AssetManager.getMapFlag(map));
-        btn.putClientProperty("originalImg", AssetManager.getMapFlag(map));
+        btn.putClientProperty("img", AssetManager.getInstance().getMapFlag(map));
+        btn.putClientProperty("originalImg", AssetManager.getInstance().getMapFlag(map));
         btn.putClientProperty("map", map);
 
         btn.setOpaque(false);
@@ -85,7 +85,7 @@ public class MapSelect extends Selection {
     public JPanel createBackground() {
 
         JPanel background = new JPanel(null) {
-            private final Image img = AssetManager.getBackground("mapSelect");
+            private final Image img = AssetManager.getInstance().getBackground("mapSelect");
 
             @Override
             protected void paintComponent(Graphics g) {

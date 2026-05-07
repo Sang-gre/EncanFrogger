@@ -109,7 +109,7 @@ public abstract class Player extends GameObject {
     @Override
     public void draw(Graphics g) {
 
-        BufferedImage[] frames = AssetManager.getPlayerAnimation(type, getLastDirection());
+        BufferedImage[] frames = AssetManager.getInstance().getPlayerAnimation(type, getLastDirection());
 
         if (frames != null) {
             BufferedImage currentFrame = frames[animationFrame % frames.length];

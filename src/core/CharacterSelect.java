@@ -60,7 +60,7 @@ public class CharacterSelect extends Selection {
     @Override
     public JPanel createBackground() {
         JPanel background = new JPanel(null) {
-            private final Image img = AssetManager.getBackground("characterSelect");
+            private final Image img = AssetManager.getInstance().getBackground("characterSelect");
 
             @Override
             protected void paintComponent(Graphics g) {

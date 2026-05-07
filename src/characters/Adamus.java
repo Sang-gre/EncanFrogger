@@ -46,7 +46,7 @@ public class Adamus extends Player {
         this.bridgeTimer = 0;
 
         // Load default (standing/down) frames from AssetManager
-        frames = AssetManager.getPlayerAnimation(PlayerType.ADAMUS, Direction.DOWN);
+        frames = AssetManager.getInstance().getPlayerAnimation(PlayerType.ADAMUS, Direction.DOWN);
         if (frames == null) {
             System.err.println("[Adamus] WARNING: animation frames for ADAMUS not found.");
         }
@@ -81,7 +81,7 @@ public class Adamus extends Player {
         movingRight = false;
         facingBack = false;
         vx = -moveSpeed;
-        BufferedImage[] leftFrames = AssetManager.getPlayerAnimation(PlayerType.ADAMUS, Direction.LEFT);
+        BufferedImage[] leftFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.ADAMUS, Direction.LEFT);
         if (leftFrames != null) {
             frames = leftFrames;
             frameIndex = 0;
@@ -92,7 +92,7 @@ public class Adamus extends Player {
     public void stopMoveLeft() {
         movingLeft = false;
         vx = 0;
-        BufferedImage[] downFrames = AssetManager.getPlayerAnimation(PlayerType.ADAMUS, Direction.DOWN);
+        BufferedImage[] downFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.ADAMUS, Direction.DOWN);
         if (downFrames != null) {
             frames = downFrames;
             frameIndex = 0;
@@ -105,7 +105,7 @@ public class Adamus extends Player {
         movingLeft = false;
         facingBack = false;
         vx = moveSpeed;
-        BufferedImage[] rightFrames = AssetManager.getPlayerAnimation(PlayerType.ADAMUS, Direction.RIGHT);
+        BufferedImage[] rightFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.ADAMUS, Direction.RIGHT);
         if (rightFrames != null) {
             frames = rightFrames;
             frameIndex = 0;
@@ -116,7 +116,7 @@ public class Adamus extends Player {
     public void stopMoveRight() {
         movingRight = false;
         vx = 0;
-        BufferedImage[] downFrames = AssetManager.getPlayerAnimation(PlayerType.ADAMUS, Direction.DOWN);
+        BufferedImage[] downFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.ADAMUS, Direction.DOWN);
         if (downFrames != null) {
             frames = downFrames;
             frameIndex = 0;
@@ -127,7 +127,7 @@ public class Adamus extends Player {
     public void setFacingBack(boolean b) {
         facingBack = b;
         if (facingBack) {
-            BufferedImage[] backFrames = AssetManager.getPlayerAnimation(PlayerType.ADAMUS, Direction.UP);
+            BufferedImage[] backFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.ADAMUS, Direction.UP);
             if (backFrames != null) {
                 frames = backFrames;
                 frameIndex = 0;
@@ -136,7 +136,7 @@ public class Adamus extends Player {
         } else {
             // revert to standing if no movement
             if (!movingLeft && !movingRight) {
-                BufferedImage[] downFrames = AssetManager.getPlayerAnimation(PlayerType.ADAMUS, Direction.DOWN);
+                BufferedImage[] downFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.ADAMUS, Direction.DOWN);
                 if (downFrames != null) {
                     frames = downFrames;
                     frameIndex = 0;
@@ -173,7 +173,7 @@ public class Adamus extends Player {
 
         // Determine desired direction and load frames for it if needed
         Direction dir = chooseDirection();
-        BufferedImage[] desiredFrames = AssetManager.getPlayerAnimation(PlayerType.ADAMUS, dir);
+        BufferedImage[] desiredFrames = AssetManager.getInstance().getPlayerAnimation(PlayerType.ADAMUS, dir);
 
         if (desiredFrames != null && desiredFrames != frames) {
             frames = desiredFrames;

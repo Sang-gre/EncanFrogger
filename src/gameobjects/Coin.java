@@ -32,7 +32,7 @@ public class Coin extends GameObject {
     public void draw(Graphics g) {
         if (!isActive()) return;
 
-        Image coinImage = AssetManager.getCoin("coin");
+        Image coinImage = AssetManager.getInstance().getCoin("coin");
         int scaledWidth = 30; 
         int scaledHeight = 30;
 

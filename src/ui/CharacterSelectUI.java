@@ -225,7 +225,7 @@ public class CharacterSelectUI {
             //Calculate select button dimensions based on image aspect ratio
             Rectangle orig = cardBounds[selectedIndex];
 
-            Image selectImg = AssetManager.getButton("select");
+            Image selectImg = AssetManager.getInstance().getButton("select");
             int selectOrigW = selectImg.getWidth(null);
             int selectOrigH = selectImg.getHeight(null);
             int btnW = (int) (W * 0.13);
@@ -237,7 +237,7 @@ public class CharacterSelectUI {
 
             // Calculate info card dimensions
             int infoH = (int)(orig.height * 0.6);
-            Image rawInfo = AssetManager.getInfoCard(PLAYER_TYPES[selectedIndex]);
+            Image rawInfo = AssetManager.getInstance().getInfoCard(PLAYER_TYPES[selectedIndex]);
             int infoOrigW = rawInfo.getWidth(null);
             int infoOrigH = rawInfo.getHeight(null);
             int infoW = orig.width;
@@ -274,7 +274,7 @@ public class CharacterSelectUI {
             }
 
             // Place selected card
-            Image cardImg = AssetManager.getCharacterCard(PLAYER_TYPES[selectedIndex])
+            Image cardImg = AssetManager.getInstance().getCharacterCard(PLAYER_TYPES[selectedIndex])
                     .getScaledInstance(orig.width, orig.height, Image.SCALE_SMOOTH);
             detailCardLabel.setIcon(new ImageIcon(cardImg));
             detailCardLabel.setBounds(orig.x, orig.y, orig.width, orig.height);
@@ -306,7 +306,7 @@ public class CharacterSelectUI {
 
     // draws cards
     private void setCardImage(JRadioButton btn, PlayerType type, int w, int h, boolean dimmed) {
-        Image raw = AssetManager.getCharacterCard(type);
+        Image raw = AssetManager.getInstance().getCharacterCard(type);
         if (raw == null)
             return;
 
