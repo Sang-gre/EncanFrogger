@@ -76,7 +76,7 @@ public class Adamus extends Player {
 
         Direction dir = getLastDirection();
         BufferedImage[] desiredFrames = AssetManager.getInstance()
-                .getPlayerAnimation(PlayerType.TERRA, dir);
+                .getPlayerAnimation(PlayerType.ADAMUS, dir);
 
         if (desiredFrames != null && desiredFrames != frames) {
             frames = desiredFrames;
