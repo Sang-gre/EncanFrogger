@@ -50,6 +50,8 @@ public class GamePanel extends JPanel implements KeyListener {
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
         this.assetManager = new AssetManager();
+
+        // game starts at character select
         this.state = GameState.CHARACTER_SELECT;
 
         setFocusable(true);
@@ -58,8 +60,12 @@ public class GamePanel extends JPanel implements KeyListener {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+
+                 // handle game over screen buttons
                 if (state == GameState.GAME_OVER && gameOverScreen != null && !showingLeaderboard) {
                     gameOverScreen.isBannerClicked(e.getPoint());
+
+                    // save score when OK is clicked
                     if (gameOverScreen.isOkClicked(e.getPoint())) {
                         String initials = gameOverScreen.getInitials();
                         LeaderboardManager.saveEntry(new ScoreEntry(initials, scoreManager.getScore()));
@@ -71,6 +77,7 @@ public class GamePanel extends JPanel implements KeyListener {
                     repaint();
                 }
 
+                // handle leaderboard play again button
                 if (showingLeaderboard && leaderboardScreen != null) {
                     if (leaderboardScreen.isPlayAgainClicked(e.getPoint())) {
                         showingLeaderboard = false;
@@ -86,6 +93,8 @@ public class GamePanel extends JPanel implements KeyListener {
     // Has back button on first character select
     public void showCharacterSelect() {
         stopThreads();
+
+         // remove resize listeners
         for (ComponentListener cl : getComponentListeners()) {
             removeComponentListener(cl);
         }
@@ -98,6 +107,7 @@ public class GamePanel extends JPanel implements KeyListener {
         repaint();
     }
 
+    // character select shown after level completion
     public void showCharacterSelectNextLevel() {
         stopThreads();
         for (ComponentListener cl : getComponentListeners()) {
@@ -111,6 +121,7 @@ public class GamePanel extends JPanel implements KeyListener {
         repaint();
     }
 
+     // map selection screen
     public void showMapSelect(Player selectedPlayer) {
         this.state = GameState.MAP_SELECT;
         removeAll();
@@ -120,6 +131,7 @@ public class GamePanel extends JPanel implements KeyListener {
         repaint();
     }
 
+    // starts the actual gameplay
     public void startLevel(Player selectedPlayer, GameMap map) {
         this.levelTransitioning = false;
         this.player = selectedPlayer;
@@ -133,20 +145,33 @@ public class GamePanel extends JPanel implements KeyListener {
         levelManager.loadLevel(currentLevel, currentMap);
 
         // resize player to grid cell
-        player.setSize(levelManager.getColumnWidth(), levelManager.getLaneHeight());
-        player.setStepSize(levelManager.getColumnWidth(), levelManager.getLaneHeight());
+        // resize player slightly smaller than lane for proper visual centering
+player.setSize(
+        (int) (levelManager.getColumnWidth() * 1.0),
+        (int) (levelManager.getLaneHeight() * 1.0)
+);
+
+// movement still snaps to full grid size
+player.setStepSize(
+        levelManager.getColumnWidth(),
+        levelManager.getLaneHeight()
+);
 
         // spawn player at bottom center cell
         int spawnCol = levelManager.getColumnCount() / 2;
         int spawnLane = levelManager.getLaneCount() - 1;
-        // int[] colX = levelManager.getColumnX();
-        // int[] laneY = levelManager.getLaneY();
 
-        // int x = colX[spawnCol];
-        // int y = laneY[spawnLane];
-        player.setPosition(
-                levelManager.getColumnX()[spawnCol],
-                levelManager.getLaneY()[spawnLane]);
+        // center player vertically inside lane
+        int spawnY =
+                levelManager.getLaneY()[spawnLane]
+                + (levelManager.getLaneHeight() - player.getHeight()) / 2;
+
+        // center player horizontally inside column
+        int spawnX =
+                levelManager.getColumnX()[spawnCol]
+                + (levelManager.getColumnWidth() - player.getWidth()) / 2;
+        
+        player.setPosition(spawnX, spawnY);
 
         removeAll();
         revalidate();
@@ -157,6 +182,8 @@ public class GamePanel extends JPanel implements KeyListener {
         hud = new ui.HUDpane();
         hud.setBounds(0, 0, 800, 60);
         add(hud);
+
+        // ensure HUD stays on top
         setComponentZOrder(hud, 0);
 
         // sync HUD with starting state
@@ -168,26 +195,47 @@ public class GamePanel extends JPanel implements KeyListener {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
+
                 if (levelManager == null || player == null)
                     return;
 
                 // Remember which lane and column the player is on BEFORE resize
                 int currentLane = levelManager.getLaneIndex(player.getY());
-                int currentCol = player.getX() / levelManager.getColumnWidth();
+                int currentCol =
+                        Math.round(
+                                (float) player.getX()
+                                / levelManager.getColumnWidth()
+                        );
 
                 // Recompute the grid
                 levelManager.resize(getWidth(), getHeight());
-                player.setSize(levelManager.getColumnWidth(), levelManager.getLaneHeight());
-                player.setStepSize(levelManager.getColumnWidth(), levelManager.getLaneHeight());
+                // keep player scaled properly after resize
+player.setSize(
+        (int) (levelManager.getColumnWidth() * 1.0),
+        (int) (levelManager.getLaneHeight() * 1.0)
+);
+
+player.setStepSize(
+        levelManager.getColumnWidth(),
+        levelManager.getLaneHeight()
+);
 
                 // Clamp in case grid shrunk
                 currentLane = Math.max(0, Math.min(currentLane, levelManager.getLaneCount() - 1));
                 currentCol = Math.max(0, Math.min(currentCol, levelManager.getColumnCount() - 1));
 
                 // Snap player back to the same logical cell in the new grid
-                player.setPosition(
-                        levelManager.getColumnX()[currentCol],
-                        levelManager.getLaneY()[currentLane]);
+                // preserve centered vertical alignment after resize
+                
+                int centeredX =
+                        levelManager.getColumnX()[currentCol]
+                        + (levelManager.getColumnWidth() - player.getWidth()) / 2;
+
+                int centeredY =
+                        levelManager.getLaneY()[currentLane]
+                        + (levelManager.getLaneHeight() - player.getHeight()) / 2;
+
+                player.setPosition(centeredX, centeredY);
             }
         });
 
@@ -227,38 +275,99 @@ public class GamePanel extends JPanel implements KeyListener {
         if (now - lastMoveTime < MOVE_DELAY)
             return;
 
-        int stepX = levelManager.getColumnWidth();
-
         boolean moved = false;
 
-        if (heldKeys.contains(KeyEvent.VK_LEFT) || heldKeys.contains(KeyEvent.VK_A)) {
-            if (player.getX() - stepX >= 0) {
-                player.setPosition(player.getX() - stepX, player.getY());
+         if (heldKeys.contains(KeyEvent.VK_LEFT)
+                || heldKeys.contains(KeyEvent.VK_A)) {
+
+            int currentCol =
+                    Math.round(
+                            (float) player.getX()
+                            / levelManager.getColumnWidth()
+                    );
+
+            int targetCol = currentCol - 1;
+
+            if (targetCol >= 0) {
+
+                // center player inside target column
+                int centeredX =
+                        levelManager.getColumnX()[targetCol]
+                        + (levelManager.getColumnWidth() - player.getWidth()) / 2;
+
+                player.setPosition(centeredX, player.getY());
+
+                moved = true;
+            }
+        }
+        
+
+        else if (heldKeys.contains(KeyEvent.VK_RIGHT)
+                || heldKeys.contains(KeyEvent.VK_D)) {
+
+            int currentCol =
+                    Math.round(
+                            (float) player.getX()
+                            / levelManager.getColumnWidth()
+                    );
+
+            int targetCol = currentCol + 1;
+
+            if (targetCol < levelManager.getColumnCount()) {
+
+                // center player inside target column
+                int centeredX =
+                        levelManager.getColumnX()[targetCol]
+                        + (levelManager.getColumnWidth() - player.getWidth()) / 2;
+
+                player.setPosition(centeredX, player.getY());
+
                 moved = true;
             }
         }
 
-        else if (heldKeys.contains(KeyEvent.VK_RIGHT) || heldKeys.contains(KeyEvent.VK_D)) {
-            if (player.getX() + stepX + player.getWidth() <= getWidth()) {
-                player.setPosition(player.getX() + stepX, player.getY());
-                moved = true;
-            }
-        }
+        else if (heldKeys.contains(KeyEvent.VK_UP)
+                || heldKeys.contains(KeyEvent.VK_W)) {
 
-        else if (heldKeys.contains(KeyEvent.VK_UP) || heldKeys.contains(KeyEvent.VK_W)) {
-            int lane = levelManager.getLaneIndex(player.getY());
+            int lane =
+                    levelManager.getLaneIndex(player.getY());
+
             if (lane > 0) {
-                player.setPosition(player.getX(), levelManager.getLaneY()[lane - 1]);
-                scoreManager.onPlayerMovedToLane(lane - 1); // award hop points if new furthest lane
+
+                int targetLane = lane - 1;
+
+                // center player vertically
+                int centeredY =
+                        levelManager.getLaneY()[targetLane]
+                        + (levelManager.getLaneHeight() - player.getHeight()) / 2;
+
+                player.setPosition(player.getX(), centeredY);
+
+                // award crossing points
+                scoreManager.onPlayerMovedToLane(targetLane);
+
                 moved = true;
             }
         }
 
-        else if (heldKeys.contains(KeyEvent.VK_DOWN) || heldKeys.contains(KeyEvent.VK_S)) {
-            int lane = levelManager.getLaneIndex(player.getY());
+        else if (heldKeys.contains(KeyEvent.VK_DOWN)
+                || heldKeys.contains(KeyEvent.VK_S)) {
+
+            int lane =
+                    levelManager.getLaneIndex(player.getY());
+
             if (lane < levelManager.getLaneCount() - 1) {
-                player.setPosition(player.getX(), levelManager.getLaneY()[lane + 1]);
-                moved = true; // no points for moving backward
+
+                int targetLane = lane + 1;
+
+                // center player vertically
+                int centeredY =
+                        levelManager.getLaneY()[targetLane]
+                        + (levelManager.getLaneHeight() - player.getHeight()) / 2;
+
+                player.setPosition(player.getX(), centeredY);
+
+                moved = true;
             }
         }
 
@@ -309,7 +418,20 @@ public class GamePanel extends JPanel implements KeyListener {
         }
 
         if (onPlatform) {
-            player.setPosition(player.getX() + platformDeltaX, player.getY());
+
+            player.setX(player.getX() + platformDeltaX);
+
+            // keep inside screen
+            if (player.getX() < 0) {
+                player.setX(0);
+            }
+
+            if (player.getX() + player.getWidth() > getWidth()) {
+
+                player.setX(
+                        getWidth() - player.getWidth()
+                );
+            }
         }
 
         // water lane death — only if in platform zone but not on a log
@@ -360,15 +482,23 @@ public class GamePanel extends JPanel implements KeyListener {
         int col = levelManager.getColumnCount() / 2;
         int lane = levelManager.getLaneCount() - 1;
 
-        player.setPosition(
-                levelManager.getColumnX()[col],
-                levelManager.getLaneY()[lane]);
+        // respawn player at centered bottom lane
+
+        int centeredX =
+                levelManager.getColumnX()[col]
+                + (levelManager.getColumnWidth() - player.getWidth()) / 2;
+        int centeredY =
+                levelManager.getLaneY()[lane]
+                + (levelManager.getLaneHeight() - player.getHeight()) / 2;
+
+        player.setPosition(centeredX, centeredY);
 
         levelTransitioning = false;
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        
         heldKeys.add(e.getKeyCode());
 
         int key = e.getKeyCode();
@@ -410,7 +540,7 @@ public class GamePanel extends JPanel implements KeyListener {
                 requestFocusInWindow();
             }
             repaint();
-            return;
+            
         }
     }
 
@@ -471,14 +601,9 @@ public class GamePanel extends JPanel implements KeyListener {
         if (levelManager != null)
             levelManager.draw(g, getWidth(), getHeight());
 
+        // draw player normally since movement is already grid-aligned
         if (player != null) {
-            Graphics2D g2 = (Graphics2D) g;
-            AffineTransform old = g2.getTransform();
-            g2.translate(
-                    Math.round(player.getX()) - player.getX(),
-                    Math.round(player.getY()) - player.getY());
-            player.draw(g2);
-            g2.setTransform(old);
+            player.draw(g);
         }
 
         // Game over overlay
