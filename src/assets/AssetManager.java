@@ -67,6 +67,7 @@ public class AssetManager {
         loadObstacles();
         loadPlatforms();
         loadHUD();
+        loadCoins();
         loadAllSpritesheets();
         loadFonts();
         loadGameOver();
