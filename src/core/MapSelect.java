@@ -61,22 +61,15 @@ public class MapSelect extends Selection {
         btn.addItemListener(e -> {
             boolean selected = (e.getStateChange() == ItemEvent.SELECTED);
 
-            Image img = (Image) btn.getClientProperty("img");
-
-            int scale = selected ? 110 : 100;
-
-            int width = btn.getWidth();
-            int height = btn.getHeight();
-
-            if (width <= 0 || height <= 0)
-                return;
-
-            int newW = width * scale / 100;
-            int newH = height * scale / 100;
-
-            Image scaled = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
-            btn.setIcon(new ImageIcon(scaled));
+            if (selected) {
+                // move up by reducing top margin
+                btn.setMargin(new Insets(0, 0, 20, 0));
+            } else {
+                // move back down (normal margin)
+                btn.setMargin(new Insets(20, 0, 0, 0));
+            }
         });
+
 
         return btn;
     }
