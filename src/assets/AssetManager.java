@@ -16,7 +16,8 @@ public class AssetManager {
 
     private static AssetManager instance;
 
-    // TODO: turn into singleton. Needs to change all call sites so best done when nobody else is working
+    // TODO: turn into singleton. Needs to change all call sites so best done when
+    // nobody else is working
 
     /* PLAYER ANIMATIONS */
     private final Map<PlayerType, Map<Direction, BufferedImage[]>> playerAnimations = new HashMap<>();
@@ -56,6 +57,9 @@ public class AssetManager {
     /* GAME OVER SCREEN */
     private final Map<String, Image> gameover = new HashMap<>();
 
+    /* POPUPS */
+    private final Map<String, Image> popups = new HashMap<>();
+
     private AssetManager() {
         loadBackgrounds();
         loadButtons();
@@ -71,6 +75,7 @@ public class AssetManager {
         loadAllSpritesheets();
         loadFonts();
         loadGameOver();
+        loadPopups();
     }
 
     public static AssetManager getInstance() {
@@ -99,9 +104,11 @@ public class AssetManager {
         buttons.put("back", loadImage("assets/Buttons/backButton.png"));
         buttons.put("next", loadImage("assets/Buttons/nextButton.png"));
         buttons.put("select", loadImage("assets/Buttons/selectButton.png"));
-    
+
         // Play again
         buttons.put("playAgain", loadImage("assets/Buttons/playAgainButton.png"));
+        buttons.put("ok", loadImage("assets/Buttons/okButton.png"));
+        buttons.put("ok2", loadImage("assets/Buttons/okButton2.png"));
     }
 
     private void loadObstacles() {
@@ -181,10 +188,10 @@ public class AssetManager {
     private void loadHUD() {
 
         hud.put("heart",
-                loadImage("assets/heartIcon.png"));
+                loadImage("assets/hud/heartIcon.png"));
 
         hud.put("score",
-                loadImage("assets/scoreLabel.png"));
+                loadImage("assets/hud/scoreLabel.png"));
 
         /*
          * hud.put("menu",
@@ -309,6 +316,11 @@ public class AssetManager {
         gameover.put("okButton", loadImage("assets/Buttons/okButton.png"));
     }
 
+    private void loadPopups() {
+        popups.put("characterSelect", loadImage("assets/popups/characterSelectPopup.png"));
+        popups.put("mapSelect", loadImage("assets/Popups/mapSelectPopup.png"));
+    }
+
     public Image getCharacterCard(PlayerType type) {
         return characterCards.get(type);
     }
@@ -365,5 +377,9 @@ public class AssetManager {
 
     public Image getGameOver(String key) {
         return gameover.get(key);
+    }
+
+    public Image getPopup(String key) {
+        return popups.get(key);
     }
 }

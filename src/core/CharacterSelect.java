@@ -124,4 +124,9 @@ public class CharacterSelect extends Selection {
     public boolean validateSelection() {
         return ui.isCharacterConfirmed();
     }
+
+    @Override
+    protected String getPopupKey() {
+        return "characterSelect";
+    }
 }

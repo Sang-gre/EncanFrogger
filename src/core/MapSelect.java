@@ -128,7 +128,7 @@ public class MapSelect extends Selection {
 
         for (JRadioButton btn : buttons) {
 
-             Image img = (Image) btn.getClientProperty("originalImg");
+            Image img = (Image) btn.getClientProperty("originalImg");
 
             Image scaled = img.getScaledInstance(cardWidth, cardHeight, Image.SCALE_SMOOTH);
 
@@ -165,4 +165,8 @@ public class MapSelect extends Selection {
         return false;
     }
 
+    @Override
+    protected String getPopupKey() {
+        return "mapSelect";
+    }
 }

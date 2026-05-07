@@ -22,7 +22,7 @@ public class GameOverScreen {
         bgImage     = AssetManager.getInstance().getGameOver("background");
         blankImage  = AssetManager.getInstance().getGameOver("enterInitialsBlank");
         activeImage = AssetManager.getInstance().getGameOver("enterInitials");
-        okImage     = AssetManager.getInstance().getGameOver("okButton");
+        okImage     = AssetManager.getInstance().getButton("ok");
     }
 
     public void draw(Graphics g, int w, int h) {
