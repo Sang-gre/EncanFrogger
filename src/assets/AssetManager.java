@@ -223,11 +223,11 @@ public class AssetManager {
     private static void loadAllSpritesheets() {
         try {
             // columns = frames per row, rows = 4 directions (DOWN, LEFT, RIGHT, UP)
-            loadSpritesheet(PlayerType.PAOPAO, "assets/spritesheets/paopaoSpritesheet.png", 7, 4);
-            loadSpritesheet(PlayerType.DEIA, "assets/spritesheets/deiaSpritesheet.png", 6, 4);
-            loadSpritesheet(PlayerType.FLAMARA, "assets/spritesheets/flammaraSpritesheet.png", 5, 4);
-            loadSpritesheet(PlayerType.TERRA, "assets/spritesheets/terraSpritesheet.png", 7, 4);
-            loadSpritesheet(PlayerType.ADAMUS, "assets/spritesheets/adamusSpritesheet.png", 6, 4);
+            loadSpritesheet(PlayerType.PAOPAO, "assets/spritesheets/paopaoSpritesheet.png", 9, 4);
+            loadSpritesheet(PlayerType.DEIA, "assets/spritesheets/deiaSpritesheet.png", 9, 4);
+            loadSpritesheet(PlayerType.FLAMARA, "assets/spritesheets/flammaraSpritesheet.png", 9, 4);
+            loadSpritesheet(PlayerType.TERRA, "assets/spritesheets/terraSpritesheet.png", 9, 4);
+            loadSpritesheet(PlayerType.ADAMUS, "assets/spritesheets/adamusSpritesheet.png", 9, 4);
         } catch (IOException e) {
             System.err.println("[AssetManager] Failed to load one or more spritesheets:");
             e.printStackTrace();
