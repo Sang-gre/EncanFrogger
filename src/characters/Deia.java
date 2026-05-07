@@ -20,15 +20,7 @@ public class Deia extends Player {
     private BufferedImage[] frames;
     private int frameIndex = 0;
     private int frameTimer = 0;
-    private int frameDelay = 20; // ticks per frame
-
-    // Movement flags
-    private boolean movingLeft = false;
-    private boolean movingRight = false;
-    private boolean facingBack = false;
-    private final int moveSpeed = 4;
-    protected int vx = 0;
-    protected int vy = 0;
+    private int frameDelay = 10;
 
     public Deia(int x, int y) {
         super(x, y, PlayerType.DEIA);
@@ -59,60 +51,16 @@ public class Deia extends Player {
         return windShield;
     }
 
-    // Movement control
-    public void startMoveLeft() {
-        movingLeft = true; movingRight = false; facingBack = false;
-        vx = -moveSpeed;
-        BufferedImage[] left = AssetManager.getInstance().getPlayerAnimation(PlayerType.DEIA, Direction.LEFT);
-        if (left != null) { frames = left; frameIndex = 0; frameTimer = 0; }
-    }
-
-    public void stopMoveLeft() {
-        movingLeft = false; vx = 0;
-        BufferedImage[] down = AssetManager.getInstance().getPlayerAnimation(PlayerType.DEIA, Direction.DOWN);
-        if (down != null) { frames = down; frameIndex = 0; frameTimer = 0; }
-    }
-
-    public void startMoveRight() {
-        movingRight = true; movingLeft = false; facingBack = false;
-        vx = moveSpeed;
-        BufferedImage[] right = AssetManager.getInstance().getPlayerAnimation(PlayerType.DEIA, Direction.RIGHT);
-        if (right != null) { frames = right; frameIndex = 0; frameTimer = 0; }
-    }
-
-    public void stopMoveRight() {
-        movingRight = false; vx = 0;
-        BufferedImage[] down = AssetManager.getInstance().getPlayerAnimation(PlayerType.DEIA, Direction.DOWN);
-        if (down != null) { frames = down; frameIndex = 0; frameTimer = 0; }
-    }
-
-    public void setFacingBack(boolean b) {
-        facingBack = b;
-        if (facingBack) {
-            BufferedImage[] back = AssetManager.getInstance().getPlayerAnimation(PlayerType.DEIA, Direction.UP);
-            if (back != null) { frames = back; frameIndex = 0; frameTimer = 0; }
-        } else if (!movingLeft && !movingRight) {
-            BufferedImage[] down = AssetManager.getInstance().getPlayerAnimation(PlayerType.DEIA, Direction.DOWN);
-            if (down != null) { frames = down; frameIndex = 0; frameTimer = 0; }
-        }
-    }
-
-    private Direction chooseDirection() {
-        if (facingBack) return Direction.UP;
-        if (movingLeft) return Direction.LEFT;
-        if (movingRight) return Direction.RIGHT;
-        return Direction.DOWN;
-    }
-
     @Override
     public void update() {
         super.update();
 
-        // Animation update
-        Direction dir = chooseDirection();
-        BufferedImage[] desired = AssetManager.getInstance().getPlayerAnimation(PlayerType.DEIA, dir);
-        if (desired != null && desired != frames) {
-            frames = desired;
+        Direction dir = getLastDirection();
+        BufferedImage[] desiredFrames = AssetManager.getInstance()
+                .getPlayerAnimation(PlayerType.DEIA, dir);
+
+        if (desiredFrames != null && desiredFrames != frames) {
+            frames = desiredFrames;
             frameIndex = 0;
             frameTimer = 0;
         }
@@ -124,26 +72,18 @@ public class Deia extends Player {
                 frameIndex = (frameIndex + 1) % frames.length;
             }
         }
-
-        x += vx;
-        y += vy;
     }
 
     @Override
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         Composite original = g2d.getComposite();
+
         if (windShield) {
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
 
-        if (frames != null && frames.length > 0) {
-            BufferedImage img = frames[frameIndex];
-            g2d.drawImage(img, x, y, width, height, null);
-        } else {
-            g2d.setColor(new Color(160, 80, 200));
-            g2d.fillRect(x, y, width, height);
-        }
+        super.draw(g); // handles all sizing, anchoring, debug hitbox
 
         g2d.setComposite(original);
     }
@@ -157,6 +97,21 @@ public class Deia extends Player {
         }
     }
 
-    public int getPhaseCount() { return phaseCount; }
-    public boolean isWindShield() { return windShield; }
+    public int getPhaseCount() {
+        return phaseCount;
+    }
+
+    public boolean isWindShield() {
+        return windShield;
+    }
+
+    @Override
+    protected BufferedImage[] getCurrentFrames() {
+        return frames;
+    }
+
+    @Override
+    protected int getCurrentFrameIndex() {
+        return frameIndex;
+    }
 }

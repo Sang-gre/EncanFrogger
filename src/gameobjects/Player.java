@@ -20,18 +20,23 @@ public abstract class Player extends GameObject {
     private int stepY;
     protected Direction lastDirection = Direction.DOWN;
     private int invincibilityFrames = 0;
+    private boolean onPlatform = false;
+    private int directionResetTimer = 0;
+    private static final int DIRECTION_RESET_DELAY = 20;
+    private boolean movedThisTick = false;
+    private int visualWidth = 80;
+    private int visualHeight = 80;
 
     public Player(int x, int y, PlayerType type) {
         super(x, y, 40, 40, 5);
+        this.stepX = 40;
+        this.stepY = 40;
 
         this.lives = 3;
         this.coins = 0;
         this.level = 1;
         this.abilityReady = true;
         this.type = type;
-
-        this.stepX = 40;
-        this.stepY = 40;
     }
 
     @Override
@@ -78,9 +83,10 @@ public abstract class Player extends GameObject {
 
     @Override
     public void update() {
-        if (invincibilityFrames > 0) invincibilityFrames--;
-        boolean isMoving = (direction != null);
+        if (invincibilityFrames > 0)
+            invincibilityFrames--;
 
+        boolean isMoving = (direction != null);
         move();
 
         if (isMoving) {
@@ -92,6 +98,19 @@ public abstract class Player extends GameObject {
         } else {
             animationFrame = 0;
         }
+
+        // Direction reset timer
+        if (movedThisTick) {
+            directionResetTimer = DIRECTION_RESET_DELAY;
+        } else {
+            if (directionResetTimer > 0) {
+                directionResetTimer--;
+                if (directionResetTimer == 0) {
+                    lastDirection = Direction.DOWN;
+                }
+            }
+        }
+        movedThisTick = false; // auto-reset each update
 
         if (!abilityReady) {
             cooldownTimer--;
@@ -108,16 +127,31 @@ public abstract class Player extends GameObject {
 
     @Override
     public void draw(Graphics g) {
+        BufferedImage[] currentFrames = getCurrentFrames();
+        int currentIndex = getCurrentFrameIndex();
+        
+        int drawX = x - (visualWidth - width) / 2;
+        int drawY = isOnPlatform()
+                ? (y + height) - visualHeight
+                : y - (visualHeight - height) / 2;
 
-        BufferedImage[] frames = AssetManager.getInstance().getPlayerAnimation(type, getLastDirection());
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 
-        if (frames != null) {
-            BufferedImage currentFrame = frames[animationFrame % frames.length];
-            g.drawImage(currentFrame, x, y, width, height, null);
+        if (currentFrames != null && currentFrames.length > 0) {
+            g2d.drawImage(currentFrames[currentIndex % currentFrames.length],
+                    drawX, drawY, visualWidth, visualHeight, null);
         } else {
-            g.setColor(Color.GREEN);
-            g.fillRect(x, y, width, height);
+            g2d.setColor(Color.GREEN);
+            g2d.fillRect(drawX, drawY, visualWidth, visualHeight);
         }
+
+        /* g2d.setColor(new Color(255, 0, 0, 60));
+        g2d.fillRect(x, y, width, height);
+        g2d.setColor(Color.RED);
+        g2d.setStroke(new BasicStroke(2));
+        g2d.drawRect(x, y, width, height); */
     }
 
     @Override
@@ -135,6 +169,14 @@ public abstract class Player extends GameObject {
         if (direction != null) {
             lastDirection = direction;
         }
+    }
+
+    protected BufferedImage[] getCurrentFrames() {
+        return AssetManager.getInstance().getPlayerAnimation(type, getLastDirection());
+    }
+
+    protected int getCurrentFrameIndex() {
+        return animationFrame;
     }
 
     public Direction getDirection() {
@@ -168,5 +210,34 @@ public abstract class Player extends GameObject {
 
     protected void setAbilityReady(boolean ready) {
         this.abilityReady = ready;
+    }
+
+    public void setOnPlatform(boolean onPlatform) {
+        this.onPlatform = onPlatform;
+    }
+
+    public boolean isOnPlatform() {
+        return onPlatform;
+    }
+
+    public void setLastDirection(Direction direction) {
+        this.lastDirection = direction;
+    }
+
+    public void setMovedThisTick(boolean moved) {
+        this.movedThisTick = moved;
+    }
+
+    public void setVisualSize(int w, int h) {
+        this.visualWidth = w;
+        this.visualHeight = h;
+    }
+
+    public int getVisualWidth() {
+        return visualWidth;
+    }
+
+    public int getVisualHeight() {
+        return visualHeight;
     }
 }
