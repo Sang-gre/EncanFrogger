@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import ui.CursorGlassPane;
+import managers.AssetManager;
 
 public class GameLauncher extends JFrame {
 
