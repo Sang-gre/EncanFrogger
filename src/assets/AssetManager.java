@@ -16,9 +16,6 @@ public class AssetManager {
 
     private static AssetManager instance;
 
-    // TODO: turn into singleton. Needs to change all call sites so best done when
-    // nobody else is working
-
     /* PLAYER ANIMATIONS */
     private final Map<PlayerType, Map<Direction, BufferedImage[]>> playerAnimations = new HashMap<>();
 
@@ -92,6 +89,7 @@ public class AssetManager {
         backgrounds.put("characterSelect", loadImage("assets/Backgrounds/chooseCharacterBackground.png"));
         backgrounds.put("mapSelect", loadImage("assets/Backgrounds/mapSelectBackground.png"));
         backgrounds.put("leaderboard", loadImage("assets/Backgrounds/leaderboardPanel.png"));
+        backgrounds.put("initials", loadImage("assets/Backgrounds/initialsBackground.png"));
     }
 
     private void loadButtons() {
@@ -319,6 +317,7 @@ public class AssetManager {
     private void loadPopups() {
         popups.put("characterSelect", loadImage("assets/popups/characterSelectPopup.png"));
         popups.put("mapSelect", loadImage("assets/Popups/mapSelectPopup.png"));
+        popups.put("initialsInput", loadImage("assets/Popups/initialsInputPopup.png"));
     }
 
     public Image getCharacterCard(PlayerType type) {
