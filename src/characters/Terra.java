@@ -19,7 +19,7 @@ public class Terra extends Player {
     private BufferedImage[] frames;
     private int frameIndex = 0;
     private int frameTimer = 0;
-    private int frameDelay = 10;
+    private int frameDelay = 7;
 
     public Terra(int x, int y) {
         super(x, y, PlayerType.TERRA);

@@ -31,7 +31,7 @@ public class Adamus extends Player {
     private BufferedImage[] frames; // current direction frames
     private int frameIndex = 0; // current frame index
     private int frameTimer = 0; // ticks since last frame advance
-    private final int frameDelay = 10; // ticks per frame (tweak for speed)
+    private final int frameDelay = 7; // ticks per frame (tweak for speed)
 
     public Adamus(int x, int y) {
         super(x, y, PlayerType.ADAMUS);

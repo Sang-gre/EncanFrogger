@@ -14,7 +14,7 @@ public class Paopao extends Player {
     private BufferedImage[] frames;
     private int frameIndex = 0;
     private int frameTimer = 0;
-    private final int frameDelay = 10;
+    private final int frameDelay = 5;
 
     public Paopao(int x, int y) {
         super(x, y, PlayerType.PAOPAO);

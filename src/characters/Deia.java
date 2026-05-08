@@ -20,7 +20,7 @@ public class Deia extends Player {
     private BufferedImage[] frames;
     private int frameIndex = 0;
     private int frameTimer = 0;
-    private int frameDelay = 10;
+    private int frameDelay = 5;
 
     public Deia(int x, int y) {
         super(x, y, PlayerType.DEIA);

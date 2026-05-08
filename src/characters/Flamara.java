@@ -21,7 +21,7 @@ public class Flamara extends Player {
     private BufferedImage[] frames;
     private int frameIndex = 0;
     private int frameTimer = 0;
-    private int frameDelay = 10;
+    private int frameDelay = 6;
 
     public Flamara(int x, int y) {
         super(x, y, PlayerType.FLAMARA);
