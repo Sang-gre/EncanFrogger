@@ -1,6 +1,5 @@
 package main;
 
-import assets.AssetManager;
 import core.GamePanel;
 import ui.InstructionsPanel;
 import java.awt.*;

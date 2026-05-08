@@ -1,7 +1,8 @@
 package gameobjects;
 
-import assets.AssetManager;
 import java.awt.*;
+
+import managers.AssetManager;
 
 
 public class Coin extends GameObject {

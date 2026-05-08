@@ -1,7 +1,8 @@
 package core;
 
-import assets.AssetManager;
 import gameobjects.Player;
+import managers.AssetManager;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

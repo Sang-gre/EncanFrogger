@@ -1,21 +1,26 @@
 package main;
 
-import assets.AssetManager;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import managers.AssetManager;
+import managers.SoundManager;
+
 public class TitlePanel extends JPanel {
 
     GameLauncher parent;
+    SoundManager sound;
     private Image background;
     private Image titleFont;
 
     public TitlePanel(GameLauncher parent) {
         this.parent = parent;
+        sound = new SoundManager();
 
         background = AssetManager.getInstance().getBackground("title");
         titleFont = AssetManager.getInstance().getBackground("titleFont");
+        sound.playBGM("menu");
 
         setLayout(null);
 

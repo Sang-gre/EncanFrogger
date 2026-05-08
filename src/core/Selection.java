@@ -1,9 +1,10 @@
 package core;
 
-import assets.AssetManager;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import managers.AssetManager;
 
 public abstract class Selection extends JPanel {
 

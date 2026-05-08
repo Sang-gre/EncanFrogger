@@ -1,12 +1,13 @@
 package core;
 
-import assets.AssetManager;
 import characters.Adamus;
 import characters.Deia;
 import characters.Flamara;
 import characters.Paopao;
 import characters.Terra;
 import gameobjects.Player;
+import managers.AssetManager;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
