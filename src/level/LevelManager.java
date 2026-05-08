@@ -422,9 +422,6 @@ public class LevelManager {
 
             Coin coin = new Coin(x, y, COIN_SIZE, COIN_SIZE);
 
-            // ============================
-            // PLATFORM COINS (FIXED)
-            // ============================
             if (isPlatformLane(lane)) {
 
                 List<Platform> candidates = new ArrayList<>();
@@ -453,10 +450,6 @@ public class LevelManager {
                 }
 
             } else {
-
-                // ============================
-                // NORMAL GRID COINS (10-COLUMN FIXED)
-                // ============================
 
                 boolean collides = false;
 
