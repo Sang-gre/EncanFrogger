@@ -16,6 +16,9 @@ public class AssetManager {
 
     private static AssetManager instance;
 
+    /* GAME LOGO/ICON */
+    private final Map<String, ImageIcon> logo = new HashMap<>();
+
     /* PLAYER ANIMATIONS */
     private final Map<PlayerType, Map<Direction, BufferedImage[]>> playerAnimations = new HashMap<>();
 
@@ -58,6 +61,7 @@ public class AssetManager {
     private final Map<String, Image> popups = new HashMap<>();
 
     private AssetManager() {
+        loadLogo();
         loadBackgrounds();
         loadButtons();
         loadCursor();
@@ -80,6 +84,10 @@ public class AssetManager {
             instance = new AssetManager();
         }
         return instance;
+    }
+
+    private void loadLogo() {
+        logo.put("logo", new ImageIcon("assets/gameLogo.png"));
     }
 
     private void loadBackgrounds() {
@@ -352,6 +360,12 @@ public class AssetManager {
     public Image getButton(String key) {
         return buttons.get(key);
     }
+
+    public Image getLogoImage(String key) {
+        ImageIcon icon = logo.get(key);
+        return (icon != null) ? icon.getImage() : null;
+    }
+
 
     public Image getObstacle(String key) {
         return obstacles.get(key);

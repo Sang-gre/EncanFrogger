@@ -36,6 +36,12 @@ public class GameLauncher extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        Image icon = AssetManager.getInstance().getLogoImage("logo");
+        
+        if (icon != null) {
+            setIconImage(icon);
+        }
+
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
