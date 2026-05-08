@@ -90,6 +90,11 @@ public class AssetManager {
         backgrounds.put("mapSelect", loadImage("assets/Backgrounds/mapSelectBackground.png"));
         backgrounds.put("leaderboard", loadImage("assets/Backgrounds/leaderboardPanel.png"));
         backgrounds.put("initials", loadImage("assets/Backgrounds/initialsBackground.png"));
+        backgrounds.put("instruction1", loadImage("assets/instructions/page1.png"));
+        backgrounds.put("instruction2", loadImage("assets/instructions/page2.png"));
+        backgrounds.put("instruction3", loadImage("assets/instructions/page3.png"));
+        backgrounds.put("instruction4", loadImage("assets/instructions/page4.png"));
+        backgrounds.put("instruction5", loadImage("assets/instructions/page5.png"));
     }
 
     private void loadButtons() {
@@ -105,7 +110,11 @@ public class AssetManager {
 
         // Play again
         buttons.put("playAgain", loadImage("assets/Buttons/playAgainButton.png"));
-        buttons.put("ok", loadImage("assets/Buttons/okButton.png"));
+        buttons.put("ok", loadImage("assets/Buttons/okButton.png"));        // idk where this is used since removed na siya sa play again
+        buttons.put("yes", loadImage("assets/Buttons/yesButton.png"));
+        buttons.put("no", loadImage("assets/Buttons/noButton.png"));
+
+        // Popup Dialog
         buttons.put("ok2", loadImage("assets/Buttons/okButton2.png"));
     }
 

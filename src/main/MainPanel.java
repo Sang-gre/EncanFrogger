@@ -58,11 +58,11 @@ public class MainPanel extends JPanel {
 
         startBttn.addActionListener(e -> {
             sound.play("click");
-            parent.startGame();
+            parent.showInitialsPanel();
         });
         menuBttn.addActionListener(e -> {
             sound.play("click");
-            parent.menuGame();
+            parent.showInstructions();
         });
         exitBttn.addActionListener(e -> {
             sound.play("click");

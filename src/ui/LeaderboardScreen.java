@@ -11,8 +11,10 @@ public class LeaderboardScreen {
 
     private Image panelImg;
     private Image playAgainImg;
+    private Image backImg;
 
     private Rectangle playAgainBounds;
+    private Rectangle backBounds;
 
     private int scrollOffset = 0;
     private static final int VISIBLE_ROWS = 4;
@@ -22,6 +24,7 @@ public class LeaderboardScreen {
         panelImg = AssetManager.getInstance().getBackground("leaderboard");
         playAgainImg = AssetManager.getInstance().getButton("playAgain");
         entries = LeaderboardManager.loadAll();
+        backImg = AssetManager.getInstance().getButton("back");
     }
 
     public void scroll(int direction) {
@@ -133,6 +136,16 @@ public class LeaderboardScreen {
             g2.setStroke(new BasicStroke(1));
         }
 
+        // --- Back button ---
+        int backH = (int) (screenH * 0.20);
+        int backW = (int) (backH * ((double) backImg.getWidth(null) / backImg.getHeight(null)));
+        int backX = (int) (screenW * 0.02);
+        int backY = (int) (screenH * 0.8);
+
+        backBounds = new Rectangle(backX, backY, backW, backH);
+        if (backImg != null)
+            g2.drawImage(backImg, backX, backY, backW, backH, null);
+
         // --- Play Again button ---
         int btnH = (int) (screenH * 0.20);
         int btnW = (int) (btnH * ((double) playAgainImg.getWidth(null) / playAgainImg.getHeight(null)));
@@ -146,5 +159,9 @@ public class LeaderboardScreen {
 
     public boolean isPlayAgainClicked(Point p) {
         return playAgainBounds != null && playAgainBounds.contains(p);
+    }
+
+    public boolean isBackClicked(Point p) {
+        return backBounds != null && backBounds.contains(p);
     }
 }
