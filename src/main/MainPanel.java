@@ -3,7 +3,6 @@ package main;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
 import managers.AssetManager;
 
 
@@ -54,8 +53,8 @@ public class MainPanel extends JPanel {
 
         add(buttonPanel);
 
-        startBttn.addActionListener(e -> parent.showInitialsPanel());
-        menuBttn.addActionListener(e -> parent.menuGame());
+        startBttn.addActionListener(e -> parent.showInitialsPanel());;
+        menuBttn.addActionListener(e -> parent.showInstructions());
         exitBttn.addActionListener(e -> System.exit(0));
     }
 

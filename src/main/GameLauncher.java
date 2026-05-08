@@ -10,6 +10,7 @@ import managers.AssetManager;
 import persistence.LeaderboardManager;
 import persistence.ScoreEntry;
 import ui.CursorGlassPane;
+import ui.InstructionsPanel;
 
 public class GameLauncher extends JFrame {
 
@@ -18,6 +19,7 @@ public class GameLauncher extends JFrame {
 
     private final TitlePanel gameLaunch;
     private final MainPanel secondPage;
+    private final InstructionsPanel instructionsPanel;
     private final GamePanel gamePanel;
     private InitialsPanel initialsPanel;
 
@@ -39,6 +41,7 @@ public class GameLauncher extends JFrame {
 
         gameLaunch = new TitlePanel(this);
         secondPage = new MainPanel(this);
+        instructionsPanel = new InstructionsPanel(this);
         gamePanel = new GamePanel(this);
         initialsPanel = new InitialsPanel(
                 this::menuGame,
@@ -71,6 +74,7 @@ public class GameLauncher extends JFrame {
         mainPanel.add(gameLaunch, "Launch");
         mainPanel.add(secondPage, "Menu");
         mainPanel.add(initialsPanel, "Initials");
+        mainPanel.add(instructionsPanel, "Instructions");
         mainPanel.add(gamePanel, "Game");
 
         add(mainPanel);
@@ -145,6 +149,17 @@ public class GameLauncher extends JFrame {
         cardLayout.show(mainPanel, "Initials");
         SwingUtilities.invokeLater(initialsPanel::activate);
     }
+    public void showMainMenu() {
+        cardLayout.show(mainPanel, "Menu");
+}
+
+    public void showInstructions() {
+        cardLayout.show(mainPanel, "Instructions");
+
+    SwingUtilities.invokeLater(() -> {
+        instructionsPanel.requestFocusInWindow();
+    });
+}
 
     public void startGame() {
         cardLayout.show(mainPanel, "Game");
