@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.function.Consumer;
 import javax.swing.*;
-import managers.AssetManager;
+import assets.AssetManager;
 import ui.PopupDialog;
 
 public class InitialsPanel extends JPanel implements KeyListener {

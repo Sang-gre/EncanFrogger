@@ -2,7 +2,7 @@ package ui;
 
 import java.awt.*;
 import javax.swing.*;
-import managers.AssetManager;
+import assets.AssetManager;
 
 public class PopupDialog {
 

@@ -1,6 +1,6 @@
 package ui;
 
-import managers.AssetManager;
+import assets.AssetManager;
 import main.GameLauncher;
 
 import javax.swing.*;
