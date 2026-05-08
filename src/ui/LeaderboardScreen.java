@@ -138,7 +138,7 @@ public class LeaderboardScreen {
         // --- Back button ---
         int backH = (int) (screenH * 0.20);
         int backW = (int) (backH * ((double) backImg.getWidth(null) / backImg.getHeight(null)));
-        int backX = (int) (screenW * 0.06);
+        int backX = (int) (screenW * 0.02);
         int backY = (int) (screenH * 0.8);
 
         backBounds = new Rectangle(backX, backY, backW, backH);

@@ -6,6 +6,7 @@ TWENYTHREE,1520,2,false
 FIVE,1500,2,false
 ELEVEN,1440,2,true
 NINE,130,1,false
+NAME,100,1,false
 NINETEEN,90,1,false
 TWENTY,80,1,false
 TWENTYSEVE,80,1,false
