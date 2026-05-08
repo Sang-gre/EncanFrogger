@@ -3,8 +3,8 @@ package core;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
 import managers.AssetManager;
+import ui.PopupDialog;
 
 public abstract class Selection extends JPanel {
 
@@ -145,50 +145,14 @@ public abstract class Selection extends JPanel {
     }
 
     private void showPopupDialog() {
-        Window ancestor = SwingUtilities.getWindowAncestor(this);
-        int parentW = ancestor.getWidth();
-
-        int popW = (int) (parentW * 0.55);
-        popW = Math.max(500, Math.min(popW, 900));
-        int popH = (int) (popW * (300.0 / 520.0));
-
         Image popupImg = getPopupKey() != null
                 ? AssetManager.getInstance().getPopup(getPopupKey())
                 : null;
-
         if (popupImg == null) {
             JOptionPane.showMessageDialog(this, "Please make a selection!");
             return;
         }
-
-        JDialog dialog = new JDialog((Frame) ancestor, true);
-        dialog.setUndecorated(true);
-        dialog.setBackground(new Color(0, 0, 0, 0));
-
-        int btnW = (int) (popW * 0.35);
-        int btnH = (int) (btnW * (70.0 / 180.0));
-
-        JPanel content = new JPanel(null) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(popupImg, 0, 0, getWidth(), getHeight(), this);
-            }
-        };
-        content.setOpaque(false);
-
-        Image okImg = AssetManager.getInstance().getButton("ok2");
-        JButton okBtn = createImageButton(okImg, btnW, btnH);
-        okBtn.addActionListener(e -> dialog.dispose());
-        content.add(okBtn);
-
-        okBtn.setBounds(popW / 2 - btnW / 2, (int) (popH * 0.55), btnW, btnH);
-
-        content.setPreferredSize(new Dimension(popW, popH));
-        dialog.setContentPane(content);
-        dialog.pack();
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
+        PopupDialog.show(this, popupImg);
     }
 
     public GamePanel getGamePanel() {

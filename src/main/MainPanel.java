@@ -54,7 +54,7 @@ public class MainPanel extends JPanel {
 
         add(buttonPanel);
 
-        startBttn.addActionListener(e -> parent.startGame());
+        startBttn.addActionListener(e -> parent.showInitialsPanel());
         menuBttn.addActionListener(e -> parent.menuGame());
         exitBttn.addActionListener(e -> System.exit(0));
     }

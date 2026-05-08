@@ -87,4 +87,8 @@ public class ScoreManager {
     public boolean isTimeUp() {
         return timeRemaining <= 0;
     }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
 }
