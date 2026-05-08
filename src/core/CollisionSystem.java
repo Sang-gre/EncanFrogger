@@ -5,12 +5,14 @@ import gameobjects.GameObject;
 import gameobjects.Obstacle;
 import gameobjects.Platform;
 import gameobjects.Player;
+import assets.SoundManager;
 import java.awt.Rectangle;
 import java.util.List;
 
 public class CollisionSystem {
 
     private int coinsCollected = 0; // running total, read by GamePanel to detect new pickups
+    private SoundManager sound = new SoundManager();
 
     public boolean checkAABB(GameObject a, GameObject b) {
         if (a == null || b == null)
@@ -39,6 +41,7 @@ public class CollisionSystem {
             if (!coin.isCollected()) {
                 ((Player) a).addCoins(1);
                 coin.onCollide(a);
+                sound.play("coin");
                 coinsCollected++; // increment so GamePanel can detect the pickup
             }
             return;
@@ -47,6 +50,7 @@ public class CollisionSystem {
         // player + obstacle
         if (a instanceof Player && b instanceof Obstacle) {
             a.onCollide(b);
+            sound.play("death");
             return;
         }
 

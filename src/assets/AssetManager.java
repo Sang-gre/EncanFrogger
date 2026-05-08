@@ -1,4 +1,4 @@
-package managers;
+package assets;
 
 import core.GameMap;
 import gameobjects.PlayerType;

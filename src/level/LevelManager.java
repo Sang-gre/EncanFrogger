@@ -4,12 +4,13 @@ import core.GameMap;
 import gameobjects.Coin;
 import gameobjects.Obstacle;
 import gameobjects.Platform;
-import managers.AssetManager;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import assets.AssetManager;
 
 public class LevelManager {
 
@@ -194,6 +195,8 @@ public class LevelManager {
         spawnCoins();
 
         background = AssetManager.getInstance().getMapBackground(map);
+
+        
     }
 
     private void assignLaneTypesForMap(GameMap map) {
@@ -409,7 +412,6 @@ public class LevelManager {
 
             int lane = rng.nextInt(LANE_COUNT);
 
-            // ❌ NO COINS ON TOP 2 LANES
             if (isTopTwoLanes(lane)) {
                 attempts++;
                 continue;

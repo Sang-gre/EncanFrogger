@@ -4,8 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import managers.AssetManager;
-import managers.SoundManager;
+import assets.AssetManager;
+import assets.SoundManager;
 
 public class TitlePanel extends JPanel {
 

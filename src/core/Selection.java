@@ -4,12 +4,14 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import managers.AssetManager;
+import assets.AssetManager;
+import assets.SoundManager;
 
 public abstract class Selection extends JPanel {
 
     private final GamePanel gamePanel;
     protected final Runnable onBack;
+    private SoundManager sound = new SoundManager();
 
     public Selection(GamePanel gamePanel, Runnable onBack) {
         this.gamePanel = gamePanel;
@@ -52,7 +54,10 @@ public abstract class Selection extends JPanel {
 
         if (onBack != null) {
             backBtn = createImageButton(AssetManager.getInstance().getButton("back"), btnWidth, btnHeight);
-            backBtn.addActionListener(e -> onBack.run());
+            backBtn.addActionListener(e -> {
+                onBack.run();
+                sound.play("click");
+            });
             panel.add(backBtn);
         }
 
@@ -62,6 +67,7 @@ public abstract class Selection extends JPanel {
                 showPopupDialog();
                 return;
             }
+            sound.play("click");
             onNext();
         });
 

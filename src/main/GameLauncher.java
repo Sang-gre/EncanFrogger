@@ -1,11 +1,12 @@
 package main;
 
 import core.GamePanel;
-import managers.AssetManager;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import assets.AssetManager;
 import ui.CursorGlassPane;
 
 public class GameLauncher extends JFrame {
@@ -32,7 +33,7 @@ public class GameLauncher extends JFrame {
         gamePanel = new GamePanel(this);
 
         mainPanel.add(gameLaunch, "Launch");
-        mainPanel.add(secondPage, "Menu");
+        mainPanel.add(secondPage, "Menu"); 
         mainPanel.add(gamePanel, "Game");
 
         add(mainPanel);

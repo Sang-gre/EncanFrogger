@@ -4,7 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import managers.AssetManager;
+import assets.AssetManager;
+import assets.SoundManager;
 
 
 public class MainPanel extends JPanel {
@@ -13,8 +14,9 @@ public class MainPanel extends JPanel {
     JButton menuBttn;
     JButton exitBttn;
 
-    JPanel buttonPanel;
-    GameLauncher parent;
+    private JPanel buttonPanel;
+    private GameLauncher parent;
+    private SoundManager sound = new SoundManager();
 
     private Image background;
 
@@ -54,9 +56,18 @@ public class MainPanel extends JPanel {
 
         add(buttonPanel);
 
-        startBttn.addActionListener(e -> parent.startGame());
-        menuBttn.addActionListener(e -> parent.menuGame());
-        exitBttn.addActionListener(e -> System.exit(0));
+        startBttn.addActionListener(e -> {
+            sound.play("click");
+            parent.startGame();
+        });
+        menuBttn.addActionListener(e -> {
+            sound.play("click");
+            parent.menuGame();
+        });
+        exitBttn.addActionListener(e -> {
+            sound.play("click");
+            System.exit(0);
+        });
     }
 
     private JButton createButton(Image img) {

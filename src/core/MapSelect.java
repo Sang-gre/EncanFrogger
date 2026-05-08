@@ -1,11 +1,12 @@
 package core;
 
 import gameobjects.Player;
-import managers.AssetManager;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import assets.AssetManager;
 
 public class MapSelect extends Selection {
 

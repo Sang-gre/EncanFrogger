@@ -3,7 +3,7 @@ package ui;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-import managers.AssetManager;
+import assets.AssetManager;
 
 public class GameOverScreen {
 

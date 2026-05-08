@@ -5,8 +5,9 @@ import gameobjects.Player;
 import gameobjects.PlayerType;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+
+import assets.AssetManager;
 import level.Direction;
-import managers.AssetManager;
 
 public class Flamara extends Player {
 

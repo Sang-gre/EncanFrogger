@@ -3,7 +3,7 @@ package ui;
 import java.awt.*;
 import java.util.List;
 
-import managers.AssetManager;
+import assets.AssetManager;
 import persistence.LeaderboardManager;
 import persistence.ScoreEntry;
 

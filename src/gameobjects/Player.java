@@ -2,8 +2,9 @@ package gameobjects;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+
+import assets.AssetManager;
 import level.Direction;
-import managers.AssetManager;
 
 public abstract class Player extends GameObject {
 
@@ -41,10 +42,12 @@ public abstract class Player extends GameObject {
 
     @Override
     public void move() {
+        
         if (direction == null)
             return;
 
         lastDirection = direction;
+
 
         switch (direction) {
             case UP:

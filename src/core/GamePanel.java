@@ -7,10 +7,11 @@ import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.*;
+
+import assets.SoundManager;
 import level.Direction;
 import level.LevelManager;
 import main.GameLauncher;
-import managers.SoundManager;
 import persistence.LeaderboardManager;
 import persistence.ScoreEntry;
 import threads.GameLogicThread;
@@ -25,6 +26,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private LevelManager levelManager;
     private CollisionSystem collisionSystem;
     private ScoreManager scoreManager = new ScoreManager();
+    private SoundManager sound = new SoundManager();
 
     private GameLogicThread logicThread;
     private RenderThread renderThread;
@@ -106,6 +108,8 @@ public class GamePanel extends JPanel implements KeyListener {
     // character select shown after level completion
     public void showCharacterSelectNextLevel() {
         stopThreads();
+        sound.stopBGM();
+        sound.playBGM("menu");
         for (ComponentListener cl : getComponentListeners()) {
             removeComponentListener(cl);
         }
@@ -133,6 +137,9 @@ public class GamePanel extends JPanel implements KeyListener {
         this.player = selectedPlayer;
         this.state = GameState.PLAYING;
         this.currentMap = map;
+        sound.stopBGM();
+        sound.playBGM("game");
+
 
         this.levelManager = new LevelManager(getWidth(), getHeight());
         this.collisionSystem = new CollisionSystem();
@@ -276,6 +283,7 @@ public class GamePanel extends JPanel implements KeyListener {
                 player.setPosition(centeredX, player.getY());
 
                 moved = true;
+                sound.play("move");
             }
         }
 
@@ -296,6 +304,7 @@ public class GamePanel extends JPanel implements KeyListener {
                 player.setPosition(centeredX, player.getY());
 
                 moved = true;
+                sound.play("move");
             }
         }
 
@@ -317,6 +326,7 @@ public class GamePanel extends JPanel implements KeyListener {
                 scoreManager.onPlayerMovedToLane(targetLane);
 
                 moved = true;
+                sound.play("move");
             }
         }
 
@@ -335,6 +345,7 @@ public class GamePanel extends JPanel implements KeyListener {
                 player.setPosition(player.getX(), centeredY);
 
                 moved = true;
+                sound.play("move");
             }
         }
 
@@ -428,6 +439,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
     public void showGameOver() {
         stopThreads();
+        sound.play("gameover");
         state = GameState.GAME_OVER;
         gameOverScreen = new ui.GameOverScreen();
         if (hud != null)

@@ -34,3 +34,12 @@ FOR POWERSHELL:
 
 Don't mind:
 javac -d bin -sourcepath src src/main/GameLauncher.java
+
+
+
+huhuh basta:
+compile:
+javac -d out src/assets/*.java src/characters/*.java src/main/*.java src/core/*.java src/gameobjects/*.java src/level/*.java src/persistence/*.java src/threads/*.java src/ui/*.java
+
+run:
+java -cp out main.GameLauncher

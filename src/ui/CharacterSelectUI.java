@@ -1,12 +1,14 @@
 package ui;
 
 import gameobjects.PlayerType;
-import managers.AssetManager;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
+
+import assets.AssetManager;
+import assets.SoundManager;
 
 public class CharacterSelectUI {
 
@@ -15,6 +17,7 @@ public class CharacterSelectUI {
     private JLabel detailInfoLabel;
     private JLabel selectBtn;
     private Rectangle[] cardBounds = new Rectangle[5];
+    private SoundManager sound = new SoundManager();
 
     private JRadioButton[] buttons;
     private int selectedIndex = -1;     // no card is selected
@@ -56,6 +59,7 @@ public class CharacterSelectUI {
         selectBtn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                sound.play("click");
                 characterConfirmed = true;
                 detailCardLabel.setVisible(false);
                 detailInfoLabel.setVisible(false);

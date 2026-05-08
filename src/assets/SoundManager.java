@@ -1,8 +1,7 @@
-package managers;
+package assets;
 
 import javax.sound.sampled.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -16,8 +15,8 @@ public class SoundManager {
 
        loadSound("click", "assets/sounds/sfx/click.wav");
        loadSound("coin", "assets/sounds/sfx/coins.wav");
-       loadSound("death", "assets/sounds/sfx/collision.wav");
-       loadSound("move", "assets/sounds/sfx/movement.wav");
+       loadSound("death", "assets/sounds/sfx/died.wav");
+       loadSound("move", "assets/sounds/sfx/move.wav");
        loadSound("gameover", "assets/sounds/sfx/gameover.wav");
 
        loadSound("game", "assets/sounds/bgm/gameBGM.wav");
@@ -85,6 +84,7 @@ public class SoundManager {
             currentMusic.stop();
         }
         
+
         currentMusic = sounds.get(name);
 
         if (currentMusic == null){
