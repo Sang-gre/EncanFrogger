@@ -62,24 +62,32 @@ public class GamePanel extends JPanel implements KeyListener {
 
                 // handle game over screen buttons
                 if (state == GameState.GAME_OVER && gameOverScreen != null && !showingLeaderboard) {
-                    gameOverScreen.isBannerClicked(e.getPoint());
 
-                    // save score when OK is clicked
-                    if (gameOverScreen.isOkClicked(e.getPoint())) {
+                    if (gameOverScreen.isYesClicked(e.getPoint())) {
+                        resetGameOverState();
+                        launcher.showInitialsPanel();
+                        return;
+                    }
+
+                    if (gameOverScreen.isNoClicked(e.getPoint())) {
                         leaderboardScreen = new ui.LeaderboardScreen();
                         showingLeaderboard = true;
                         requestFocusInWindow();
                         repaint();
+                        return;
                     }
-                    repaint();
                 }
 
-                // handle leaderboard play again button
+                // handle leaderboard play again & back button
                 if (showingLeaderboard && leaderboardScreen != null) {
                     if (leaderboardScreen.isPlayAgainClicked(e.getPoint())) {
                         showingLeaderboard = false;
                         leaderboardScreen = null;
                         launcher.showInitialsPanel();
+                    }
+                    if (leaderboardScreen.isBackClicked(e.getPoint())) {
+                        resetGameOverState();
+                        launcher.menuGame();
                     }
                 }
             }
@@ -514,13 +522,17 @@ public class GamePanel extends JPanel implements KeyListener {
         }
 
         if (state == GameState.GAME_OVER && gameOverScreen != null && !showingLeaderboard) {
-            boolean handled = gameOverScreen.handleKey(e.getKeyCode(), e.getKeyChar());
-            if (!handled) {
-                leaderboardScreen = new ui.LeaderboardScreen();
-                showingLeaderboard = true;
-                requestFocusInWindow();
+            if (!gameOverScreen.isShowingPlayAgain()) {
+                boolean handled = gameOverScreen.handleKey(e.getKeyCode(), e.getKeyChar());
+                if (!handled) {
+                    LeaderboardManager.upsertEntry(
+                            new ScoreEntry(gameOverScreen.getInitials(), scoreManager.getScore(), currentLevel, false));
+                    leaderboardScreen = new ui.LeaderboardScreen();
+                    showingLeaderboard = true;
+                    requestFocusInWindow();
+                }
+                repaint();
             }
-            repaint();
         }
     }
 

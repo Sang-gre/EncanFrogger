@@ -110,7 +110,7 @@ public class AssetManager {
 
         // Play again
         buttons.put("playAgain", loadImage("assets/Buttons/playAgainButton.png"));
-        buttons.put("ok", loadImage("assets/Buttons/okButton.png"));
+        buttons.put("ok", loadImage("assets/Buttons/okButton.png"));        // idk where this is used since removed na siya sa play again
         buttons.put("yes", loadImage("assets/Buttons/yesButton.png"));
         buttons.put("no", loadImage("assets/Buttons/noButton.png"));
 
