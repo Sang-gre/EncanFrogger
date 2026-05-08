@@ -52,7 +52,7 @@ public class MainPanel extends JPanel {
         add(buttonPanel);
 
         startBttn.addActionListener(e -> parent.startGame());
-        menuBttn.addActionListener(e -> parent.menuGame());
+        menuBttn.addActionListener(e -> parent.showInstructions());
         exitBttn.addActionListener(e -> System.exit(0));
     }
 

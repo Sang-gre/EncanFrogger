@@ -92,6 +92,12 @@ public class AssetManager {
         backgrounds.put("characterSelect", loadImage("assets/Backgrounds/chooseCharacterBackground.png"));
         backgrounds.put("mapSelect", loadImage("assets/Backgrounds/mapSelectBackground.png"));
         backgrounds.put("leaderboard", loadImage("assets/Backgrounds/leaderboardPanel.png"));
+
+        backgrounds.put("instruction1", loadImage("assets/instructions/page1.png"));
+        backgrounds.put("instruction2", loadImage("assets/instructions/page2.png"));
+        backgrounds.put("instruction3", loadImage("assets/instructions/page3.png"));
+        backgrounds.put("instruction4", loadImage("assets/instructions/page4.png"));
+        backgrounds.put("instruction5", loadImage("assets/instructions/page5.png"));
     }
 
     private void loadButtons() {

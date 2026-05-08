@@ -2,6 +2,7 @@ package main;
 
 import assets.AssetManager;
 import core.GamePanel;
+import ui.InstructionsPanel;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -14,6 +15,7 @@ public class GameLauncher extends JFrame {
 
     private final TitlePanel gameLaunch;
     private final MainPanel secondPage;
+    private final InstructionsPanel instructionsPanel;
     private final GamePanel gamePanel;
 
     public GameLauncher() {
@@ -28,10 +30,12 @@ public class GameLauncher extends JFrame {
 
         gameLaunch = new TitlePanel(this);
         secondPage = new MainPanel(this);
+        instructionsPanel = new InstructionsPanel(this);
         gamePanel = new GamePanel(this);
 
         mainPanel.add(gameLaunch, "Launch");
         mainPanel.add(secondPage, "Menu");
+        mainPanel.add(instructionsPanel, "Instructions");
         mainPanel.add(gamePanel, "Game");
 
         add(mainPanel);
@@ -85,6 +89,18 @@ public class GameLauncher extends JFrame {
     public void menuGame() {
         cardLayout.show(mainPanel, "Menu");
     }
+
+    public void showMainMenu() {
+        cardLayout.show(mainPanel, "Menu");
+}
+
+    public void showInstructions() {
+        cardLayout.show(mainPanel, "Instructions");
+
+    SwingUtilities.invokeLater(() -> {
+        instructionsPanel.requestFocusInWindow();
+    });
+}
 
     public void startGame() {
         cardLayout.show(mainPanel, "Game");
