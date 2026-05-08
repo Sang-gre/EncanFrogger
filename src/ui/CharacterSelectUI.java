@@ -1,7 +1,8 @@
 package ui;
 
-import assets.AssetManager;
 import gameobjects.PlayerType;
+import managers.AssetManager;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;

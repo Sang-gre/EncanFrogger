@@ -10,6 +10,7 @@ import javax.swing.*;
 import level.Direction;
 import level.LevelManager;
 import main.GameLauncher;
+import managers.SoundManager;
 import persistence.LeaderboardManager;
 import persistence.ScoreEntry;
 import threads.GameLogicThread;
@@ -489,6 +490,7 @@ public class GamePanel extends JPanel implements KeyListener {
             boolean handled = gameOverScreen.handleKey(e.getKeyCode(), e.getKeyChar());
             if (!handled) {
                 String initials = gameOverScreen.getInitials();
+               // LeaderboardManager.saveEntry(new ScoreEntry(initials, scoreManager.getScore())); // ← remove this line
                 leaderboardScreen = new ui.LeaderboardScreen();
                 showingLeaderboard = true;
                 requestFocusInWindow();

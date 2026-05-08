@@ -1,9 +1,11 @@
 package main;
 
-import assets.AssetManager;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import managers.AssetManager;
+
 
 public class MainPanel extends JPanel {
 
@@ -34,6 +36,7 @@ public class MainPanel extends JPanel {
         startImg = AssetManager.getInstance().getButton("start");
         menuImg = AssetManager.getInstance().getButton("menu");
         exitImg = AssetManager.getInstance().getButton("exit");
+        
     }
 
     private void setupButtons() {

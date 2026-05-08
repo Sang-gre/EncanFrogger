@@ -1,8 +1,9 @@
 package ui;
 
-import assets.AssetManager;
 import java.awt.*;
 import javax.swing.*;
+
+import managers.AssetManager;
 
 public class HUDpane extends JPanel {
 

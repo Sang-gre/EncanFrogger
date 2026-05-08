@@ -1,7 +1,8 @@
 package main;
 
-import assets.AssetManager;
 import core.GamePanel;
+import managers.AssetManager;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

@@ -1,10 +1,11 @@
 package level;
 
-import assets.AssetManager;
 import core.GameMap;
 import gameobjects.Coin;
 import gameobjects.Obstacle;
 import gameobjects.Platform;
+import managers.AssetManager;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;

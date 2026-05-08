@@ -1,8 +1,9 @@
 package ui;
 
-import assets.AssetManager;
 import java.awt.*;
 import java.util.List;
+
+import managers.AssetManager;
 import persistence.LeaderboardManager;
 import persistence.ScoreEntry;
 

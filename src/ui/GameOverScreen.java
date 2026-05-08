@@ -1,8 +1,9 @@
 package ui;
 
-import assets.AssetManager;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+
+import managers.AssetManager;
 
 public class GameOverScreen {
 
