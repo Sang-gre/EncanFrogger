@@ -94,11 +94,11 @@ public class SoundManager {
 
         currentMusic.setFramePosition(0);
         currentMusic.loop(Clip.LOOP_CONTINUOUSLY);
+
     }
 
 
     public void stopBGM (){
-
         if (currentMusic != null){
             currentMusic.stop();
         }

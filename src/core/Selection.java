@@ -6,6 +6,7 @@ import javax.swing.*;
 
 import assets.AssetManager;
 import assets.SoundManager;
+import level.LevelManager;
 import ui.PopupDialog;
 
 public abstract class Selection extends JPanel {
@@ -75,6 +76,18 @@ public abstract class Selection extends JPanel {
         panel.add(nextBtn);
 
         JButton finalBackBtn = backBtn;
+    
+        JLabel coinLabel = new JLabel();
+        int coins = new CollisionSystem().getCoinsCollected();
+        coinLabel.setText(Integer.toString(coins * 20)); //20 kase wala lang huhu
+
+        JLabel levelLabel = new JLabel();
+        int level = new LevelManager(getWidth(), getHeight()).getCurrentLevel();
+        levelLabel.setText("LEVEL " +  level);
+        //set font and whatsoever
+
+        panel.add(coinLabel);
+        panel.add(levelLabel);
 
         panel.addComponentListener(new ComponentAdapter() {
             @Override
@@ -96,9 +109,15 @@ public abstract class Selection extends JPanel {
                         h - btnHeight,
                         btnWidth,
                         btnHeight);
+
+
+                //for the labels din po
+                coinLabel.setBounds()
+                
             }
         });
 
+        
         return panel;
     }
 
@@ -142,6 +161,7 @@ public abstract class Selection extends JPanel {
 
         return button;
     }
+
 
     public abstract JPanel createSelectionButtons();
 
