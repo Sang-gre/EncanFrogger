@@ -60,6 +60,8 @@ public class AssetManager {
     /* POPUPS */
     private final Map<String, Image> popups = new HashMap<>();
 
+    private final Map<String, Image> instructions = new HashMap<>();
+
     private AssetManager() {
         loadLogo();
         loadBackgrounds();
@@ -77,6 +79,7 @@ public class AssetManager {
         loadFonts();
         loadGameOver();
         loadPopups();
+        loadInstructions();
     }
 
     public static AssetManager getInstance() {
@@ -98,11 +101,6 @@ public class AssetManager {
         backgrounds.put("mapSelect", loadImage("assets/Backgrounds/mapSelectBackground.png"));
         backgrounds.put("leaderboard", loadImage("assets/Backgrounds/leaderboardPanel.png"));
         backgrounds.put("initials", loadImage("assets/Backgrounds/initialsBackground.png"));
-        backgrounds.put("instruction1", loadImage("assets/instructions/page1.png"));
-        backgrounds.put("instruction2", loadImage("assets/instructions/page2.png"));
-        backgrounds.put("instruction3", loadImage("assets/instructions/page3.png"));
-        backgrounds.put("instruction4", loadImage("assets/instructions/page4.png"));
-        backgrounds.put("instruction5", loadImage("assets/instructions/page5.png"));
     }
 
     private void loadButtons() {
@@ -124,6 +122,11 @@ public class AssetManager {
 
         // Popup Dialog
         buttons.put("ok2", loadImage("assets/Buttons/okButton2.png"));
+
+        // Instructions Button
+        buttons.put("leftArrow", loadImage("assets/Buttons/leftArrowButton.png"));
+        buttons.put("rightArrow", loadImage("assets/Buttons/rightArrowButton.png"));
+        buttons.put("xButton", loadImage("assets/Buttons/exButton.png"));
     }
 
     private void loadObstacles() {
@@ -337,6 +340,14 @@ public class AssetManager {
         popups.put("initialsInput", loadImage("assets/Popups/initialsInputPopup.png"));
     }
 
+    private void loadInstructions() {
+        instructions.put("instruction1", loadImage("assets/instructions/page1.png"));
+        instructions.put("instruction2", loadImage("assets/instructions/page2.png"));
+        instructions.put("instruction3", loadImage("assets/instructions/page3.png"));
+        instructions.put("instruction4", loadImage("assets/instructions/page4.png"));
+        instructions.put("instruction5", loadImage("assets/instructions/page5.png"));
+    }
+
     public Image getCharacterCard(PlayerType type) {
         return characterCards.get(type);
     }
@@ -403,5 +414,9 @@ public class AssetManager {
 
     public Image getPopup(String key) {
         return popups.get(key);
+    }
+
+    public Image getInstructions(String key) {
+        return instructions.get(key);
     }
 }
