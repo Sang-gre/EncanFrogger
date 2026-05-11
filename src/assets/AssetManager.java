@@ -60,6 +60,7 @@ public class AssetManager {
     /* POPUPS */
     private final Map<String, Image> popups = new HashMap<>();
 
+    /* INSTRUCTIONS */
     private final Map<String, Image> instructions = new HashMap<>();
 
     private AssetManager() {
@@ -101,6 +102,7 @@ public class AssetManager {
         backgrounds.put("mapSelect", loadImage("assets/Backgrounds/mapSelectBackground.png"));
         backgrounds.put("leaderboard", loadImage("assets/Backgrounds/leaderboardPanel.png"));
         backgrounds.put("initials", loadImage("assets/Backgrounds/initialsBackground.png"));
+        backgrounds.put("pausePanel", loadImage("assets/Backgrounds/pausePanel.png"));
     }
 
     private void loadButtons() {
@@ -127,6 +129,12 @@ public class AssetManager {
         buttons.put("leftArrow", loadImage("assets/Buttons/leftArrowButton.png"));
         buttons.put("rightArrow", loadImage("assets/Buttons/rightArrowButton.png"));
         buttons.put("xButton", loadImage("assets/Buttons/exButton.png"));
+
+        // Pause Panel Buttons
+        buttons.put("exit2", loadImage("assets/Buttons/exitButton2.png"));
+        buttons.put("menu2", loadImage("assets/Buttons/menuButton2.png"));
+        buttons.put("resume", loadImage("assets/Buttons/resumeButton.png"));
+        buttons.put("pause", loadImage("assets/Buttons/pauseButton.png"));
     }
 
     private void loadObstacles() {
