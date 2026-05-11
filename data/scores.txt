@@ -1,2 +1,3 @@
 MIMIN,3710,3,false
 MM,3280,3,true
+MIN,0,1,true

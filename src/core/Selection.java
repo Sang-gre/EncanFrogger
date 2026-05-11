@@ -80,11 +80,13 @@ public abstract class Selection extends JPanel {
         JLabel coinLabel = new JLabel();
         int coins = new CollisionSystem().getCoinsCollected();
         coinLabel.setText(Integer.toString(coins * 20)); //20 kase wala lang huhu
+        coinLabel.setFont(new Font("Monospaced", Font.BOLD, 24));
 
         JLabel levelLabel = new JLabel();
         int level = new LevelManager(getWidth(), getHeight()).getCurrentLevel();
         levelLabel.setText("LEVEL " +  level);
-        //set font and whatsoever
+        levelLabel.setFont(new Font("Monospaced", Font.BOLD, 18));
+
 
         panel.add(coinLabel);
         panel.add(levelLabel);
@@ -112,7 +114,12 @@ public abstract class Selection extends JPanel {
 
 
                 //for the labels din po
-                coinLabel.setBounds()
+                coinLabel.setBounds((getWidth()/2) - 50, h - btnHeight, btnWidth,
+                        btnHeight);
+
+
+                levelLabel.setBounds((getWidth()/2) + 30, h - btnHeight, btnWidth,
+                        btnHeight);
                 
             }
         });
