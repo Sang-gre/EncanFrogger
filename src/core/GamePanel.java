@@ -255,8 +255,12 @@ public class GamePanel extends JPanel {
                 stateManager.setShowingLeaderboard(false);
                 leaderboardScreen = null;
                 resetGameOverState();
-                if (player != null)
-                    showMapSelect(player);
+                if (!stateManager.isPlayerAlive()) {
+                    launcher.showInitialsPanel();
+                } else {
+                    if (player != null)
+                        showMapSelect(player);
+                }
                 return;
             }
             if (leaderboardScreen.isBackClicked(e.getPoint())) {
@@ -269,7 +273,6 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Rendering
     // -------------------------------------------------------------------------
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

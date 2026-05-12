@@ -7,11 +7,7 @@ import javax.swing.SwingUtilities;
 import level.LevelManager;
 import main.GameLauncher;
 
-/**
- * Responsible for everything that happens when a level starts:
- * spawning the player, building the HUD and PauseScreen,
- * attaching the resize listener, and launching the game threads.
- */
+/* Responsible for everything on start level */
 public class LevelSetup {
 
     private final GamePanel gamePanel;
@@ -21,10 +17,10 @@ public class LevelSetup {
     private final GameLauncher launcher;
 
     public LevelSetup(GamePanel gamePanel,
-                      GameStateManager stateManager,
-                      ScoreManager scoreManager,
-                      assets.SoundManager sound,
-                      GameLauncher launcher) {
+            GameStateManager stateManager,
+            ScoreManager scoreManager,
+            assets.SoundManager sound,
+            GameLauncher launcher) {
         this.gamePanel = gamePanel;
         this.stateManager = stateManager;
         this.scoreManager = scoreManager;
@@ -33,12 +29,10 @@ public class LevelSetup {
     }
 
     public void startLevel(Player selectedPlayer, GameMap map, int level) {
-        int resolvedLevel = stateManager.isFreshStart() ? launcher.getStartingLevel() : level;
-        stateManager.setCurrentLevel(resolvedLevel);
-        stateManager.setCurrentMap(map);
-
         if (stateManager.isFreshStart()) {
+            stateManager.setCurrentLevel(launcher.getStartingLevel());
             scoreManager.setScore(launcher.getStartingScore());
+            stateManager.setFreshStart(false);
         }
 
         stateManager.setPlayerAlive(true);
@@ -53,7 +47,7 @@ public class LevelSetup {
         sound.playBGM("game");
 
         LevelManager levelManager = new LevelManager(gamePanel.getWidth(), gamePanel.getHeight());
-        levelManager.loadLevel(resolvedLevel, map);
+        levelManager.loadLevel(stateManager.getCurrentLevel(), map);
         gamePanel.setLevelManager(levelManager);
         gamePanel.setCollisionSystem(new CollisionSystem());
 
@@ -67,11 +61,6 @@ public class LevelSetup {
         buildHUD(selectedPlayer);
         buildPauseScreen(selectedPlayer, map);
         attachResizeListener(selectedPlayer);
-
-        if (stateManager.isFreshStart()) {
-            scoreManager.setScore(launcher.getStartingScore());
-            stateManager.setFreshStart(false);
-        }
 
         gamePanel.startThreads();
         SwingUtilities.invokeLater(gamePanel::requestFocusInWindow);
