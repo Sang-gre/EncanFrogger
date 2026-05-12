@@ -40,12 +40,11 @@ public class PopupDialog {
 
             @Override
             protected void paintComponent(Graphics g) {
-
                 super.paintComponent(g);
 
                 Graphics2D g2 = (Graphics2D) g.create();
 
-                g2.setColor(new Color(0, 0, 0, 180));
+                g2.setColor(new Color(0, 0, 0, 160));
                 g2.fillRect(0, 0, getWidth(), getHeight());
 
                 int popupX = (getWidth() - finalPopW) / 2;
