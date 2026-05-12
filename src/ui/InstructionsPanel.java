@@ -155,39 +155,25 @@ public class InstructionsPanel extends JPanel {
             @Override
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
-<<<<<<< Updated upstream
-                    case KeyEvent.VK_RIGHT -> {
-=======
                     case KeyEvent.VK_RIGHT:
                         sound.play("click");
 
->>>>>>> Stashed changes
                         if (currentPage < pages.length - 1) {
                             currentPage++;
                             repaint();
                             updateButtonVisibility();
                         }
-<<<<<<< Updated upstream
-                    }
-                    case KeyEvent.VK_LEFT -> {
-=======
                         break;
                     case KeyEvent.VK_LEFT:
                         sound.play("click");
->>>>>>> Stashed changes
                         if (currentPage > 0) {
                             currentPage--;
                             repaint();
                             updateButtonVisibility();
                         }
-<<<<<<< Updated upstream
-                    }
-                    case KeyEvent.VK_ESCAPE -> {
-=======
                         break;
                     case KeyEvent.VK_ESCAPE:
                         sound.play("click");
->>>>>>> Stashed changes
                         currentPage = 0;
                         onExit.run();
                     }
