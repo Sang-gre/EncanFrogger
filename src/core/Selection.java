@@ -81,8 +81,7 @@ public abstract class Selection extends JPanel {
 
         JButton finalBackBtn = backBtn;
 
-
-        //LABEL
+        // LABEL
 
         AssetManager am = AssetManager.getInstance();
 
@@ -96,7 +95,8 @@ public abstract class Selection extends JPanel {
         levelLabel = new JLabel(new ImageIcon(scaledLevel));
 
         Font font = am.getFont("proffaliceHandwrite");
-        if (font == null) font = new Font("Serif", Font.BOLD, 20);
+        if (font == null)
+            font = new Font("Serif", Font.BOLD, 20);
         font = font.deriveFont(18f);
 
         coinLabel.setFont(font);
@@ -106,30 +106,29 @@ public abstract class Selection extends JPanel {
         coinLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         coinLabel.setVerticalTextPosition(SwingConstants.CENTER);
 
-        
         List<ScoreEntry> entries = LeaderboardManager.loadAll();
+        String currentInitials = gamePanel.getPlayerInitials();
 
-        if (!entries.isEmpty()) {
+        ScoreEntry match = entries.stream()
+                .filter(e -> e.initials.equalsIgnoreCase(currentInitials))
+                .findFirst()
+                .orElse(null);
 
-            ScoreEntry latest = entries.get(0);
-
-            levelLabel.setText("LEVEL " + latest.level);
-            coinLabel.setText(String.valueOf(latest.coins * 50));
+        if (match != null) {
+            levelLabel.setText("LEVEL " + match.level);
+            coinLabel.setText(String.valueOf(match.coins * 50));
+        } else {
+            levelLabel.setText("LEVEL 1");
+            coinLabel.setText("0");
         }
-        
+
         levelLabel.setFont(font);
         levelLabel.setForeground(new Color(246, 242, 195));
         levelLabel.setHorizontalAlignment(SwingConstants.CENTER);
         levelLabel.setVerticalAlignment(SwingConstants.CENTER);
         levelLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         levelLabel.setVerticalTextPosition(SwingConstants.CENTER);
-
-        if (!entries.isEmpty()) {
-            ScoreEntry latest = entries.get(0);
-            coinLabel.setText(String.valueOf(latest.coins * 50));
-            levelLabel.setText("LEVEL " + latest.level);
-        }
-
+        
         panel.add(coinLabel);
         panel.add(levelLabel);
 
@@ -156,7 +155,8 @@ public abstract class Selection extends JPanel {
     protected abstract void onNext();
 
     public JButton createImageButton(Image img, int width, int height) {
-        if (img == null) return new JButton("?");
+        if (img == null)
+            return new JButton("?");
         Image scaled = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 
         JButton button = new JButton(new ImageIcon(scaled));
@@ -191,6 +191,7 @@ public abstract class Selection extends JPanel {
     }
 
     public abstract JPanel createSelectionButtons();
+
     public abstract boolean validateSelection();
 
     protected String getPopupKey() {

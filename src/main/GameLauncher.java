@@ -68,20 +68,10 @@ public class GameLauncher extends JFrame {
     // -------------------------------------------------------------------------
     // Session state
     // -------------------------------------------------------------------------
-    public String getPlayerInitials() {
-        return playerInitials;
-    }
-
-    public int getStartingLevel() {
-        return startingLevel;
-    }
-
-    public int getStartingScore() {
-        return startingScore;
-    }
-
-    public GamePanel getGamePanel() {
-        return gamePanel;
+    public void resetSessionState() {
+        startingLevel = DEFAULT_LEVEL;
+        startingScore = DEFAULT_SCORE;
+        playerInitials = DEFAULT_INITIALS;
     }
 
     // -------------------------------------------------------------------------
@@ -96,8 +86,8 @@ public class GameLauncher extends JFrame {
     }
 
     public void showInitialsPanel() {
+        resetSessionState();
         gamePanel.resetGameOverState();
-        gamePanel.showCharacterSelect();
         cardLayout.show(mainPanel, "Initials");
         SwingUtilities.invokeLater(initialsPanel::activate);
     }
@@ -124,9 +114,6 @@ public class GameLauncher extends JFrame {
     // Helpers
     // -------------------------------------------------------------------------
     private void handleInitialsSubmit(String initials) {
-        startingLevel = DEFAULT_LEVEL;
-        startingScore = DEFAULT_SCORE;
-
         List<ScoreEntry> existing = LeaderboardManager.loadAll();
         ScoreEntry match = existing.stream()
                 .filter(e -> e.initials.equalsIgnoreCase(initials))
@@ -141,9 +128,14 @@ public class GameLauncher extends JFrame {
         if (match != null) {
             startingLevel = match.level;
             startingScore = match.score;
+        } else {
+            startingLevel = DEFAULT_LEVEL;
+            startingScore = DEFAULT_SCORE;
         }
 
         playerInitials = initials;
+        gamePanel.setPlayerInitials(initials);
+        gamePanel.showCharacterSelect();
         startGame();
     }
 
@@ -191,11 +183,31 @@ public class GameLauncher extends JFrame {
         });
     }
 
+    // -------------------------------------------------------------------------
+    // Getters / Setters
+    // -------------------------------------------------------------------------
+
     private Component getActivePanel() {
         for (Component c : mainPanel.getComponents()) {
             if (c.isVisible())
                 return c;
         }
+        return gamePanel;
+    }
+
+    public String getPlayerInitials() {
+        return playerInitials;
+    }
+
+    public int getStartingLevel() {
+        return startingLevel;
+    }
+
+    public int getStartingScore() {
+        return startingScore;
+    }
+
+    public GamePanel getGamePanel() {
         return gamePanel;
     }
 }
