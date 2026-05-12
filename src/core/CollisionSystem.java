@@ -11,7 +11,7 @@ import java.util.List;
 
 public class CollisionSystem {
 
-    private int coinsCollected = 0; // running total, read by GamePanel to detect new pickups
+    private static int coinsCollected = 0; // running total, read by GamePanel to detect new pickups
     private SoundManager sound = new SoundManager();
 
     public boolean checkAABB(GameObject a, GameObject b) {
@@ -80,6 +80,7 @@ public class CollisionSystem {
     }
 
     public int getCoinsCollected() {
+        System.out.println("Coins Collected: " + coinsCollected);
         return coinsCollected;
     }
 }
