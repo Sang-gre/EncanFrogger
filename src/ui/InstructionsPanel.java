@@ -10,7 +10,7 @@ public class InstructionsPanel extends JPanel {
 
     private GameLauncher launcher;
     private Image[] pages;
-    private Image background;
+    private final Image background;
 
     private Image leftImg;
     private Image rightImg;
@@ -145,24 +145,24 @@ public class InstructionsPanel extends JPanel {
             @Override
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_RIGHT:
+                    case KeyEvent.VK_RIGHT -> {
                         if (currentPage < pages.length - 1) {
                             currentPage++;
                             repaint();
                             updateButtonVisibility();
                         }
-                        break;
-                    case KeyEvent.VK_LEFT:
+                    }
+                    case KeyEvent.VK_LEFT -> {
                         if (currentPage > 0) {
                             currentPage--;
                             repaint();
                             updateButtonVisibility();
                         }
-                        break;
-                    case KeyEvent.VK_ESCAPE:
+                    }
+                    case KeyEvent.VK_ESCAPE -> {
                         currentPage = 0;
                         onExit.run();
-                        break;
+                    }
                 }
             }
         });

@@ -8,14 +8,14 @@ import javax.swing.*;
 
 public class PauseScreen extends JPanel {
 
-    private Image panelBg;
-    private Image resumeImg;
-    private Image menuImg;
-    private Image exitImg;
+    private final Image panelBg;
+    private final Image resumeImg;
+    private final Image menuImg;
+    private final Image exitImg;
 
-    private JButton resumeBtn;
-    private JButton menuBtn;
-    private JButton exitBtn;
+    private final JButton resumeBtn;
+    private final JButton menuBtn;
+    private final JButton exitBtn;
 
     private int lastBtnH = -1;
 
@@ -30,9 +30,9 @@ public class PauseScreen extends JPanel {
         menuImg = AssetManager.getInstance().getButton("menu2");
         exitImg = AssetManager.getInstance().getButton("exit2");
 
-        resumeBtn = makeButton(resumeImg);
-        menuBtn = makeButton(menuImg);
-        exitBtn = makeButton(exitImg);
+        resumeBtn = makeButton();
+        menuBtn = makeButton();
+        exitBtn = makeButton();
 
         resumeBtn.addActionListener(e -> {
             sound.play("click");
@@ -59,7 +59,7 @@ public class PauseScreen extends JPanel {
         });
     }
 
-    private JButton makeButton(Image img) {
+    private JButton makeButton() {
         JButton btn = new JButton();
         btn.setBorderPainted(false);
         btn.setContentAreaFilled(false);

@@ -1,11 +1,10 @@
 package main;
 
+import assets.AssetManager;
+import assets.SoundManager;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
-import assets.AssetManager;
-import assets.SoundManager;
 
 public class TitlePanel extends JPanel {
 
@@ -27,7 +26,7 @@ public class TitlePanel extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                parent.menuGame();
+                parent.showMainMenu();
             }
         });
     }
