@@ -8,13 +8,11 @@ import javax.swing.*;
 
 public class TitlePanel extends JPanel {
 
-    GameLauncher parent;
     SoundManager sound;
-    private Image background;
-    private Image titleFont;
+    private final Image background;
+    private final Image titleFont;
 
     public TitlePanel(GameLauncher parent) {
-        this.parent = parent;
         sound = new SoundManager();
 
         background = AssetManager.getInstance().getBackground("title");

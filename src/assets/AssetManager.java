@@ -352,6 +352,7 @@ public class AssetManager {
         popups.put("characterSelect", loadImage("assets/popups/characterSelectPopup.png"));
         popups.put("mapSelect", loadImage("assets/Popups/mapSelectPopup.png"));
         popups.put("initialsInput", loadImage("assets/Popups/initialsInputPopup.png"));
+        popups.put("initialsTaken", loadImage("assets/Popups/initialsTakenPopup.png"));
     }
 
     private void loadInstructions() {
