@@ -49,7 +49,7 @@ public class AssetManager {
     private final Map<String, Image> hud = new HashMap<>();
 
     /* FONTS */
-    private Font enchantedLandFont;
+    private Font proffaliceHandwriteFont;
 
     /* COINS */
     private final Map<String, Image> coins = new HashMap<>();
@@ -317,12 +317,13 @@ public class AssetManager {
 
     private void loadFonts() {
         try {
-            enchantedLandFont = Font.createFont(
+            proffaliceHandwriteFont = Font.createFont(
                     Font.TRUETYPE_FONT,
-                    new File("assets/Enchanted Land.otf")).deriveFont(20f);
+                    new File("assets/Proffalice Handwrite Regular.ttf")
+            ).deriveFont(20f);
         } catch (Exception e) {
-            System.err.println("[AssetManager] WARNING: failed to load font Enchanted Land.ttf");
-            enchantedLandFont = new Font("Segoe UI", Font.BOLD, 20); // fallback
+            System.err.println("[AssetManager] WARNING: failed to load Font");
+            proffaliceHandwriteFont = new Font("Segoe UI", Font.BOLD, 20); // fallback
         }
     }
 
@@ -409,8 +410,9 @@ public class AssetManager {
     }
 
     public Font getFont(String key) {
-        if (key.equals("enchantedLand"))
-            return enchantedLandFont;
+        if (key.equals("proffaliceHandwrite")) {
+            return proffaliceHandwriteFont;
+        }
         return null;
     }
 

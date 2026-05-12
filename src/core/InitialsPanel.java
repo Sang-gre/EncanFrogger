@@ -1,10 +1,10 @@
 package core;
 
+import assets.AssetManager;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.function.Consumer;
 import javax.swing.*;
-import assets.AssetManager;
 import ui.PopupDialog;
 
 public class InitialsPanel extends JPanel implements KeyListener {
@@ -87,7 +87,7 @@ public class InitialsPanel extends JPanel implements KeyListener {
             return;
 
         AssetManager am = AssetManager.getInstance();
-        Font font = am.getFont("enchantedLand");
+        Font font = am.getFont("proffaliceHandwrite");
         if (font == null)
             font = new Font("Serif", Font.BOLD, 36);
         font = font.deriveFont(Font.BOLD, (float) (h * TEXT_SIZE));

@@ -1,9 +1,8 @@
 package ui;
 
+import assets.AssetManager;
 import java.awt.*;
 import java.util.List;
-
-import assets.AssetManager;
 import persistence.LeaderboardManager;
 import persistence.ScoreEntry;
 
@@ -61,7 +60,7 @@ public class LeaderboardScreen {
         scrollOffset = Math.max(0, Math.min(scrollOffset, maxOffset));
 
         int fontSize = Math.max(16, panelH / 23);
-        Font baseFont = AssetManager.getInstance().getFont("enchantedLand");
+        Font baseFont = AssetManager.getInstance().getFont("proffaliceHandwrite");
         Font font = baseFont.deriveFont((float) fontSize);
         g2.setFont(font);
 
