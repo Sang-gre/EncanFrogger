@@ -32,17 +32,23 @@ public class LeaderboardManager {
 
                     entries.set(i, new ScoreEntry(
                             existing.initials,
-                            newEntry.score, // accumulate all-time
+                            newEntry.score,
                             newEntry.level,
                             newEntry.isAlive,
-                            existing.coins + newEntry.coins));
+                            newEntry.coins * 50));
                     found = true;
                     break;
                 }
             }
 
             if (!found)
-                entries.add(newEntry);
+                entries.add(new ScoreEntry(
+                        newEntry.initials,
+                        newEntry.score,
+                        newEntry.level,
+                        newEntry.isAlive,
+                        newEntry.coins * 50
+                ));
 
             entries.sort((a, b) -> b.score - a.score);
             if (entries.size() > MAX_ENTRIES)

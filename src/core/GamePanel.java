@@ -22,10 +22,10 @@ public class GamePanel extends JPanel {
     private final SoundManager sound = new SoundManager();
     private final GameRenderer renderer = new GameRenderer(stateManager);
 
-    private InputHandler inputHandler;
+    private final InputHandler inputHandler;
     private GameLogicController logicController;
-    private LevelSetup levelSetup;
-    private ScreenNavigator screenNavigator;
+    private final LevelSetup levelSetup;
+    private final ScreenNavigator screenNavigator;
 
     // --- Game objects ---
     private Player player;
@@ -96,13 +96,8 @@ public class GamePanel extends JPanel {
     public void startLevel(Player selectedPlayer, GameMap map, int level) {
         playerInitials = launcher.getPlayerInitials();
 
-        // Re-create collaborators that depend on per-level CollisionSystem
-        logicController = new GameLogicController(
-                this, stateManager, scoreManager, collisionSystem, inputHandler, sound);
-
         levelSetup.startLevel(selectedPlayer, map, level);
 
-        // logicController needs the fresh CollisionSystem set by LevelSetup
         logicController = new GameLogicController(
                 this, stateManager, scoreManager, collisionSystem, inputHandler, sound);
     }

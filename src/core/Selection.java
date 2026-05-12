@@ -116,7 +116,7 @@ public abstract class Selection extends JPanel {
 
         if (match != null) {
             levelLabel.setText("LEVEL " + match.level);
-            coinLabel.setText(String.valueOf(match.coins * 50));
+            coinLabel.setText(String.valueOf(match.coins));
         } else {
             levelLabel.setText("LEVEL 1");
             coinLabel.setText("0");

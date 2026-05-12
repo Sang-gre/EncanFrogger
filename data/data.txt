@@ -1,4 +1,4 @@
-HELLO,13780,3,true,142
+HELLO,23050,2,true,700
 SC,3000,2,true,17
 TD,1440,2,true,8
 JED,170,1,false,0
