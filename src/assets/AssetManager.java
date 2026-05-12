@@ -218,11 +218,6 @@ public class AssetManager {
 
         hud.put("score",
                 loadImage("assets/hud/scoreLabel.png"));
-
-        /*
-         * hud.put("menu",
-         * loadImage("assets/HUD/menuButton.png"));
-         */
     }
 
     private void loadCoins() {

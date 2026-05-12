@@ -68,17 +68,20 @@ public class HUDpane extends JPanel {
         super.doLayout();
 
         int h = getHeight();
-        if (h <= 0) return;
-        if (h == lastHeight) return;
+        if (h <= 0)
+            return;
+        if (h == lastHeight)
+            return;
         lastHeight = h;
+        System.out.println("pauseImg=" + pauseImg + " scoreImg=" + scoreImg + " heartImg=" + heartImg);
 
         // scale everything relative to HUD height
-        int btnSize   = (int) (h * 0.85);
-        int scoreH    = (int) (h * 0.85);
-        int scoreW    = (int) (scoreH * (180.0 / 50.0)); // keep original aspect ratio
+        int btnSize = (int) (h * 0.85);
+        int scoreH = (int) (h * 0.85);
+        int scoreW = (int) (scoreH * (180.0 / 50.0)); // keep original aspect ratio
         int heartSize = (int) (h * 0.65);
-        int pad       = (int) (h * 0.08);
-        int centerY   = (h - btnSize) / 2;
+        int pad = (int) (h * 0.08);
+        int centerY = (h - btnSize) / 2;
 
         /* Pause Button */
         pauseButton.setIcon(new ImageIcon(
@@ -93,13 +96,13 @@ public class HUDpane extends JPanel {
 
         /* Score Text */
         scoreValue.setFont(
-                AssetManager.getInstance().getFont("enchantedLand").deriveFont((float) (h * 0.4)));
+                AssetManager.getInstance().getFont("proffaliceHandwrite").deriveFont((float) (h * 0.4)));
         int textX = scoreX + (int) (scoreW * 0.5);
         scoreValue.setBounds(textX, (h - scoreH) / 2, scoreW, scoreH);
 
         /* Hearts */
         int heartsX = scoreX + scoreW + pad;
-        int heartY  = (h - heartSize) / 2;
+        int heartY = (h - heartSize) / 2;
         for (int i = 0; i < hearts.length; i++) {
             hearts[i].setIcon(new ImageIcon(
                     heartImg.getScaledInstance(heartSize, heartSize, Image.SCALE_SMOOTH)));
@@ -115,5 +118,11 @@ public class HUDpane extends JPanel {
         for (int i = 0; i < hearts.length; i++) {
             hearts[i].setVisible(i < livesRemaining);
         }
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        lastHeight = -1; // force relayout when added to panel
     }
 }
