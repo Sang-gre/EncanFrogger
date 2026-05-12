@@ -32,6 +32,7 @@ public class Terra extends Player {
         if (frames == null) {
             System.err.println("[Terra] WARNING: animation frames not found.");
         }
+        maxLevels = 3;
     }
 
     @Override

@@ -1,10 +1,10 @@
 package core;
 
+import assets.AssetManager;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.function.Consumer;
 import javax.swing.*;
-import assets.AssetManager;
 import ui.PopupDialog;
 
 public class InitialsPanel extends JPanel implements KeyListener {
@@ -41,7 +41,7 @@ public class InitialsPanel extends JPanel implements KeyListener {
         okImage = am.getButton("ok2");
         popupImage = am.getPopup("initialsInput");
 
-        okBtn = createImageButton(okImage, 100, 50);
+        okBtn = createImageButton(okImage);
         okBtn.addActionListener(e -> {
             requestFocusInWindow();
             tryConfirm();
@@ -87,7 +87,7 @@ public class InitialsPanel extends JPanel implements KeyListener {
             return;
 
         AssetManager am = AssetManager.getInstance();
-        Font font = am.getFont("enchantedLand");
+        Font font = am.getFont("proffaliceHandwrite");
         if (font == null)
             font = new Font("Serif", Font.BOLD, 36);
         font = font.deriveFont(Font.BOLD, (float) (h * TEXT_SIZE));
@@ -104,7 +104,7 @@ public class InitialsPanel extends JPanel implements KeyListener {
         int textX = (w - fm.stringWidth(text)) / 2;
         int textY = (int) (h * TEXT_Y);
 
-        g2.setColor(Color.WHITE);
+        g2.setColor(new Color(151, 59, 53));
         g2.drawString(text, textX, textY);
     }
 
@@ -177,11 +177,24 @@ public class InitialsPanel extends JPanel implements KeyListener {
         requestFocusInWindow();
     }
 
-    private JButton createImageButton(Image img, int width, int height) {
-        if (img == null)
-            return new JButton("?");
-        Image scaled = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        JButton button = new JButton(new ImageIcon(scaled));
+    private JButton createImageButton(Image img) {
+        JButton button = new JButton() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                if (img == null) {
+                    super.paintComponent(g);
+                    return;
+                }
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                g2.drawImage(img, 0, 0, getWidth(), getHeight(), null);
+                g2.dispose();
+            }
+        };
+        if (img == null) {
+            button.setText("?");
+        }
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.setFocusPainted(false);

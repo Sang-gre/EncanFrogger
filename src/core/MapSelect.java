@@ -146,7 +146,7 @@ public class MapSelect extends Selection {
         if (selectedMap == null)
             return;
 
-        getGamePanel().startLevel(selectedPlayer, selectedMap);
+        getGamePanel().startLevel(selectedPlayer, selectedMap, 1);
     }
 
     @Override

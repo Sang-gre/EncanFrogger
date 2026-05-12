@@ -1,11 +1,10 @@
 package main;
 
+import assets.AssetManager;
+import assets.SoundManager;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
-import assets.AssetManager;
-import assets.SoundManager;
 
 
 public class MainPanel extends JPanel {
@@ -62,7 +61,7 @@ public class MainPanel extends JPanel {
         });
         menuBttn.addActionListener(e -> {
             sound.play("click");
-            parent.showInstructions();
+            parent.showInstructions(false);
         });
         exitBttn.addActionListener(e -> {
             sound.play("click");

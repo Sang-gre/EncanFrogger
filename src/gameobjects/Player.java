@@ -27,6 +27,7 @@ public abstract class Player extends GameObject {
     private boolean movedThisTick = false;
     private int visualWidth = 80;
     private int visualHeight = 80;
+    protected int maxLevels;
 
     public Player(int x, int y, PlayerType type) {
         super(x, y, 40, 40, 5);
@@ -242,5 +243,9 @@ public abstract class Player extends GameObject {
 
     public int getVisualHeight() {
         return visualHeight;
+    }
+
+    public int getMaxLevels() {
+        return maxLevels;
     }
 }

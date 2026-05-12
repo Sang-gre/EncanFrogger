@@ -1,14 +1,12 @@
 package main;
 
+import assets.AssetManager;
 import core.GamePanel;
-
 import core.InitialsPanel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 import javax.swing.*;
-
-import assets.AssetManager;
 import persistence.LeaderboardManager;
 import persistence.ScoreEntry;
 import ui.CursorGlassPane;
@@ -39,7 +37,7 @@ public class GameLauncher extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Image icon = AssetManager.getInstance().getLogoImage("logo");
-        
+
         if (icon != null) {
             setIconImage(icon);
         }
@@ -157,17 +155,23 @@ public class GameLauncher extends JFrame {
         cardLayout.show(mainPanel, "Initials");
         SwingUtilities.invokeLater(initialsPanel::activate);
     }
+
     public void showMainMenu() {
         cardLayout.show(mainPanel, "Menu");
-}
+    }
 
-    public void showInstructions() {
+    public void showInstructions(boolean fromPause) {
+        if (fromPause) {
+            instructionsPanel.setOnExit(() -> {
+                cardLayout.show(mainPanel, "Game");
+                gamePanel.resumeFromInstructions();
+            });
+        } else {
+            instructionsPanel.setOnExit(() -> showMainMenu());
+        }
         cardLayout.show(mainPanel, "Instructions");
-
-    SwingUtilities.invokeLater(() -> {
-        instructionsPanel.requestFocusInWindow();
-    });
-}
+        SwingUtilities.invokeLater(() -> instructionsPanel.requestFocusInWindow());
+    }
 
     public void startGame() {
         cardLayout.show(mainPanel, "Game");

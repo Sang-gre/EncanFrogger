@@ -18,7 +18,7 @@ public class GameTester {
 
         SwingUtilities.invokeLater(() -> {
             Paopao player = new Paopao(0, 0);
-            gamePanel.startLevel(player, TEST_MAP);
+            gamePanel.startLevel(player, TEST_MAP, TEST_MAP.getStartLevel());
             gamePanel.setState(GameState.PLAYING);
             launcher.startGame();
             gamePanel.requestFocusInWindow();

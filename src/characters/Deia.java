@@ -33,6 +33,7 @@ public class Deia extends Player {
         if (frames == null) {
             System.err.println("[Deia] WARNING: animation frames not found.");
         }
+        maxLevels = 5;
     }
 
     @Override

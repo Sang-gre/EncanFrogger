@@ -1,74 +1,113 @@
 package ui;
 
+import assets.AssetManager;
 import java.awt.*;
 import javax.swing.*;
-
-import assets.AssetManager;
 
 public class HUDpane extends JPanel {
 
     private JLabel[] hearts;
+    private JLabel scoreLabel;
     private JLabel scoreValue;
+    private JButton pauseButton;
+
+    private final Image pauseImg;
+    private final Image scoreImg;
+    private final Image heartImg;
+
+    private int lastHeight = -1;
 
     public HUDpane() {
+        this(null);
+    }
+
+    public HUDpane(Runnable onPauseClicked) {
 
         setLayout(null);
         setOpaque(false);
         setPreferredSize(new Dimension(800, 60));
-        
+
+        pauseImg = AssetManager.getInstance().getButton("pause");
+        scoreImg = AssetManager.getInstance().getHUD("score");
+        heartImg = AssetManager.getInstance().getHUD("heart");
+
+        /* Pause Button */
+        pauseButton = new JButton();
+        pauseButton.setBorderPainted(false);
+        pauseButton.setContentAreaFilled(false);
+        pauseButton.setFocusPainted(false);
+        pauseButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        if (onPauseClicked != null) {
+            pauseButton.addActionListener(e -> onPauseClicked.run());
+        }
+        add(pauseButton);
+
         /* Score Label */
-        Image scoreImg = AssetManager.getInstance().getHUD("score");
-        JLabel score = new JLabel(
-                new ImageIcon(
-                        scoreImg.getScaledInstance(180, 50, Image.SCALE_SMOOTH)));
-        score.setBounds(10, 5, 180, 50);
-        add(score);
+        scoreLabel = new JLabel();
+        add(scoreLabel);
 
         /* Score Text */
-        scoreValue = new JLabel("0");scoreValue.setFont(AssetManager.getInstance().getFont("enchantedLand").deriveFont(24f));
+        scoreValue = new JLabel("0");
+        scoreValue.setFont(AssetManager.getInstance().getFont("proffaliceHandwrite").deriveFont(24f));
         scoreValue.setForeground(new Color(246, 242, 195));
-        
-        scoreValue.setBounds(105, 4, 140, 50);
         scoreValue.setHorizontalAlignment(SwingConstants.LEFT);
         scoreValue.setVerticalAlignment(SwingConstants.CENTER);
-
         add(scoreValue);
-
         setComponentZOrder(scoreValue, 0);
 
+        /* Hearts */
         hearts = new JLabel[3];
-
-        Image heartImg = AssetManager.getInstance().getHUD("heart");
-
         for (int i = 0; i < hearts.length; i++) {
-
-            JLabel h = new JLabel(
-                    new ImageIcon(
-                            heartImg.getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
-
-            h.setBounds(200 + (i * 45), 10, 40, 40);
-
-            hearts[i] = h;
-            add(h);
+            hearts[i] = new JLabel();
+            add(hearts[i]);
         }
+    }
 
-        /*
-         * Image menuImg = AssetManager.getInstance().getHUD("menu");
-         * 
-         * JButton menuButton = new JButton(
-         * new ImageIcon(
-         * menuImg.getScaledInstance(120, 50, Image.SCALE_SMOOTH)
-         * )
-         * );
-         * 
-         * menuButton.setBounds(650, 5, 120, 50);
-         * 
-         * menuButton.setBorderPainted(false);
-         * menuButton.setContentAreaFilled(false);
-         * menuButton.setFocusPainted(false);
-         * 
-         * add(menuButton);
-         */ // wala pang image for this so di ko muna i add
+    @Override
+    public void doLayout() {
+        super.doLayout();
+
+        int h = getHeight();
+        if (h <= 0)
+            return;
+        if (h == lastHeight)
+            return;
+        lastHeight = h;
+        System.out.println("pauseImg=" + pauseImg + " scoreImg=" + scoreImg + " heartImg=" + heartImg);
+
+        // scale everything relative to HUD height
+        int btnSize = (int) (h * 0.85);
+        int scoreH = (int) (h * 0.85);
+        int scoreW = (int) (scoreH * (180.0 / 50.0)); // keep original aspect ratio
+        int heartSize = (int) (h * 0.65);
+        int pad = (int) (h * 0.08);
+        int centerY = (h - btnSize) / 2;
+
+        /* Pause Button */
+        pauseButton.setIcon(new ImageIcon(
+                pauseImg.getScaledInstance(btnSize, btnSize, Image.SCALE_SMOOTH)));
+        pauseButton.setBounds(pad, centerY, btnSize, btnSize);
+
+        /* Score Label */
+        int scoreX = pad + btnSize + pad;
+        scoreLabel.setIcon(new ImageIcon(
+                scoreImg.getScaledInstance(scoreW, scoreH, Image.SCALE_SMOOTH)));
+        scoreLabel.setBounds(scoreX, (h - scoreH) / 2, scoreW, scoreH);
+
+        /* Score Text */
+        scoreValue.setFont(
+                AssetManager.getInstance().getFont("proffaliceHandwrite").deriveFont((float) (h * 0.4)));
+        int textX = scoreX + (int) (scoreW * 0.5);
+        scoreValue.setBounds(textX, (h - scoreH) / 2, scoreW, scoreH);
+
+        /* Hearts */
+        int heartsX = scoreX + scoreW + pad;
+        int heartY = (h - heartSize) / 2;
+        for (int i = 0; i < hearts.length; i++) {
+            hearts[i].setIcon(new ImageIcon(
+                    heartImg.getScaledInstance(heartSize, heartSize, Image.SCALE_SMOOTH)));
+            hearts[i].setBounds(heartsX + i * (heartSize + pad / 2), heartY, heartSize, heartSize);
+        }
     }
 
     public void updateScore(int newScore) {
@@ -79,5 +118,11 @@ public class HUDpane extends JPanel {
         for (int i = 0; i < hearts.length; i++) {
             hearts[i].setVisible(i < livesRemaining);
         }
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        lastHeight = -1; // force relayout when added to panel
     }
 }

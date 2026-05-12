@@ -123,3 +123,4 @@ public class Platform extends GameObject {
         this.image = img;
     }
 }
+

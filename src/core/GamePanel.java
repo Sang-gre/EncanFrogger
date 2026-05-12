@@ -1,5 +1,6 @@
 package core;
 
+import assets.SoundManager;
 import gameobjects.Platform;
 import gameobjects.Player;
 import java.awt.*;
@@ -7,8 +8,6 @@ import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.*;
-
-import assets.SoundManager;
 import level.Direction;
 import level.LevelManager;
 import main.GameLauncher;
@@ -27,12 +26,14 @@ public class GamePanel extends JPanel implements KeyListener {
     private CollisionSystem collisionSystem;
     private ScoreManager scoreManager = new ScoreManager();
     private SoundManager sound = new SoundManager();
+    private ui.PauseScreen pauseScreen;
 
     private GameLogicThread logicThread;
     private RenderThread renderThread;
 
     private boolean levelTransitioning = false;
     private int currentLevel = 1;
+    private int selectedLevel = 1;
 
     private GameMap currentMap;
     private final Set<Integer> heldKeys = new HashSet<>();
@@ -51,6 +52,8 @@ public class GamePanel extends JPanel implements KeyListener {
     private boolean freshStart = true;
     private int coins = new CollisionSystem().getCoinsCollected();
 
+
+    private final Thread leaderboardWorker = new Thread();
 
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
@@ -148,17 +151,43 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     // starts the actual gameplay
-    public void startLevel(Player selectedPlayer, GameMap map) {
-        if (freshStart) {
-            currentLevel = launcher.getStartingLevel();
-            scoreManager.setScore(launcher.getStartingScore());
-        }
+    public void startLevel(Player selectedPlayer, GameMap map, int level) {
+
+    currentLevel = level; 
+
+    if (freshStart) {
+        currentLevel = launcher.getStartingLevel();
+        scoreManager.setScore(launcher.getStartingScore());
+    }
+
+    playerIsAlive = true;
+    playerInitials = launcher.getPlayerInitials();
+    scoreManager.resetCrossing();
+
+    new Thread(() ->
+        LeaderboardManager.upsertEntry(
+            new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins)
+        )
+    ).start();
+
+    this.levelTransitioning = false;
+    this.player = selectedPlayer;
+    this.state = GameState.PLAYING;
+    this.currentMap = map;
+
+    sound.stopBGM();
+    sound.playBGM("game");
+
+    this.levelManager = new LevelManager(getWidth(), getHeight());
+    this.collisionSystem = new CollisionSystem();
+
+    levelManager.loadLevel(currentLevel, currentMap);
 
         playerIsAlive = true;
         playerInitials = launcher.getPlayerInitials();
         scoreManager.resetCrossing();
-        LeaderboardManager.upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins));
-
+        new Thread(() -> LeaderboardManager
+                .upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins))).start();
         this.levelTransitioning = false;
         this.player = selectedPlayer;
         this.state = GameState.PLAYING;
@@ -166,10 +195,10 @@ public class GamePanel extends JPanel implements KeyListener {
         sound.stopBGM();
         sound.playBGM("game");
 
-
         this.levelManager = new LevelManager(getWidth(), getHeight());
         this.collisionSystem = new CollisionSystem();
 
+        currentLevel = selectedLevel;
         levelManager.loadLevel(currentLevel, currentMap);
         // movement still snaps to full grid size
         player.setSize(
@@ -200,8 +229,21 @@ public class GamePanel extends JPanel implements KeyListener {
 
         setLayout(null);
 
-        hud = new ui.HUDpane();
-        hud.setBounds(0, 0, 800, 60);
+        hud = new ui.HUDpane(() -> {
+            if (state == GameState.PLAYING) {
+                state = GameState.PAUSED;
+                pauseScreen.setVisible(true);
+                pauseScreen.revalidate();
+            } else if (state == GameState.PAUSED) {
+                state = GameState.PLAYING;
+                pauseScreen.setVisible(false);
+                pauseScreen.revalidate();
+            }
+            requestFocusInWindow();
+        });
+        int hudHeight = getHeight() / 9;
+        hud.setBounds(0, 0, getWidth(), hudHeight);
+        hud.revalidate();
         add(hud);
 
         // ensure HUD stays on top
@@ -211,10 +253,42 @@ public class GamePanel extends JPanel implements KeyListener {
         hud.updateScore(scoreManager.getScore());
         hud.updateLives(player.getLives());
 
+        pauseScreen = new ui.PauseScreen(
+                // Resume
+                () -> {
+                    state = GameState.PLAYING;
+                    pauseScreen.setVisible(false);
+                    pauseScreen.revalidate();
+                    requestFocusInWindow();
+                },
+                // Menu: instructions
+                () -> {
+                    stopThreads();
+                    sound.stopBGM();
+                    launcher.showInstructions(true);
+                },
+                // Exit: main menu
+                () -> {
+                    stopThreads();
+                    sound.stopBGM();
+                    launcher.menuGame();
+                });
+        pauseScreen.setBounds(0, 0, getWidth(), getHeight());
+        pauseScreen.setVisible(false);
+        pauseScreen.revalidate();
+        add(pauseScreen);
+        setComponentZOrder(pauseScreen, 0);
+
         // handle window resize
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
+
+                if (state == GameState.PLAYING) {
+                    state = GameState.PAUSED;
+                    pauseScreen.setVisible(true);
+                    pauseScreen.revalidate();
+                }
 
                 if (levelManager == null || player == null)
                     return;
@@ -250,6 +324,11 @@ public class GamePanel extends JPanel implements KeyListener {
                         + (levelManager.getLaneHeight() - player.getHeight()) / 2;
 
                 player.setPosition(centeredX, centeredY);
+                int hudHeight = getHeight() / 10;
+                hud.setBounds(0, 0, getWidth(), hudHeight);
+                hud.revalidate();
+
+                pauseScreen.setBounds(0, 0, getWidth(), getHeight());
             }
         });
 
@@ -446,11 +525,26 @@ public class GamePanel extends JPanel implements KeyListener {
             levelTransitioning = true;
             scoreManager.onReachedTop(currentLevel);
             hud.updateScore(scoreManager.getScore());
-            currentLevel++;
+            
+            if (currentLevel < player.getMaxLevels()) {
+                currentLevel++;
+                stopThreads();
+                SwingUtilities.invokeLater(() -> showCharacterSelectNextLevel());
+            } else {
+                showFinalVictory();
+            }
             // save progress before moving to character select
-            LeaderboardManager.upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins));
+            new Thread(() -> LeaderboardManager
+                    .upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins))).start();
             stopThreads();
-            SwingUtilities.invokeLater(() -> showCharacterSelectNextLevel());
+
+            if (currentLevel < currentMap.getMaxLevels()) {
+                SwingUtilities.invokeLater(() ->
+                    showLevelSelect(currentMap));
+
+    } else { SwingUtilities.invokeLater(() -> showFinalVictory());
+    }
+       
         }
 
         // player falls off side of screen while on log
@@ -472,7 +566,8 @@ public class GamePanel extends JPanel implements KeyListener {
         sound.play("gameover");
         state = GameState.GAME_OVER;
         playerIsAlive = false;
-        LeaderboardManager.upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, false, coins));
+        new Thread(() -> LeaderboardManager
+                .upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, false, coins))).start();
         gameOverScreen = new ui.GameOverScreen();
         if (hud != null)
             hud.setVisible(false);
@@ -514,11 +609,15 @@ public class GamePanel extends JPanel implements KeyListener {
 
         if (state == GameState.PLAYING && key == KeyEvent.VK_ESCAPE) {
             state = GameState.PAUSED;
+            pauseScreen.setVisible(true);
+            pauseScreen.revalidate();
             return;
         }
 
         if (state == GameState.PAUSED && key == KeyEvent.VK_ESCAPE) {
             state = GameState.PLAYING;
+            pauseScreen.setVisible(false);
+            pauseScreen.revalidate();
             return;
         }
 
@@ -543,8 +642,10 @@ public class GamePanel extends JPanel implements KeyListener {
             if (!gameOverScreen.isShowingPlayAgain()) {
                 boolean handled = gameOverScreen.handleKey(e.getKeyCode(), e.getKeyChar());
                 if (!handled) {
-                    LeaderboardManager.upsertEntry(
-                            new ScoreEntry(gameOverScreen.getInitials(), scoreManager.getScore(), currentLevel, false, coins));
+                    new Thread(() -> LeaderboardManager
+                            .upsertEntry(new ScoreEntry(gameOverScreen.getInitials(), scoreManager.getScore(),
+                                    currentLevel, false, coins)))
+                            .start();
                     leaderboardScreen = new ui.LeaderboardScreen();
                     showingLeaderboard = true;
                     requestFocusInWindow();
@@ -562,6 +663,11 @@ public class GamePanel extends JPanel implements KeyListener {
     public void keyReleased(KeyEvent e) {
         heldKeys.remove(e.getKeyCode());
     }
+
+    public void showLevelSelect(GameMap map) {
+        // temporary fallback
+        showCharacterSelectNextLevel();
+}
 
     public void stopThreads() {
         if (logicThread != null) {
@@ -621,5 +727,35 @@ public class GamePanel extends JPanel implements KeyListener {
         if (showingLeaderboard && leaderboardScreen != null) {
             leaderboardScreen.draw(g, getWidth(), getHeight());
         }
+
+        // Pause overlay
+        if (state == GameState.PAUSED && pauseScreen != null) {
+            pauseScreen.draw(g, getWidth(), getHeight());
+        }
+    }
+
+    private void showFinalVictory() {
+        stopThreads();
+        state = GameState.GAME_OVER;
+
+        LeaderboardManager.saveEntry(
+                new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins));
+        leaderboardScreen = new ui.LeaderboardScreen();
+        showingLeaderboard = true;
+        repaint();
+    }
+
+    public void setSelectedLevel(int level) {
+        this.selectedLevel = level;
+}
+    public void resumeFromInstructions() {
+        sound.playBGM("game");
+        logicThread = new GameLogicThread(this);
+        renderThread = new RenderThread(this);
+        logicThread.start();
+        renderThread.start();
+        pauseScreen.setVisible(true);
+        state = GameState.PAUSED;
+        requestFocusInWindow();
     }
 }

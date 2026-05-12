@@ -36,6 +36,7 @@ public class Flamara extends Player {
         if (frames == null) {
             System.err.println("[Flammara] WARNING: animation frames not found.");
         }
+        maxLevels = 4;
     }
 
     @Override
