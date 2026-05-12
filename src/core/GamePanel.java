@@ -233,12 +233,9 @@ public class GamePanel extends JPanel implements KeyListener {
                 },
                 // Menu: instructions
                 () -> {
-                    state = GameState.PLAYING;
-                    pauseScreen.setVisible(false);
-                    pauseScreen.revalidate();
                     stopThreads();
                     sound.stopBGM();
-                    launcher.showInstructions();
+                    launcher.showInstructions(true);
                 },
                 // Exit: main menu
                 () -> {
@@ -498,10 +495,9 @@ public class GamePanel extends JPanel implements KeyListener {
             if (currentLevel < player.getMaxLevels()) {
                 currentLevel++;
                 stopThreads();
-                    SwingUtilities.invokeLater(() ->
-                       showCharacterSelectNextLevel());
+                SwingUtilities.invokeLater(() -> showCharacterSelectNextLevel());
             } else {
-                        showFinalVictory();
+                showFinalVictory();
             }
             // save progress before moving to character select
             new Thread(() -> LeaderboardManager
@@ -696,11 +692,21 @@ public class GamePanel extends JPanel implements KeyListener {
         stopThreads();
         state = GameState.GAME_OVER;
 
-    LeaderboardManager.saveEntry(
-            new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true)
-    );
+        LeaderboardManager.saveEntry(
+                new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true));
         leaderboardScreen = new ui.LeaderboardScreen();
         showingLeaderboard = true;
         repaint();
+    }
+
+    public void resumeFromInstructions() {
+        sound.playBGM("game");
+        logicThread = new GameLogicThread(this);
+        renderThread = new RenderThread(this);
+        logicThread.start();
+        renderThread.start();
+        pauseScreen.setVisible(true);
+        state = GameState.PAUSED;
+        requestFocusInWindow();
     }
 }
