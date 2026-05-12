@@ -43,7 +43,5 @@ public class CongratsScreen {
         g2.dispose();
     }
 
-    public boolean isOkClicked(Point p, int w, int h) {
-    return p != null && p.x >= 0 && p.y >= 0 && p.x <= w && p.y <= h;
-}
+    
 }
