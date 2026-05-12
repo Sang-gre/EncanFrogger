@@ -43,6 +43,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private ui.HUDpane hud;
     private ui.GameOverScreen gameOverScreen;
     private ui.LeaderboardScreen leaderboardScreen;
+    private ui.CongratsScreen congratsScreen;
 
     private boolean showingLeaderboard = false;
     private int platformDeltaX = 0;
@@ -67,6 +68,22 @@ public class GamePanel extends JPanel implements KeyListener {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+
+                if (congratsScreen != null) {
+
+            if (congratsScreen.isOkClicked(e.getPoint())) {
+
+        leaderboardScreen = new ui.LeaderboardScreen();
+
+        showingLeaderboard = true;
+
+        congratsScreen = null;
+
+        repaint();
+    }
+
+    return;
+}
 
                 // handle game over screen buttons
                 if (state == GameState.GAME_OVER && gameOverScreen != null && !showingLeaderboard) {
@@ -538,14 +555,17 @@ public class GamePanel extends JPanel implements KeyListener {
                     .upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins))).start();
             stopThreads();
 
-            if (currentLevel < currentMap.getMaxLevels()) {
-                SwingUtilities.invokeLater(() ->
-                    showLevelSelect(currentMap));
+    scoreManager.onReachedTop(currentLevel);
+    hud.updateScore(scoreManager.getScore());
 
-    } else { SwingUtilities.invokeLater(() -> showFinalVictory());
-    }
-       
-        }
+    stopThreads();
+
+    SwingUtilities.invokeLater(() -> {
+        showFinalVictory(); // THIS shows CongratsScreen
+    });
+
+    return;
+}
 
         // player falls off side of screen while on log
         if (player.getX() + player.getWidth() < 0 || player.getX() > getWidth()) {
@@ -732,11 +752,15 @@ public class GamePanel extends JPanel implements KeyListener {
         if (state == GameState.PAUSED && pauseScreen != null) {
             pauseScreen.draw(g, getWidth(), getHeight());
         }
+
+        if (congratsScreen != null) {
+            congratsScreen.draw(g, getWidth(), getHeight());
+}
     }
 
     private void showFinalVictory() {
         stopThreads();
-        state = GameState.GAME_OVER;
+        state = GameState.WIN;
 
         LeaderboardManager.saveEntry(
                 new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins));
