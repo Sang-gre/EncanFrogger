@@ -1,6 +1,8 @@
 package ui;
 
 import assets.AssetManager;
+import assets.SoundManager;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -23,6 +25,7 @@ public class InstructionsPanel extends JPanel {
     private JButton xButton;
 
     private Runnable onExit = () -> launcher.showMainMenu(); // default
+    SoundManager sound = new SoundManager();
 
     public void setOnExit(Runnable onExit) {
         this.onExit = onExit;
@@ -101,6 +104,9 @@ public class InstructionsPanel extends JPanel {
         }
 
         leftButton.addActionListener(e -> {
+
+            sound.play("click");
+
             animateButtonPress(leftButton);
             if (currentPage > 0) {
                 currentPage--;
@@ -111,6 +117,8 @@ public class InstructionsPanel extends JPanel {
         });
 
         rightButton.addActionListener(e -> {
+            sound.play("click");
+
             animateButtonPress(rightButton);
             if (currentPage < pages.length - 1) {
                 currentPage++;
@@ -121,6 +129,8 @@ public class InstructionsPanel extends JPanel {
         });
 
         xButton.addActionListener(e -> {
+            sound.play("click");
+
             animateButtonPress(xButton);
             currentPage = 0; // reset page for next time
             Timer t = new Timer(100, ev -> onExit.run());
@@ -145,28 +155,32 @@ public class InstructionsPanel extends JPanel {
             @Override
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_RIGHT -> {
+                    case KeyEvent.VK_RIGHT:
+                        sound.play("click");
+
                         if (currentPage < pages.length - 1) {
                             currentPage++;
                             repaint();
                             updateButtonVisibility();
                         }
-                    }
-                    case KeyEvent.VK_LEFT -> {
+                        break;
+                    case KeyEvent.VK_LEFT:
+                        sound.play("click");
                         if (currentPage > 0) {
                             currentPage--;
                             repaint();
                             updateButtonVisibility();
                         }
-                    }
-                    case KeyEvent.VK_ESCAPE -> {
+                        break;
+                    case KeyEvent.VK_ESCAPE:
+                        sound.play("click");
                         currentPage = 0;
                         onExit.run();
                     }
                 }
-            }
-        });
-    }
+            });
+        }
+
 
     private void loadPages() {
         pages = new Image[] {

@@ -1,6 +1,8 @@
 package core;
 
 import assets.AssetManager;
+import assets.SoundManager;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.function.Consumer;
@@ -44,6 +46,10 @@ public class InitialsPanel extends JPanel implements KeyListener {
         okBtn = createImageButton(okImage);
         okBtn.addActionListener(e -> {
             requestFocusInWindow();
+
+            SoundManager sound = new SoundManager();
+            sound.play("click");
+            
             tryConfirm();
         });
         add(okBtn);
