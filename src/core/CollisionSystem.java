@@ -1,17 +1,17 @@
 package core;
 
+import assets.SoundManager;
 import gameobjects.Coin;
 import gameobjects.GameObject;
 import gameobjects.Obstacle;
 import gameobjects.Platform;
 import gameobjects.Player;
-import assets.SoundManager;
 import java.awt.Rectangle;
 import java.util.List;
 
 public class CollisionSystem {
 
-    private static int coinsCollected = 0; // running total, read by GamePanel to detect new pickups
+    private static int coinsCollected = 0;
     private SoundManager sound = new SoundManager();
 
     public boolean checkAABB(GameObject a, GameObject b) {
@@ -42,7 +42,7 @@ public class CollisionSystem {
                 ((Player) a).addCoins(1);
                 coin.onCollide(a);
                 sound.play("coin");
-                coinsCollected++; // increment so GamePanel can detect the pickup
+                coinsCollected++;
             }
             return;
         }
@@ -80,7 +80,6 @@ public class CollisionSystem {
     }
 
     public static int getCoinsCollected() {
-        System.out.println("Coins Collected: " + coinsCollected);
         return coinsCollected;
     }
 }

@@ -5,10 +5,7 @@ import gameobjects.Player;
 import javax.swing.SwingUtilities;
 import level.LevelManager;
 
-/**
- * Owns the per-tick game update logic: moving the player, checking collisions,
- * detecting win/loss conditions. Called from GameLogicThread every tick.
- */
+/* Owns the per-tick game update logic */
 public class GameLogicController {
 
     private final GamePanel gamePanel;

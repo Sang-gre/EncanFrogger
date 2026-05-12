@@ -109,7 +109,6 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Game loop (GameLogicThread)
     // -------------------------------------------------------------------------
-
     public void updateGame() {
         if (logicController != null)
             logicController.updateGame();
@@ -118,7 +117,6 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Win / lose
     // -------------------------------------------------------------------------
-
     public void showGameOver() {
         stopThreads();
         sound.play("gameover");
@@ -170,7 +168,6 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Key events (InputHandler)
     // -------------------------------------------------------------------------
-
     public void onKeyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         GameState state = stateManager.getState();
@@ -223,7 +220,6 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Mouse routing
     // -------------------------------------------------------------------------
-
     private void handleMouseClick(MouseEvent e) {
         if (congratsScreen != null) {
             leaderboardScreen = new ui.LeaderboardScreen();

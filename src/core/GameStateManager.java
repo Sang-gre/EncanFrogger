@@ -28,9 +28,10 @@ public class GameStateManager {
         showingLeaderboard = false;
         state = GameState.CHARACTER_SELECT;
     }
-
-    // --- Getters & Setters ---
-
+    
+    // -------------------------------------------------------------------------
+    // Getters & Setters
+    // -------------------------------------------------------------------------
     public GameState getState() {
         return state;
     }

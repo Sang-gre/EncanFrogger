@@ -9,8 +9,8 @@ import java.util.Set;
 import level.Direction;
 import level.LevelManager;
 
+/* Handles key inputs */
 public class InputHandler implements KeyListener {
-
     private final Set<Integer> heldKeys = new HashSet<>();
     private long lastMoveTime = 0;
     private static final long MOVE_DELAY = 140;

@@ -4,10 +4,7 @@ import gameobjects.Player;
 import java.awt.Graphics;
 import level.LevelManager;
 
-/**
- * Handles all rendering: the level, the player, and every overlay
- * (pause, game over, leaderboard, congrats). Called from paintComponent.
- */
+/* Handles rendering */
 public class GameRenderer {
 
     private final GameStateManager stateManager;
