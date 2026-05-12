@@ -1,3 +1,15 @@
 JJ,2750,2,true
-NAME,390,1,false
+DENISE,230,1,false
+NAME,160,1,false
 LOR,0,1,true
+DEFSA,0,1,true
+YGYJF,0,1,true
+WDW,0,1,true
+QE,0,1,true
+U,0,1,true
+E,0,1,true
+W,0,1,true
+JADE,0,1,true
+DJ,0,1,true
+KD,0,1,true
+LORENZ,0,1,true
