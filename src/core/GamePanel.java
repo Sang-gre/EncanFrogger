@@ -53,8 +53,11 @@ public class GamePanel extends JPanel implements KeyListener {
     private boolean freshStart = true;
     private int coins = new CollisionSystem().getCoinsCollected();
 
+    private int previousScore = 0;
+    private int totalScore = 0;
+
+
     private final Thread leaderboardWorker = new Thread();
-    private boolean waitingForNextLevel = false;
 
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
@@ -66,14 +69,6 @@ public class GamePanel extends JPanel implements KeyListener {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-
-                if (waitingForNextLevel && congratsScreen != null) {
-    waitingForNextLevel = false;
-    congratsScreen = null;
-    loadNextLevel();
-    return;
-}
-
                 if (congratsScreen != null) {
                     leaderboardScreen = new ui.LeaderboardScreen();
                     showingLeaderboard = true;
@@ -116,6 +111,7 @@ public class GamePanel extends JPanel implements KeyListener {
         });
     }
 
+   
     public void showMapSelect(Player selectedPlayer) {
         showMapSelect(selectedPlayer, currentMap != null ? currentMap : GameMap.LIREO);
     }
@@ -127,11 +123,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
         removeAll();
         setLayout(new BorderLayout());
-        add(new MapSelect(
-        this,
-        () -> showLevelSelect(selectedPlayer, this.currentMap),
-        selectedPlayer
-), BorderLayout.CENTER);
+        add(new MapSelect(this, () -> showLevelSelect(selectedPlayer, map), selectedPlayer), BorderLayout.CENTER);
         revalidate();
         repaint();
     }
@@ -468,37 +460,24 @@ public class GamePanel extends JPanel implements KeyListener {
 
         // player reaches top lane — award completion bonus then advance
         if (!levelTransitioning && playerLane == 0) {
+            levelTransitioning = true;
 
-    levelTransitioning = true;
+            scoreManager.onReachedTop(currentLevel);
+            hud.updateScore(scoreManager.getScore());
 
-    scoreManager.onReachedTop(currentLevel);
-    hud.updateScore(scoreManager.getScore());
+            // --- Track scores ---
+            previousScore = scoreManager.getScore();
+            totalScore += previousScore;
 
-    stopThreads();
+            stopThreads();
 
-    // FINAL LEVEL
-    if (currentLevel == 3) {
+            SwingUtilities.invokeLater(() -> {
+                showFinalVictory();
+            });
 
-    SwingUtilities.invokeLater(() -> {
-        congratsScreen = new ui.CongratsScreen(true);
-        repaint();
-    });
+            return;
+        }
 
-    return;
-}
-
-    // NORMAL LEVEL CLEAR
-    currentLevel++;
-
-    waitingForNextLevel = true;
-
-    SwingUtilities.invokeLater(() -> {
-        congratsScreen = new ui.CongratsScreen(false);
-        repaint();
-    });
-
-    return;
-}
 
         // player falls off side of screen while on log
         if (player.getX() + player.getWidth() < 0 || player.getX() > getWidth()) {
@@ -699,21 +678,7 @@ public class GamePanel extends JPanel implements KeyListener {
         }
 
         if (congratsScreen != null) {
-
-    // draw level cleared text at top
-    g.setFont(new Font("Arial", Font.BOLD, 25));
-    g.setColor(Color.WHITE);
-
-    String text = "Level - DONE";
-
-    FontMetrics fm = g.getFontMetrics();
-    int x = (getWidth() - fm.stringWidth(text)) / 2;
-    int y = 70;
-
-    g.drawString(text, x, y);
-
-    // draw congrats panel normally
-    congratsScreen.draw(g, getWidth(), getHeight());
+            congratsScreen.draw(g, getWidth(), getHeight());
 }
     }
 
@@ -721,12 +686,14 @@ public class GamePanel extends JPanel implements KeyListener {
         stopThreads();
         state = GameState.WIN;
 
-        LeaderboardManager.saveEntry(
-                new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins));
-        leaderboardScreen = new ui.LeaderboardScreen();
-        showingLeaderboard = true;
+        showingLeaderboard = false;
+        leaderboardScreen = null;
+
+        congratsScreen = new ui.CongratsScreen(previousScore, totalScore);
+
         repaint();
     }
+
 
     public void setSelectedLevel(int level) {
         this.selectedLevel = level;
@@ -743,18 +710,5 @@ public class GamePanel extends JPanel implements KeyListener {
     }
     public void enterGameplay(Player player, GameMap map, int level) {
     startLevel(player, map, level);
-}
-
-public void loadNextLevel() {
-    currentLevel++;
-
-    if (currentLevel > 3) {
-        showFinalVictory();
-        return;
-    }
-
-    levelTransitioning = false;
-
-    startLevel(player, currentMap, currentLevel);
 }
 }
