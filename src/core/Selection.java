@@ -107,7 +107,7 @@ public abstract class Selection extends JPanel {
             ScoreEntry latest = entries.get(0);
 
             levelLabel.setText("LEVEL " + latest.level);
-            coinLabel.setText(String.valueOf(latest.coins));
+            coinLabel.setText(String.valueOf(latest.coins * 50));
         }
 
         //int level = new LevelManager(getWidth(), getHeight()).getCurrentLevel();
