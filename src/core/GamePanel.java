@@ -49,6 +49,8 @@ public class GamePanel extends JPanel implements KeyListener {
     private String playerInitials;
     private boolean playerIsAlive = true;
     private boolean freshStart = true;
+    private int coins = new CollisionSystem().getCoinsCollected();
+
 
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
@@ -155,7 +157,7 @@ public class GamePanel extends JPanel implements KeyListener {
         playerIsAlive = true;
         playerInitials = launcher.getPlayerInitials();
         scoreManager.resetCrossing();
-        LeaderboardManager.upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true));
+        LeaderboardManager.upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins));
 
         this.levelTransitioning = false;
         this.player = selectedPlayer;
@@ -385,6 +387,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
         int livesBefore = player.getLives();
         int coinsBefore = collisionSystem.getCoinsCollected();
+        System.out.println(coinsBefore);
 
         collisionSystem.checkAll(player,
                 levelManager.getObstacles(),
@@ -393,6 +396,8 @@ public class GamePanel extends JPanel implements KeyListener {
 
         // update score if a new coin was collected
         int coinsAfter = collisionSystem.getCoinsCollected();
+        System.out.println(coinsAfter);
+
         if (coinsAfter > coinsBefore) {
             for (int i = 0; i < (coinsAfter - coinsBefore); i++) {
                 scoreManager.onCoinCollected();
@@ -443,7 +448,7 @@ public class GamePanel extends JPanel implements KeyListener {
             hud.updateScore(scoreManager.getScore());
             currentLevel++;
             // save progress before moving to character select
-            LeaderboardManager.upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true));
+            LeaderboardManager.upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins));
             stopThreads();
             SwingUtilities.invokeLater(() -> showCharacterSelectNextLevel());
         }
@@ -467,7 +472,7 @@ public class GamePanel extends JPanel implements KeyListener {
         sound.play("gameover");
         state = GameState.GAME_OVER;
         playerIsAlive = false;
-        LeaderboardManager.upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, false));
+        LeaderboardManager.upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, false, coins));
         gameOverScreen = new ui.GameOverScreen();
         if (hud != null)
             hud.setVisible(false);
@@ -539,7 +544,7 @@ public class GamePanel extends JPanel implements KeyListener {
                 boolean handled = gameOverScreen.handleKey(e.getKeyCode(), e.getKeyChar());
                 if (!handled) {
                     LeaderboardManager.upsertEntry(
-                            new ScoreEntry(gameOverScreen.getInitials(), scoreManager.getScore(), currentLevel, false));
+                            new ScoreEntry(gameOverScreen.getInitials(), scoreManager.getScore(), currentLevel, false, coins));
                     leaderboardScreen = new ui.LeaderboardScreen();
                     showingLeaderboard = true;
                     requestFocusInWindow();
