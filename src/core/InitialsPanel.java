@@ -104,7 +104,7 @@ public class InitialsPanel extends JPanel implements KeyListener {
         int textX = (w - fm.stringWidth(text)) / 2;
         int textY = (int) (h * TEXT_Y);
 
-        g2.setColor(Color.WHITE);
+        g2.setColor(new Color(151, 59, 53));
         g2.drawString(text, textX, textY);
     }
 
