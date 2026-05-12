@@ -11,13 +11,16 @@ public class InstructionsPanel extends JPanel {
     private GameLauncher parent;
     private Image[] pages;
     private Image background;
+
+    private Image leftImg;
+    private Image rightImg;
+    private Image exitImg;
+
     private int currentPage = 0;
 
     private JButton leftButton;
     private JButton rightButton;
     private JButton xButton;
-
-    private static final int BTN_SIZE = 64;
 
     public InstructionsPanel(GameLauncher parent) {
         this.parent = parent;
@@ -30,16 +33,23 @@ public class InstructionsPanel extends JPanel {
         loadPages();
         setupButtons();
         setupKeys();
+    }
 
-        requestFocusInWindow();
+    @Override
+    public void addNotify() {
+        super.addNotify();
+
+        SwingUtilities.invokeLater(this::requestFocusInWindow);
     }
 
     private ImageIcon scaleIcon(Image img, int width, int height) {
-        return new ImageIcon(img.getScaledInstance(width, height, Image.SCALE_SMOOTH));
+        return new ImageIcon(
+                img.getScaledInstance(width, height, Image.SCALE_SMOOTH));
     }
 
     private void animateButtonPress(JButton btn) {
         Point original = btn.getLocation();
+
         btn.setLocation(original.x, original.y + 5);
 
         Timer timer = new Timer(80, e -> btn.setLocation(original));
@@ -52,25 +62,59 @@ public class InstructionsPanel extends JPanel {
         rightButton.setVisible(currentPage < pages.length - 1);
     }
 
+    private void updateResponsiveLayout() {
+
+        int w = getWidth();
+        int h = getHeight();
+
+        int btnSize = Math.max(48, Math.min(w, h) / 8);
+
+        leftButton.setIcon(scaleIcon(leftImg, btnSize, btnSize));
+        rightButton.setIcon(scaleIcon(rightImg, btnSize, btnSize));
+        xButton.setIcon(scaleIcon(exitImg, btnSize, btnSize));
+
+        leftButton.setBounds(
+                w / 15,
+                h / 2 - btnSize / 2,
+                btnSize,
+                btnSize);
+
+        rightButton.setBounds(
+                w - btnSize - w / 12,
+                h / 2 - btnSize / 2,
+                btnSize,
+                btnSize);
+
+        int xMargin = w / 8;
+
+        xButton.setBounds(
+                w - btnSize - xMargin,
+                h / 25,
+                btnSize,
+                btnSize);
+    }
+
     private void setupButtons() {
 
-        Image leftImg = AssetManager.getInstance().getButton("leftArrow");
-        Image rightImg = AssetManager.getInstance().getButton("rightArrow");
-        Image exitImg = AssetManager.getInstance().getButton("xButton");
+        leftImg = AssetManager.getInstance().getButton("leftArrow");
+        rightImg = AssetManager.getInstance().getButton("rightArrow");
+        exitImg = AssetManager.getInstance().getButton("xButton");
 
-        leftButton = new JButton(scaleIcon(leftImg, BTN_SIZE, BTN_SIZE));
-        rightButton = new JButton(scaleIcon(rightImg, BTN_SIZE, BTN_SIZE));
-        xButton = new JButton(scaleIcon(exitImg, BTN_SIZE, BTN_SIZE));
+        leftButton = new JButton();
+        rightButton = new JButton();
+        xButton = new JButton();
 
         for (JButton btn : new JButton[]{leftButton, rightButton, xButton}) {
             btn.setBorderPainted(false);
             btn.setContentAreaFilled(false);
             btn.setFocusPainted(false);
             btn.setOpaque(false);
+            btn.setFocusable(false);
             add(btn);
         }
 
         leftButton.addActionListener(e -> {
+
             animateButtonPress(leftButton);
 
             if (currentPage > 0) {
@@ -78,9 +122,12 @@ public class InstructionsPanel extends JPanel {
                 repaint();
                 updateButtonVisibility();
             }
+
+            requestFocusInWindow();
         });
 
         rightButton.addActionListener(e -> {
+
             animateButtonPress(rightButton);
 
             if (currentPage < pages.length - 1) {
@@ -88,57 +135,66 @@ public class InstructionsPanel extends JPanel {
                 repaint();
                 updateButtonVisibility();
             }
+
+            requestFocusInWindow();
         });
 
         xButton.addActionListener(e -> {
+
             animateButtonPress(xButton);
 
             Timer t = new Timer(100, ev -> parent.showMainMenu());
             t.setRepeats(false);
             t.start();
+
+            requestFocusInWindow();
         });
 
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                int w = getWidth();
-                int h = getHeight();
-
-                leftButton.setBounds(20, h / 2 - BTN_SIZE / 2, BTN_SIZE, BTN_SIZE);
-                rightButton.setBounds(w - BTN_SIZE - 20, h / 2 - BTN_SIZE / 2, BTN_SIZE, BTN_SIZE);
-                xButton.setBounds(w - BTN_SIZE - 110, 20, BTN_SIZE, BTN_SIZE);
+                updateResponsiveLayout();
             }
         });
 
+        updateResponsiveLayout();
         updateButtonVisibility();
     }
 
     private void setupKeys() {
+
         addKeyListener(new KeyAdapter() {
+
             @Override
             public void keyPressed(KeyEvent e) {
 
                 switch (e.getKeyCode()) {
 
                     case KeyEvent.VK_RIGHT:
+
                         if (currentPage < pages.length - 1) {
                             currentPage++;
                             repaint();
                             updateButtonVisibility();
                         }
+
                         break;
 
                     case KeyEvent.VK_LEFT:
+
                         if (currentPage > 0) {
                             currentPage--;
                             repaint();
                             updateButtonVisibility();
                         }
+
                         break;
 
                     case KeyEvent.VK_ESCAPE:
+
                         currentPage = 0;
                         parent.showMainMenu();
+
                         break;
                 }
             }
@@ -146,6 +202,7 @@ public class InstructionsPanel extends JPanel {
     }
 
     private void loadPages() {
+
         pages = new Image[]{
             AssetManager.getInstance().getInstructions("instruction1"),
             AssetManager.getInstance().getInstructions("instruction2"),
@@ -157,6 +214,7 @@ public class InstructionsPanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
+
         super.paintComponent(g);
 
         if (background != null) {
@@ -164,7 +222,13 @@ public class InstructionsPanel extends JPanel {
         }
 
         if (pages != null && pages[currentPage] != null) {
-            g.drawImage(pages[currentPage], 0, 0, getWidth(), getHeight(), this);
+            g.drawImage(
+                    pages[currentPage],
+                    0,
+                    0,
+                    getWidth(),
+                    getHeight(),
+                    this);
         }
     }
 }
