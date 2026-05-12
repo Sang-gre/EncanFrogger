@@ -80,7 +80,6 @@ public class HUDpane extends JPanel {
         int h = size.height;
         //int w = size.width;
         
-        System.out.println("pauseImg=" + pauseImg + " scoreImg=" + scoreImg + " heartImg=" + heartImg);
 
         // scale everything relative to HUD height
         int btnSize = (int) (h * 0.85);
