@@ -441,7 +441,14 @@ public class GamePanel extends JPanel implements KeyListener {
             levelTransitioning = true;
             scoreManager.onReachedTop(currentLevel);
             hud.updateScore(scoreManager.getScore());
-            currentLevel++;
+            if (currentLevel < player.getMaxLevels()) {
+                currentLevel++;
+                stopThreads();
+                    SwingUtilities.invokeLater(() ->
+                       showCharacterSelectNextLevel());
+            } else {
+                        showFinalVictory();
+            }
             // save progress before moving to character select
             LeaderboardManager.upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true));
             stopThreads();
@@ -616,5 +623,17 @@ public class GamePanel extends JPanel implements KeyListener {
         if (showingLeaderboard && leaderboardScreen != null) {
             leaderboardScreen.draw(g, getWidth(), getHeight());
         }
+    }
+
+    private void showFinalVictory() {
+        stopThreads();
+        state = GameState.GAME_OVER;
+
+    LeaderboardManager.saveEntry(
+            new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true)
+    );
+        leaderboardScreen = new ui.LeaderboardScreen();
+        showingLeaderboard = true;
+        repaint();
     }
 }

@@ -45,6 +45,7 @@ public class Adamus extends Player {
         if (frames == null) {
             System.err.println("[Adamus] WARNING: animation frames for ADAMUS not found.");
         }
+        maxLevels = 4;
     }
 
     // -------------------------

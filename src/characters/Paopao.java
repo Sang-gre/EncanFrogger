@@ -25,6 +25,8 @@ public class Paopao extends Player {
         if (frames == null) {
             System.err.println("[Paopao] WARNING: animation frames not found.");
         }
+
+        maxLevels = 3;
     }
 
     @Override
