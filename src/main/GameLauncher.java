@@ -1,14 +1,12 @@
 package main;
 
+import assets.AssetManager;
 import core.GamePanel;
-
 import core.InitialsPanel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 import javax.swing.*;
-
-import assets.AssetManager;
 import persistence.LeaderboardManager;
 import persistence.ScoreEntry;
 import ui.CursorGlassPane;
@@ -24,7 +22,7 @@ public class GameLauncher extends JFrame {
     private final InstructionsPanel instructionsPanel;
     private final GamePanel gamePanel;
     private InitialsPanel initialsPanel;
-
+    
     private int startingScore = 0;
 
     // Initials collected at the start of each session
