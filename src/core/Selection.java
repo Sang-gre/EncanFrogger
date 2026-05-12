@@ -127,7 +127,7 @@ public abstract class Selection extends JPanel {
        // List<ScoreEntry> entries = LeaderboardManager.loadAll();
         if (!entries.isEmpty()) {
             ScoreEntry latest = entries.get(0);
-            coinLabel.setText(String.valueOf(latest.coins));
+            coinLabel.setText(String.valueOf(latest.coins*50));
             levelLabel.setText("LEVEL " + latest.level);
         }
 

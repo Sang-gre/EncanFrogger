@@ -137,7 +137,9 @@ public class GamePanel extends JPanel implements KeyListener {
             removeComponentListener(cl);
         }
 
-        scoreManager = new ScoreManager();
+        scoreManager = new ScoreManager(); 
+        scoreManager.reset(); // ensures totalScore = 0
+
         currentLevel = 1;
         playerIsAlive = true;
         this.state = GameState.CHARACTER_SELECT;
@@ -150,6 +152,7 @@ public class GamePanel extends JPanel implements KeyListener {
         repaint();
         freshStart = true;
     }
+
 
     // Show character select after completing a level
     public void showCharacterSelectNextLevel() {
@@ -462,19 +465,13 @@ public class GamePanel extends JPanel implements KeyListener {
         if (!levelTransitioning && playerLane == 0) {
             levelTransitioning = true;
 
+            // let ScoreManager handle previous + total
             scoreManager.onReachedTop(currentLevel);
             hud.updateScore(scoreManager.getScore());
 
-            // --- Track scores ---
-            previousScore = scoreManager.getScore();
-            totalScore += previousScore;
-
             stopThreads();
 
-            SwingUtilities.invokeLater(() -> {
-                showFinalVictory();
-            });
-
+            SwingUtilities.invokeLater(this::showFinalVictory);
             return;
         }
 
@@ -686,13 +683,17 @@ public class GamePanel extends JPanel implements KeyListener {
         stopThreads();
         state = GameState.WIN;
 
+        int prev = scoreManager.getPreviousScore();
+        int total = scoreManager.getTotalScore();
+
         showingLeaderboard = false;
         leaderboardScreen = null;
 
-        congratsScreen = new ui.CongratsScreen(true);
+        congratsScreen = new ui.CongratsScreen(prev, total);
 
         repaint();
     }
+
 
 
     public void setSelectedLevel(int level) {
