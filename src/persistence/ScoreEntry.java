@@ -5,11 +5,13 @@ public class ScoreEntry {
     public int score;
     public int level;
     public boolean isAlive;
+    public int coins;
 
-    public ScoreEntry(String initials, int score, int level, boolean isAlive) {
+    public ScoreEntry(String initials, int score, int level, boolean isAlive, int coins) {
         this.initials = initials.toUpperCase();
         this.score = score;
         this.level = level;
         this.isAlive = isAlive;
+        this.coins = coins;
     }
 }

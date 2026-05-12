@@ -2,11 +2,17 @@ package core;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 import javax.swing.*;
 
 import assets.AssetManager;
 import assets.SoundManager;
 import level.LevelManager;
+import persistence.ScoreEntry;
 import ui.PopupDialog;
 
 public abstract class Selection extends JPanel {
@@ -77,16 +83,62 @@ public abstract class Selection extends JPanel {
 
         JButton finalBackBtn = backBtn;
     
+
+        //LABELS 
+        /*File f = new File("scores.txt");
+        if (!f.exists()) return;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 4) {
+                    try {
+                        int coin = Integer.parseInt(parts[1].trim());
+                        int level = Integer.parseInt(parts[2].trim());
+
+                    } catch (NumberFormatException ex) {}
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }*/
+
+
         JLabel coinLabel = new JLabel();
         int coins = new CollisionSystem().getCoinsCollected();
-        coinLabel.setText(Integer.toString(coins * 20)); //20 kase wala lang huhu
-        coinLabel.setFont(new Font("Monospaced", Font.BOLD, 24));
+        coinLabel.setText(Integer.toString(coins *  50));
+        System.out.println(Integer.toString(coins));
+        coinLabel.setFont(AssetManager.getInstance().getFont("enchantedLand").deriveFont(24f));
+        coinLabel.setForeground(new Color(246, 242, 195));
 
         JLabel levelLabel = new JLabel();
-        int level = new LevelManager(getWidth(), getHeight()).getCurrentLevel();
-        levelLabel.setText("LEVEL " +  level);
-        levelLabel.setFont(new Font("Monospaced", Font.BOLD, 18));
+        File file = new File("data/scores.txt");
 
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 4) {
+                    try {
+                        int level = Integer.parseInt(parts[2].trim());
+
+                        SwingUtilities.invokeLater( () -> levelLabel.setText("LEVEL  " +  level));
+                        System.out.println("LEVEL  " +  level);
+
+                    } catch (NumberFormatException ex) {
+                        System.err.println("Skipping corrupted line: " + line);
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        //int level = new LevelManager(getWidth(), getHeight()).getCurrentLevel();
+
+        levelLabel.setFont(AssetManager.getInstance().getFont("enchantedLand").deriveFont(22f));
+        levelLabel.setForeground(new Color(246, 242, 195));
 
         panel.add(coinLabel);
         panel.add(levelLabel);
@@ -118,7 +170,7 @@ public abstract class Selection extends JPanel {
                         btnHeight);
 
 
-                levelLabel.setBounds((getWidth()/2) + 30, h - btnHeight, btnWidth,
+                levelLabel.setBounds((getWidth()/2) + 33, h - btnHeight, btnWidth,
                         btnHeight);
                 
             }
@@ -130,6 +182,7 @@ public abstract class Selection extends JPanel {
 
     protected abstract void onNext();
 
+    
     public JButton createImageButton(Image img, int width, int height) {
 
         if (img == null)

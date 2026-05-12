@@ -1,12 +1,16 @@
 package persistence;
 
 import java.io.*;
+import java.security.cert.CollectionCertStoreParameters;
 import java.util.*;
+import core.CollisionSystem;
 
 public class LeaderboardManager {
 
     private static final String FILE_PATH = "data/scores.txt";
     private static final int MAX_ENTRIES = 100;
+    private static CollisionSystem cs = new CollisionSystem();
+    private static int coins = cs.getCoinsCollected();
 
     public static void saveEntry(ScoreEntry entry) {
         List<ScoreEntry> entries = loadAll();
@@ -49,7 +53,7 @@ public class LeaderboardManager {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 4) {
+                if (parts.length == 5) {
                     try {
                         String initials = parts[0].trim();
                         int score = Integer.parseInt(parts[1].trim());
@@ -57,7 +61,7 @@ public class LeaderboardManager {
                         boolean isAlive = Boolean.parseBoolean(parts[3].trim());
 
                         if (!seen.contains(initials.toLowerCase())) {
-                            entries.add(new ScoreEntry(initials, score, level, isAlive));
+                            entries.add(new ScoreEntry(initials, score, level, isAlive, coins));
                             seen.add(initials.toLowerCase());
                         }
                     } catch (NumberFormatException ex) {
@@ -74,7 +78,7 @@ public class LeaderboardManager {
     private static void writeAll(List<ScoreEntry> entries) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(FILE_PATH))) {
             for (ScoreEntry e : entries) {
-                pw.printf("%s,%d,%d,%b%n", e.initials, e.score, e.level, e.isAlive);
+                pw.printf("%s,%d,%d,%b%n,%d", e.initials, e.score, e.level, e.isAlive, coins);
             }
         } catch (IOException ex) {
             ex.printStackTrace();

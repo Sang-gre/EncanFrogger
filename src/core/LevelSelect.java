@@ -10,47 +10,45 @@ public class LevelSelect extends Selection {
 
     private final Player selectedPlayer;
     private final GameMap selectedMap;
+    private final GamePanel gamePanel;
 
     private JRadioButton[] levelButtons;
 
-    public LevelSelect(
-            GamePanel gamePanel,
-            Runnable onBack,
-            Player selectedPlayer,
-            GameMap selectedMap
-    ) {
-        super(gamePanel, onBack);
-        this.selectedPlayer = selectedPlayer;
-        this.selectedMap = selectedMap;
-    }
+    public LevelSelect(GamePanel gamePanel, Runnable onBack, Player selectedPlayer, GameMap selectedMap) {
+    super(gamePanel, onBack);
+    this.gamePanel = gamePanel;
+    this.selectedPlayer = selectedPlayer;
+    this.selectedMap = selectedMap;
+}
+
 
     @Override
     public JPanel createSelectionButtons() {
 
-        int start = selectedMap.getStartLevel();
-        int end = selectedMap.getEndLevel();
-        int count = end - start + 1;
+    int start = selectedMap.getStartLevel();
+    int end = selectedMap.getEndLevel();
+    int count = end - start + 1;
 
-        levelButtons = new JRadioButton[count];
+    levelButtons = new JRadioButton[count];
 
-        ButtonGroup group = new ButtonGroup();
-        JPanel panel = new JPanel(new GridLayout(1, count));
-        panel.setOpaque(false);
-        panel.setBorder(BorderFactory.createEmptyBorder(120, 20, 0, 20));
+    ButtonGroup group = new ButtonGroup();
 
-        for (int i = 0; i < count; i++) {
+    JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 20));
+    panel.setOpaque(false);
 
-            int levelNumber = start + i;
+    for (int i = 0; i < count; i++) {
 
-            JRadioButton btn = createBtn(levelNumber);
+        int levelNumber = start + i;
 
-            levelButtons[i] = btn;
-            group.add(btn);
-            panel.add(btn);
-        }
+        JRadioButton btn = createBtn(levelNumber);
 
-        return panel;
+        levelButtons[i] = btn;
+        group.add(btn);
+        panel.add(btn);
     }
+
+    return panel;
+}
 
     private JRadioButton createBtn(int level) {
 
@@ -121,25 +119,26 @@ public class LevelSelect extends Selection {
 
     private void resizeButtons(int panelWidth, int panelHeight) {
 
-        if (levelButtons == null) return;
+    if (levelButtons == null) return;
 
-        int count = levelButtons.length;
-        int cardWidth = panelWidth / count;
-        int cardHeight = panelHeight - 100;
+    int btnW = panelWidth / 6;   // consistent size
+    int btnH = panelHeight / 2;
 
-        for (JRadioButton btn : levelButtons) {
+    for (JRadioButton btn : levelButtons) {
 
-            Image img = (Image) btn.getClientProperty("originalImg");
+        Image img = (Image) btn.getClientProperty("originalImg");
 
-            Image scaled = img.getScaledInstance(
-                    cardWidth,
-                    cardHeight,
-                    Image.SCALE_SMOOTH
-            );
+        if (img == null) continue;
 
-            btn.setIcon(new ImageIcon(scaled));
-        }
+        Image scaled = img.getScaledInstance(
+                btnW,
+                btnH,
+                Image.SCALE_SMOOTH
+        );
+
+        btn.setIcon(new ImageIcon(scaled));
     }
+}
 
     @Override
     protected void onNext() {
@@ -157,11 +156,7 @@ public class LevelSelect extends Selection {
 
         if (selectedLevel == null) return;
 
-        getGamePanel().startLevel(
-                selectedPlayer,
-                selectedMap,
-                selectedLevel
-        );
+        gamePanel.startLevel(selectedPlayer, selectedMap, selectedLevel);
     }
 
     @Override
@@ -180,4 +175,6 @@ public class LevelSelect extends Selection {
     protected String getPopupKey() {
         return "levelSelect";
     }
+
+    
 }
