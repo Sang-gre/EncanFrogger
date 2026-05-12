@@ -1,4 +1,7 @@
-KJ,2790,2,true,0
-JJ,2700,2,true,0
-HDHF,2660,1,true,0
-JF,0,1,true,0
+JJJJJJ,220,1,false,0
+JJPPL,0,1,false,0
+JJJJJ,0,1,true,0
+HDHD,0,1,true,0
+DJWED,0,1,true,0
+NFEON,0,1,true,0
+RGTR,0,1,true,0
