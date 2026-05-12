@@ -8,8 +8,6 @@ public class CongratsScreen {
     private Image bgImage;
     private Image okImage;
 
-    private Rectangle okBounds = new Rectangle();
-
     public CongratsScreen() {
 
         bgImage = AssetManager.getInstance()
@@ -37,7 +35,6 @@ public class CongratsScreen {
         int btnX = (w - btnW) / 2;
         int btnY = (int)(h * 0.75);
 
-        okBounds.setBounds(btnX, btnY, btnW, btnH);
 
         if (okImage != null) {
             g2.drawImage(okImage, btnX, btnY, btnW, btnH, null);
@@ -46,7 +43,7 @@ public class CongratsScreen {
         g2.dispose();
     }
 
-    public boolean isOkClicked(Point p) {
-        return okBounds.contains(p);
-    }
+    public boolean isOkClicked(Point p, int w, int h) {
+    return p != null && p.x >= 0 && p.y >= 0 && p.x <= w && p.y <= h;
+}
 }
