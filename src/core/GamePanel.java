@@ -33,6 +33,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
     private boolean levelTransitioning = false;
     private int currentLevel = 1;
+    private int selectedLevel = 1;
 
     private GameMap currentMap;
     private final Set<Integer> heldKeys = new HashSet<>();
@@ -148,11 +149,37 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     // starts the actual gameplay
-    public void startLevel(Player selectedPlayer, GameMap map) {
-        if (freshStart) {
-            currentLevel = launcher.getStartingLevel();
-            scoreManager.setScore(launcher.getStartingScore());
-        }
+    public void startLevel(Player selectedPlayer, GameMap map, int level) {
+
+    currentLevel = level; 
+
+    if (freshStart) {
+        currentLevel = launcher.getStartingLevel();
+        scoreManager.setScore(launcher.getStartingScore());
+    }
+
+    playerIsAlive = true;
+    playerInitials = launcher.getPlayerInitials();
+    scoreManager.resetCrossing();
+
+    new Thread(() ->
+        LeaderboardManager.upsertEntry(
+            new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true)
+        )
+    ).start();
+
+    this.levelTransitioning = false;
+    this.player = selectedPlayer;
+    this.state = GameState.PLAYING;
+    this.currentMap = map;
+
+    sound.stopBGM();
+    sound.playBGM("game");
+
+    this.levelManager = new LevelManager(getWidth(), getHeight());
+    this.collisionSystem = new CollisionSystem();
+
+    levelManager.loadLevel(currentLevel, currentMap);
 
         playerIsAlive = true;
         playerInitials = launcher.getPlayerInitials();
@@ -169,6 +196,7 @@ public class GamePanel extends JPanel implements KeyListener {
         this.levelManager = new LevelManager(getWidth(), getHeight());
         this.collisionSystem = new CollisionSystem();
 
+        currentLevel = selectedLevel;
         levelManager.loadLevel(currentLevel, currentMap);
         // movement still snaps to full grid size
         player.setSize(
@@ -495,19 +523,19 @@ public class GamePanel extends JPanel implements KeyListener {
             levelTransitioning = true;
             scoreManager.onReachedTop(currentLevel);
             hud.updateScore(scoreManager.getScore());
-            if (currentLevel < player.getMaxLevels()) {
-                currentLevel++;
-                stopThreads();
-                    SwingUtilities.invokeLater(() ->
-                       showCharacterSelectNextLevel());
-            } else {
-                        showFinalVictory();
-            }
+            
             // save progress before moving to character select
             new Thread(() -> LeaderboardManager
                     .upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true))).start();
             stopThreads();
-            SwingUtilities.invokeLater(() -> showCharacterSelectNextLevel());
+
+            if (currentLevel < currentMap.getMaxLevels()) {
+                SwingUtilities.invokeLater(() ->
+                    showLevelSelect(currentMap));
+
+    } else { SwingUtilities.invokeLater(() -> showFinalVictory());
+    }
+       
         }
 
         // player falls off side of screen while on log
@@ -627,6 +655,11 @@ public class GamePanel extends JPanel implements KeyListener {
         heldKeys.remove(e.getKeyCode());
     }
 
+    public void showLevelSelect(GameMap map) {
+        // temporary fallback
+        showCharacterSelectNextLevel();
+}
+
     public void stopThreads() {
         if (logicThread != null) {
             logicThread.stopThread();
@@ -703,4 +736,8 @@ public class GamePanel extends JPanel implements KeyListener {
         showingLeaderboard = true;
         repaint();
     }
+
+    public void setSelectedLevel(int level) {
+        this.selectedLevel = level;
+}
 }

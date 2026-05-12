@@ -176,7 +176,7 @@ public class LevelManager {
 
         currentLevel = n;
 
-        obstacleSpeed = BASE_SPEED + (n - 1) * SPEED_INCREMENT;
+        
 
         obstacles.clear();
         obstacleLanes.clear();
@@ -196,8 +196,19 @@ public class LevelManager {
 
         background = AssetManager.getInstance().getMapBackground(map);
 
+        obstacleSpeed = computeSpeed(n, map);
+
         
     }
+
+    private float computeSpeed(int level, GameMap map) {
+    int max = getMaxLevel(map);
+
+    // reset cycle per map
+    int cycleLevel = ((level - 1) % max) + 1;
+
+    return BASE_SPEED + (cycleLevel - 1) * SPEED_INCREMENT;
+}
 
     private void assignLaneTypesForMap(GameMap map) {
         Arrays.fill(laneObstacleType, null);
@@ -750,6 +761,24 @@ public class LevelManager {
 
         return LANE_COUNT - 1;
     }
+
+    private int getMaxLevel(GameMap map) {
+    switch (map) {
+        case LIREO:
+        case HATHORIA:
+            return 3;
+
+        case ADAMYA:
+        case SAPIRO:
+            return 4;
+
+        case MINEAVE:
+            return 5;
+
+        default:
+            return 3;
+    }
+}
 
     public List<Obstacle> getObstacles() {
         return Collections.unmodifiableList(obstacles);

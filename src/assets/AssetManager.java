@@ -422,4 +422,11 @@ public class AssetManager {
     public Image getInstructions(String key) {
         return instructions.get(key);
     }
+
+    public Image getLevelButtonImage(int level) {
+
+    return getImage(
+            "level" + level + "Button"
+    );
+}
 }
