@@ -15,6 +15,8 @@ public class HUDpane extends JPanel {
     private final Image scoreImg;
     private final Image heartImg;
 
+    private int lastHeight = -1;
+
     public HUDpane() {
         this(null);
     }
@@ -66,6 +68,8 @@ public class HUDpane extends JPanel {
 
         int h = getHeight();
         if (h <= 0) return;
+        if (h == lastHeight) return;
+        lastHeight = h;
 
         // scale everything relative to HUD height
         int btnSize   = (int) (h * 0.85);
