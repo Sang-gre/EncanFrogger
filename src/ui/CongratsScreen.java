@@ -34,7 +34,7 @@ public class CongratsScreen {
         }
 
         g2.setColor(Color.WHITE);
-        g2.setFont(customFont.deriveFont((float)(w * 0.035))); // use imported font
+        g2.setFont(customFont.deriveFont((float)(w * 0.035)));
 
         String prevText = String.valueOf(previousScore);
         String totalText = String.valueOf(totalScore);
