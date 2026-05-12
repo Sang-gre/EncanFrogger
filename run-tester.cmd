@@ -19,7 +19,7 @@ if %errorlevel% neq 0 (
 
 echo [3/3] Launching Tester...
 echo.
-java -cp bin main.GameLauncher --test
+java -cp bin main.Main --test
 
 if %errorlevel% neq 0 (
     echo.

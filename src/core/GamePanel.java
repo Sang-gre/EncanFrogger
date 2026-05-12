@@ -98,7 +98,7 @@ public class GamePanel extends JPanel implements KeyListener {
                         leaderboardScreen = null;
                         resetGameOverState();
                         if (player != null) {
-                            showMapSelect(player); // now valid
+                            showMapSelect(player);
                         }
                         return;
                     }
@@ -123,7 +123,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
         removeAll();
         setLayout(new BorderLayout());
-        add(new MapSelect(this, () -> showLevelSelect(selectedPlayer, map), selectedPlayer), BorderLayout.CENTER);
+        add(new MapSelect(this, () -> launcher.showMainMenu(), selectedPlayer), BorderLayout.CENTER);
         revalidate();
         repaint();
     }

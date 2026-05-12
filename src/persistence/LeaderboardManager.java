@@ -33,12 +33,11 @@ public class LeaderboardManager {
                 int totalCoins = existing.coins + newEntry.coins;
 
                 entries.set(i, new ScoreEntry(
-                    existing.initials,
-                    totalScore,
-                    newEntry.level,       // keep latest level
-                    newEntry.isAlive,     // keep latest alive status
-                    totalCoins
-                ));
+                        existing.initials,
+                        totalScore,
+                        newEntry.level, // keep latest level
+                        newEntry.isAlive, // keep latest alive status
+                        totalCoins));
                 found = true;
                 break;
             }
@@ -54,14 +53,13 @@ public class LeaderboardManager {
         writeAll(entries);
     }
 
-
-
     public static List<ScoreEntry> loadAll() {
         List<ScoreEntry> entries = new ArrayList<>();
         Set<String> seen = new HashSet<>();
 
         File f = new File(FILE_PATH);
-        if (!f.exists()) return entries;
+        if (!f.exists())
+            return entries;
 
         try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
@@ -78,7 +76,6 @@ public class LeaderboardManager {
                         int coins = Integer.parseInt(parts[4].trim());
 
                         if (!seen.contains(initials.toLowerCase())) {
-                            // ✅ FIXED: use saved coins instead of runtime value
                             entries.add(new ScoreEntry(initials, score, level, isAlive, coins));
                             seen.add(initials.toLowerCase());
                         }
@@ -97,7 +94,9 @@ public class LeaderboardManager {
     }
 
     private static void writeAll(List<ScoreEntry> entries) {
-        try (PrintWriter pw = new PrintWriter(new FileWriter(FILE_PATH))) {
+        File f = new File(FILE_PATH);
+        f.getParentFile().mkdirs();
+        try (PrintWriter pw = new PrintWriter(new FileWriter(f))) {
             for (ScoreEntry e : entries) {
                 pw.printf("%s,%d,%d,%b,%d%n",
                         e.initials,

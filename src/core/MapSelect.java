@@ -1,12 +1,10 @@
 package core;
 
+import assets.AssetManager;
 import gameobjects.Player;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
-import assets.AssetManager;
 
 public class MapSelect extends Selection {
 
@@ -135,7 +133,7 @@ public class MapSelect extends Selection {
     protected void onNext() {
         JRadioButton[] buttons = { lireo, hathoria, adamya, sapiro, mineave };
 
-        GameMap selectedMap = null;
+        this.selectedMap = null;
         for (JRadioButton btn : buttons) {
             if (btn.isSelected()) {
                 selectedMap = (GameMap) btn.getClientProperty("map");
