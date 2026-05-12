@@ -190,13 +190,15 @@ public class LevelManager {
 
         assignLaneTypesForMap(currentMap);
 
+        obstacleSpeed = computeSpeed(n, map);
+
         spawnObstacles();
         spawnPlatforms();
         spawnCoins();
 
         background = AssetManager.getInstance().getMapBackground(map);
 
-        obstacleSpeed = computeSpeed(n, map);
+        
 
         
     }

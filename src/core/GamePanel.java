@@ -43,6 +43,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private ui.HUDpane hud;
     private ui.GameOverScreen gameOverScreen;
     private ui.LeaderboardScreen leaderboardScreen;
+    private ui.CongratsScreen congratsScreen;
 
     private boolean showingLeaderboard = false;
     private int platformDeltaX = 0;
@@ -50,6 +51,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private String playerInitials;
     private boolean playerIsAlive = true;
     private boolean freshStart = true;
+    
 
     private final Thread leaderboardWorker = new Thread();
 
@@ -65,6 +67,22 @@ public class GamePanel extends JPanel implements KeyListener {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+
+                if (congratsScreen != null) {
+
+            if (congratsScreen.isOkClicked(e.getPoint())) {
+
+        leaderboardScreen = new ui.LeaderboardScreen();
+
+        showingLeaderboard = true;
+
+        congratsScreen = null;
+
+        repaint();
+    }
+
+    return;
+}
 
                 // handle game over screen buttons
                 if (state == GameState.GAME_OVER && gameOverScreen != null && !showingLeaderboard) {
@@ -517,30 +535,19 @@ public class GamePanel extends JPanel implements KeyListener {
 
         // player reaches top lane — award completion bonus then advance
         if (!levelTransitioning && playerLane == 0) {
-            levelTransitioning = true;
-            scoreManager.onReachedTop(currentLevel);
-            hud.updateScore(scoreManager.getScore());
-            
-            if (currentLevel < player.getMaxLevels()) {
-                currentLevel++;
-                stopThreads();
-                SwingUtilities.invokeLater(() -> showCharacterSelectNextLevel());
-            } else {
-                showFinalVictory();
-            }
-            // save progress before moving to character select
-            new Thread(() -> LeaderboardManager
-                    .upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true))).start();
-            stopThreads();
+    levelTransitioning = true;
 
-            if (currentLevel < currentMap.getMaxLevels()) {
-                SwingUtilities.invokeLater(() ->
-                    showLevelSelect(currentMap));
+    scoreManager.onReachedTop(currentLevel);
+    hud.updateScore(scoreManager.getScore());
 
-    } else { SwingUtilities.invokeLater(() -> showFinalVictory());
-    }
-       
-        }
+    stopThreads();
+
+    SwingUtilities.invokeLater(() -> {
+        showFinalVictory(); // THIS shows CongratsScreen
+    });
+
+    return;
+}
 
         // player falls off side of screen while on log
         if (player.getX() + player.getWidth() < 0 || player.getX() > getWidth()) {
@@ -727,17 +734,22 @@ public class GamePanel extends JPanel implements KeyListener {
         if (state == GameState.PAUSED && pauseScreen != null) {
             pauseScreen.draw(g, getWidth(), getHeight());
         }
+
+        if (congratsScreen != null) {
+            congratsScreen.draw(g, getWidth(), getHeight());
+}
     }
 
     private void showFinalVictory() {
         stopThreads();
-        state = GameState.GAME_OVER;
+        state = GameState.WIN;
 
-        LeaderboardManager.saveEntry(
-                new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true));
-        leaderboardScreen = new ui.LeaderboardScreen();
-        showingLeaderboard = true;
-        repaint();
+        showingLeaderboard = false;
+        leaderboardScreen = null;
+
+    congratsScreen = new ui.CongratsScreen();
+
+    repaint();
     }
 
     public void setSelectedLevel(int level) {
