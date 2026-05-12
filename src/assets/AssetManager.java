@@ -107,9 +107,9 @@ public class AssetManager {
     }
 
     private void loadBackgrounds() {
-        backgrounds.put("title", loadImage("ASSETS/Backgrounds/background.png"));
-        backgrounds.put("titleFont", loadImage("ASSETS/Backgrounds/titleFont.png"));
-        backgrounds.put("menu", loadImage("ASSETS/Backgrounds/buttonDashboardBackground.png"));
+        backgrounds.put("title", loadImage("assets/Backgrounds/background.png"));
+        backgrounds.put("titleFont", loadImage("assets/Backgrounds/titleFont.png"));
+        backgrounds.put("menu", loadImage("assets/Backgrounds/buttonDashboardBackground.png"));
         backgrounds.put("characterSelect", loadImage("assets/Backgrounds/chooseCharacterBackground.png"));
         backgrounds.put("mapSelect", loadImage("assets/Backgrounds/mapSelectBackground.png"));
         backgrounds.put("leaderboard", loadImage("assets/Backgrounds/leaderboardPanel.png"));
@@ -119,9 +119,9 @@ public class AssetManager {
 
     private void loadButtons() {
         // Main menu
-        buttons.put("start", loadImage("ASSETS/Buttons/startButton.png"));
-        buttons.put("menu", loadImage("ASSETS/Buttons/menuButton.png"));
-        buttons.put("exit", loadImage("ASSETS/Buttons/exitButton.png"));
+        buttons.put("start", loadImage("assets/Buttons/startButton.png"));
+        buttons.put("menu", loadImage("assets/Buttons/menuButton.png"));
+        buttons.put("exit", loadImage("assets/Buttons/exitButton.png"));
 
         // Navigation
         buttons.put("back", loadImage("assets/Buttons/backButton.png"));
@@ -130,7 +130,7 @@ public class AssetManager {
 
         // Play again
         buttons.put("playAgain", loadImage("assets/Buttons/playAgainButton.png"));
-        buttons.put("ok", loadImage("assets/Buttons/okButton.png"));        // idk where this is used since removed na siya sa play again
+        buttons.put("ok", loadImage("assets/Buttons/okButton.png"));
         buttons.put("yes", loadImage("assets/Buttons/yesButton.png"));
         buttons.put("no", loadImage("assets/Buttons/noButton.png"));
 
@@ -242,7 +242,7 @@ public class AssetManager {
     }
 
     private void loadCursor() {
-        customCursor = loadImage("ASSETS/customCursor.png");
+        customCursor = loadImage("assets/customCursor.png");
     }
 
     private void loadCharacterCards() {
@@ -287,14 +287,11 @@ public class AssetManager {
             loadSpritesheet(PlayerType.ADAMUS, "assets/spritesheets/adamusSpritesheet.png", 9, 4);
         } catch (IOException e) {
             System.err.println("[AssetManager] Failed to load one or more spritesheets:");
-            e.printStackTrace();
         }
     }
 
-    /*
-     * Slices a spritesheet into per-direction frame arrays.
-     * Row order assumed: DOWN=0, LEFT=1, RIGHT=2, UP=3
-     */
+    // Slices a spritesheet into per-direction frame arrays.
+    // DOWN=0, LEFT=1, RIGHT=2, UP=3
     private void loadSpritesheet(PlayerType type, String path, int columns, int rows)
             throws IOException {
 
@@ -317,23 +314,12 @@ public class AssetManager {
         playerAnimations.put(type, dirMap);
     }
 
-    // Convenience loader: returns null and prints a warning instead of throwing.
-    private Image loadImage(String path) {
-        File f = new File(path);
-        if (!f.exists()) {
-            System.err.printf("[AssetManager] WARNING: asset not found: %s%n", path);
-            return null;
-        }
-        return new ImageIcon(path).getImage();
-    }
-
     private void loadFonts() {
         try {
             proffaliceHandwriteFont = Font.createFont(
                     Font.TRUETYPE_FONT,
-                    new File("assets/Proffalice Handwrite Regular.ttf")
-            ).deriveFont(20f);
-        } catch (Exception e) {
+                    new File("assets/Proffalice Handwrite Regular.ttf")).deriveFont(20f);
+        } catch (IOException | FontFormatException e) {
             System.err.println("[AssetManager] WARNING: failed to load Font");
             proffaliceHandwriteFont = new Font("Segoe UI", Font.BOLD, 20); // fallback
         }
@@ -365,6 +351,16 @@ public class AssetManager {
         instructions.put("instruction3", loadImage("assets/instructions/page3.png"));
         instructions.put("instruction4", loadImage("assets/instructions/page4.png"));
         instructions.put("instruction5", loadImage("assets/instructions/page5.png"));
+    }
+
+    // Convenience loader: returns null and prints a warning instead of throwing.
+    private Image loadImage(String path) {
+        try {
+            return ImageIO.read(new File(path));
+        } catch (IOException e) {
+            System.err.println("[AssetManager] Failed to load: " + path);
+            return null;
+        }
     }
 
     public Image getCharacterCard(PlayerType type) {
@@ -400,13 +396,8 @@ public class AssetManager {
         return (icon != null) ? icon.getImage() : null;
     }
 
-
     public Image getObstacle(String key) {
         return obstacles.get(key);
-    }
-
-    public Image getPlatform(String key) {
-        return platforms.get(key);
     }
 
     public Image getHUD(String key) {
@@ -445,6 +436,6 @@ public class AssetManager {
     }
 
     public Image getLevelButtonImage(int level) {
-    return buttons.get("level" + level);
-}
+        return buttons.get("level" + level);
+    }
 }

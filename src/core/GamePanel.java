@@ -66,60 +66,58 @@ public class GamePanel extends JPanel implements KeyListener {
         addKeyListener(this);
 
         addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
+    @Override
+    public void mouseClicked(MouseEvent e) {
 
-                if (congratsScreen != null) {
+        if (congratsScreen != null) {
 
-            if (congratsScreen.isOkClicked(e.getPoint())) {
+            leaderboardScreen = new ui.LeaderboardScreen();
+            showingLeaderboard = true;
+            congratsScreen = null;
 
-        leaderboardScreen = new ui.LeaderboardScreen();
+    repaint();
+    return;
+}
 
-        showingLeaderboard = true;
+        if (state == GameState.GAME_OVER && gameOverScreen != null && !showingLeaderboard) {
 
-        congratsScreen = null;
+            if (gameOverScreen.isYesClicked(e.getPoint())) {
+                resetGameOverState();
+                launcher.showInitialsPanel();
+                return;
+            }
 
-        repaint();
+            if (gameOverScreen.isNoClicked(e.getPoint())) {
+                leaderboardScreen = new ui.LeaderboardScreen();
+                showingLeaderboard = true;
+                requestFocusInWindow();
+                repaint();
+                return;
+            }
+        }
+
+        if (leaderboardScreen != null) {
+
+            if (leaderboardScreen.isPlayAgainClicked(e.getPoint())) {
+                showingLeaderboard = false;
+                leaderboardScreen = null;
+
+                resetGameOverState();
+
+                if (player != null) {
+                showMapSelect(player);   // DIRECTLY go to MapSelect
     }
 
     return;
 }
 
-                // handle game over screen buttons
-                if (state == GameState.GAME_OVER && gameOverScreen != null && !showingLeaderboard) {
-
-                    if (gameOverScreen.isYesClicked(e.getPoint())) {
-                        resetGameOverState();
-                        launcher.showInitialsPanel();
-                        return;
-                    }
-
-                    if (gameOverScreen.isNoClicked(e.getPoint())) {
-                        leaderboardScreen = new ui.LeaderboardScreen();
-                        showingLeaderboard = true;
-                        requestFocusInWindow();
-                        repaint();
-                        return;
-                    }
-                }
-
-                // handle leaderboard play again & back button
-                if (showingLeaderboard && leaderboardScreen != null) {
-                    if (leaderboardScreen.isPlayAgainClicked(e.getPoint())) {
-                        showingLeaderboard = false;
-                        leaderboardScreen = null;
-                        launcher.showInitialsPanel();
-                    }
-                    if (leaderboardScreen.isBackClicked(e.getPoint())) {
-                        resetGameOverState();
-                        launcher.menuGame();
-                    }
-                }
+            if (leaderboardScreen.isBackClicked(e.getPoint())) {
+                resetGameOverState();
+                launcher.menuGame();
             }
-        });
-        showCharacterSelect();
+        }
     }
-
+});}
     // Has back button on first character select
     public void showCharacterSelect() {
         stopThreads();
@@ -158,14 +156,18 @@ public class GamePanel extends JPanel implements KeyListener {
     }
 
     // map selection screen
-    public void showMapSelect(Player selectedPlayer) {
-        this.state = GameState.MAP_SELECT;
-        removeAll();
-        setLayout(new BorderLayout());
-        add(new MapSelect(this, () -> showCharacterSelect(), selectedPlayer), BorderLayout.CENTER);
-        revalidate();
-        repaint();
-    }
+    public void showMapSelect(Player selectedPlayer, GameMap map) {
+    this.state = GameState.MAP_SELECT;
+    this.currentMap = map;
+
+    removeAll();
+    setLayout(new BorderLayout());
+
+    add(new MapSelect(this, () -> showLevelSelect(selectedPlayer, map), selectedPlayer), BorderLayout.CENTER);
+
+    revalidate();
+    repaint();
+}
 
     // starts the actual gameplay
     public void startLevel(Player selectedPlayer, GameMap map, int level) {
@@ -207,7 +209,7 @@ public class GamePanel extends JPanel implements KeyListener {
                 .upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins))).start();
         this.levelTransitioning = false;
         this.player = selectedPlayer;
-        this.state = GameState.PLAYING;
+        //this.state = GameState.PLAYING;
         this.currentMap = map;
         sound.stopBGM();
         sound.playBGM("game");
@@ -252,7 +254,7 @@ public class GamePanel extends JPanel implements KeyListener {
                 pauseScreen.setVisible(true);
                 pauseScreen.revalidate();
             } else if (state == GameState.PAUSED) {
-                state = GameState.PLAYING;
+                enterGameplay(player, currentMap, selectedLevel);
                 pauseScreen.setVisible(false);
                 pauseScreen.revalidate();
             }
@@ -273,7 +275,7 @@ public class GamePanel extends JPanel implements KeyListener {
         pauseScreen = new ui.PauseScreen(
                 // Resume
                 () -> {
-                    state = GameState.PLAYING;
+                    setState(GameState.PLAYING);
                     pauseScreen.setVisible(false);
                     pauseScreen.revalidate();
                     requestFocusInWindow();
@@ -616,7 +618,7 @@ public class GamePanel extends JPanel implements KeyListener {
         leaderboardScreen = null;
         gameOverScreen = null;
         levelManager = null;
-        player = null;
+        
         state = GameState.CHARACTER_SELECT;
     }
 
@@ -635,14 +637,10 @@ public class GamePanel extends JPanel implements KeyListener {
         }
 
         if (state == GameState.PAUSED && key == KeyEvent.VK_ESCAPE) {
-            state = GameState.PLAYING;
+            setState(GameState.PLAYING);
             pauseScreen.setVisible(false);
             pauseScreen.revalidate();
             return;
-        }
-
-        if (key == KeyEvent.VK_SPACE && player != null) {
-            player.useAbility();
         }
 
         if (state == GameState.GAME_OVER && showingLeaderboard && leaderboardScreen != null) {
@@ -684,9 +682,23 @@ public class GamePanel extends JPanel implements KeyListener {
         heldKeys.remove(e.getKeyCode());
     }
 
-    public void showLevelSelect(GameMap map) {
-        // temporary fallback
-        showCharacterSelectNextLevel();
+    public void showLevelSelect(Player player, GameMap map) {
+
+    stopThreads();
+    state = GameState.LEVEL_SELECT;
+
+    removeAll();
+    setLayout(new BorderLayout());
+
+    add(new LevelSelect(
+            this,
+            () -> showMapSelect(player),
+            player,
+            map
+    ), BorderLayout.CENTER);
+
+    revalidate();
+    repaint();
 }
 
     public void stopThreads() {
@@ -782,4 +794,7 @@ public class GamePanel extends JPanel implements KeyListener {
         state = GameState.PAUSED;
         requestFocusInWindow();
     }
+    public void enterGameplay(Player player, GameMap map, int level) {
+    startLevel(player, map, level);
+}
 }
