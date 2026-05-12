@@ -81,6 +81,9 @@ public abstract class Selection extends JPanel {
 
         JButton finalBackBtn = backBtn;
 
+
+        //LABEL
+
         AssetManager am = AssetManager.getInstance();
 
         Image coinImg = am.getTracker("coinTrack");
@@ -123,7 +126,7 @@ public abstract class Selection extends JPanel {
 
         if (!entries.isEmpty()) {
             ScoreEntry latest = entries.get(0);
-            coinLabel.setText(String.valueOf(latest.coins*50));
+            coinLabel.setText(String.valueOf(latest.coins * 50));
             levelLabel.setText("LEVEL " + latest.level);
         }
 
