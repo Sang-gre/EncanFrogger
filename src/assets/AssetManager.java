@@ -135,6 +135,11 @@ public class AssetManager {
         buttons.put("menu2", loadImage("assets/Buttons/menuButton2.png"));
         buttons.put("resume", loadImage("assets/Buttons/resumeButton.png"));
         buttons.put("pause", loadImage("assets/Buttons/pauseButton.png"));
+
+        // Level select buttons (1–20)
+        for (int i = 1; i <= 20; i++) {
+            buttons.put("level" + i, loadImage("assets/Buttons/level" + i + "Button.png"));
+        }
     }
 
     private void loadObstacles() {
@@ -424,9 +429,6 @@ public class AssetManager {
     }
 
     public Image getLevelButtonImage(int level) {
-
-    return getImage(
-            "level" + level + "Button"
-    );
+    return buttons.get("level" + level);
 }
 }

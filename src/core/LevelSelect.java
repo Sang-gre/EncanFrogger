@@ -1,23 +1,17 @@
 package core;
 
 import gameobjects.Player;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
 import assets.AssetManager;
 
 public class LevelSelect extends Selection {
 
-    private Player selectedPlayer;
-    private GameMap selectedMap;
+    private final Player selectedPlayer;
+    private final GameMap selectedMap;
 
-    private JRadioButton level1;
-    private JRadioButton level2;
-    private JRadioButton level3;
-    private JRadioButton level4;
-    private JRadioButton level5;
+    private JRadioButton[] levelButtons;
 
     public LevelSelect(
             GamePanel gamePanel,
@@ -25,9 +19,7 @@ public class LevelSelect extends Selection {
             Player selectedPlayer,
             GameMap selectedMap
     ) {
-
         super(gamePanel, onBack);
-
         this.selectedPlayer = selectedPlayer;
         this.selectedMap = selectedMap;
     }
@@ -35,48 +27,26 @@ public class LevelSelect extends Selection {
     @Override
     public JPanel createSelectionButtons() {
 
-        level1 = createBtn(1);
-        level2 = createBtn(2);
-        level3 = createBtn(3);
-        level4 = createBtn(4);
-        level5 = createBtn(5);
+        int start = selectedMap.getStartLevel();
+        int end = selectedMap.getEndLevel();
+        int count = end - start + 1;
 
-        JRadioButton[] buttons = {
-                level1,
-                level2,
-                level3,
-                level4,
-                level5
-        };
+        levelButtons = new JRadioButton[count];
 
         ButtonGroup group = new ButtonGroup();
-
-        for (JRadioButton b : buttons) {
-
-            if (b != null) {
-                group.add(b);
-            }
-        }
-
-        int maxLevels = selectedMap.getMaxLevels();
-
-        JPanel panel = new JPanel(
-                new GridLayout(1, maxLevels)
-        );
-
+        JPanel panel = new JPanel(new GridLayout(1, count));
         panel.setOpaque(false);
+        panel.setBorder(BorderFactory.createEmptyBorder(120, 20, 0, 20));
 
-        panel.setBorder(
-                BorderFactory.createEmptyBorder(
-                        120,
-                        20,
-                        0,
-                        20
-                )
-        );
+        for (int i = 0; i < count; i++) {
 
-        for (int i = 0; i < maxLevels; i++) {
-            panel.add(buttons[i]);
+            int levelNumber = start + i;
+
+            JRadioButton btn = createBtn(levelNumber);
+
+            levelButtons[i] = btn;
+            group.add(btn);
+            panel.add(btn);
         }
 
         return panel;
@@ -84,63 +54,31 @@ public class LevelSelect extends Selection {
 
     private JRadioButton createBtn(int level) {
 
-    if (level > selectedMap.getMaxLevels()) {
-        return null;
+        JRadioButton btn = new JRadioButton();
+
+        Image img = AssetManager.getInstance()
+                .getLevelButtonImage(level);
+
+        btn.putClientProperty("originalImg", img);
+        btn.putClientProperty("level", level);
+
+        btn.setOpaque(false);
+        btn.setBorderPainted(false);
+        btn.setContentAreaFilled(false);
+        btn.setFocusPainted(false);
+        btn.setHorizontalAlignment(SwingConstants.CENTER);
+        btn.setVerticalAlignment(SwingConstants.CENTER);
+
+        btn.addItemListener(e -> {
+            boolean selected = (e.getStateChange() == ItemEvent.SELECTED);
+
+            btn.setMargin(selected
+                    ? new Insets(0, 0, 20, 0)
+                    : new Insets(20, 0, 0, 0));
+        });
+
+        return btn;
     }
-
-    JRadioButton btn = new JRadioButton();
-
-    Image img =
-            AssetManager.getInstance()
-                    .getLevelButtonImage(level);
-
-    btn.putClientProperty("img", img);
-
-    btn.putClientProperty(
-            "originalImg",
-            img
-    );
-
-    btn.putClientProperty(
-            "level",
-            level
-    );
-
-    btn.setOpaque(false);
-    btn.setBorderPainted(false);
-    btn.setContentAreaFilled(false);
-    btn.setFocusPainted(false);
-
-    btn.setHorizontalAlignment(
-            SwingConstants.CENTER
-    );
-
-    btn.setVerticalAlignment(
-            SwingConstants.CENTER
-    );
-
-    btn.addItemListener(e -> {
-
-        boolean selected =
-                (e.getStateChange()
-                        == ItemEvent.SELECTED);
-
-        if (selected) {
-
-            btn.setMargin(
-                    new Insets(0, 0, 20, 0)
-            );
-
-        } else {
-
-            btn.setMargin(
-                    new Insets(20, 0, 0, 0)
-            );
-        }
-    });
-
-    return btn;
-}
 
     @Override
     public JPanel createBackground() {
@@ -149,151 +87,75 @@ public class LevelSelect extends Selection {
 
             private final Image img =
                     AssetManager.getInstance()
-                            .getBackground(
-                                    "selectLevelPanel"
-                            );
+                            .getBackground("selectLevelPanel");
 
             @Override
             protected void paintComponent(Graphics g) {
-
                 super.paintComponent(g);
-
-                g.drawImage(
-                        img,
-                        0,
-                        0,
-                        getWidth(),
-                        getHeight(),
-                        this
-                );
+                g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
             }
         };
 
-        JPanel selection =
-                createSelectionButtons();
-
-        JPanel nav =
-                createNavButtons();
+        JPanel selection = createSelectionButtons();
+        JPanel nav = createNavButtons();
 
         background.add(selection);
         background.add(nav);
 
-        background.addComponentListener(
-                new ComponentAdapter() {
+        background.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
 
-                    @Override
-                    public void componentResized(
-                            ComponentEvent e
-                    ) {
+                int w = background.getWidth();
+                int h = background.getHeight();
 
-                        int w =
-                                background.getWidth();
+                selection.setBounds(0, 0, w, h - 50);
+                nav.setBounds(0, h - 100, w, 100);
 
-                        int h =
-                                background.getHeight();
-
-                        selection.setBounds(
-                                0,
-                                0,
-                                w,
-                                h - 50
-                        );
-
-                        nav.setBounds(
-                                0,
-                                h - 100,
-                                w,
-                                100
-                        );
-
-                        resizeButtons(
-                                w,
-                                h - 100
-                        );
-                    }
-                }
-        );
+                resizeButtons(w, h - 100);
+            }
+        });
 
         return background;
     }
 
-    private void resizeButtons(
-            int panelWidth,
-            int panelHeight
-    ) {
+    private void resizeButtons(int panelWidth, int panelHeight) {
 
-        int count =
-                selectedMap.getMaxLevels();
+        if (levelButtons == null) return;
 
-        int cardWidth =
-                panelWidth / count;
+        int count = levelButtons.length;
+        int cardWidth = panelWidth / count;
+        int cardHeight = panelHeight - 100;
 
-        int cardHeight =
-                panelHeight - 100;
+        for (JRadioButton btn : levelButtons) {
 
-        JRadioButton[] buttons = {
-                level1,
-                level2,
-                level3,
-                level4,
-                level5
-        };
+            Image img = (Image) btn.getClientProperty("originalImg");
 
-        for (int i = 0; i < count; i++) {
-
-            JRadioButton btn = buttons[i];
-
-            if (btn == null)
-                continue;
-
-            Image img = (Image)
-                    btn.getClientProperty(
-                            "originalImg"
-                    );
-
-            Image scaled =
-                    img.getScaledInstance(
-                            cardWidth,
-                            cardHeight,
-                            Image.SCALE_SMOOTH
-                    );
-
-            btn.setIcon(
-                    new ImageIcon(scaled)
+            Image scaled = img.getScaledInstance(
+                    cardWidth,
+                    cardHeight,
+                    Image.SCALE_SMOOTH
             );
+
+            btn.setIcon(new ImageIcon(scaled));
         }
     }
 
     @Override
     protected void onNext() {
 
-        JRadioButton[] buttons = {
-                level1,
-                level2,
-                level3,
-                level4,
-                level5
-        };
+        if (levelButtons == null) return;
 
         Integer selectedLevel = null;
 
-        for (JRadioButton btn : buttons) {
-
-            if (btn != null
-                    && btn.isSelected()) {
-
-                selectedLevel =
-                        (Integer)
-                                btn.getClientProperty(
-                                        "level"
-                                );
-
+        for (JRadioButton btn : levelButtons) {
+            if (btn.isSelected()) {
+                selectedLevel = (Integer) btn.getClientProperty("level");
                 break;
             }
         }
 
-        if (selectedLevel == null)
-            return;
+        if (selectedLevel == null) return;
 
         getGamePanel().startLevel(
                 selectedPlayer,
@@ -305,21 +167,10 @@ public class LevelSelect extends Selection {
     @Override
     public boolean validateSelection() {
 
-        JRadioButton[] buttons = {
-                level1,
-                level2,
-                level3,
-                level4,
-                level5
-        };
+        if (levelButtons == null) return false;
 
-        for (JRadioButton btn : buttons) {
-
-            if (btn != null
-                    && btn.isSelected()) {
-
-                return true;
-            }
+        for (JRadioButton btn : levelButtons) {
+            if (btn.isSelected()) return true;
         }
 
         return false;
