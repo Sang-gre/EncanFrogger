@@ -109,14 +109,17 @@ public class GamePanel extends JPanel implements KeyListener {
                     }
                     if (leaderboardScreen.isBackClicked(e.getPoint())) {
                         resetGameOverState();
-                        launcher.menuGame();
+                        launcher.showMainMenu();
                     }
                 }
             }
         });
     }
 
+<<<<<<< Updated upstream
    
+=======
+>>>>>>> Stashed changes
     public void showMapSelect(Player selectedPlayer) {
         showMapSelect(selectedPlayer, currentMap != null ? currentMap : GameMap.LIREO);
     }
@@ -153,7 +156,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
         removeAll();
         setLayout(new BorderLayout());
-        add(new CharacterSelect(this, () -> launcher.menuGame()), BorderLayout.CENTER);
+        add(new CharacterSelect(this, () -> launcher.showMainMenu()), BorderLayout.CENTER);
 
         revalidate();
         repaint();
@@ -174,7 +177,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
         removeAll();
         setLayout(new BorderLayout());
-        add(new CharacterSelect(this, () -> launcher.menuGame()), BorderLayout.CENTER);
+        add(new CharacterSelect(this, () -> launcher.showMainMenu()), BorderLayout.CENTER);
 
         revalidate();
         repaint();
@@ -245,7 +248,7 @@ public class GamePanel extends JPanel implements KeyListener {
         pauseScreen = new ui.PauseScreen(
             () -> { setState(GameState.PLAYING); pauseScreen.setVisible(false); pauseScreen.revalidate(); requestFocusInWindow(); },
             () -> { stopThreads(); sound.stopBGM(); launcher.showInstructions(true); },
-            () -> { stopThreads(); sound.stopBGM(); launcher.menuGame(); }
+            () -> { stopThreads(); sound.stopBGM(); launcher.showMainMenu(); }
         );
         pauseScreen.setBounds(0, 0, getWidth(), getHeight());
         pauseScreen.setVisible(false);

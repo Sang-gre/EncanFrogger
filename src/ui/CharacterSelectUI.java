@@ -1,14 +1,12 @@
 package ui;
 
+import assets.AssetManager;
+import assets.SoundManager;
 import gameobjects.PlayerType;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
-
-import assets.AssetManager;
-import assets.SoundManager;
 
 public class CharacterSelectUI {
 
@@ -16,10 +14,10 @@ public class CharacterSelectUI {
     private JLabel detailCardLabel;
     private JLabel detailInfoLabel;
     private JLabel selectBtn;
-    private Rectangle[] cardBounds = new Rectangle[5];
-    private SoundManager sound = new SoundManager();
+    private final Rectangle[] cardBounds = new Rectangle[5];
+    private final SoundManager sound = new SoundManager();
 
-    private JRadioButton[] buttons;
+    private final JRadioButton[] buttons;
     private int selectedIndex = -1;     // no card is selected
     private boolean characterConfirmed = false;
 

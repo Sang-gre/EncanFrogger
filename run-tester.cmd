@@ -6,7 +6,7 @@ echo [1/3] Cleaning old builds...
 if exist bin\main rmdir /s /q bin\main
 
 echo [2/3] Compiling EncanFrogger...
-javac -d bin -sourcepath src src/main/GameLauncher.java
+javac -d bin -sourcepath src src/main/Main.java
 
 if %errorlevel% neq 0 (
     echo.
