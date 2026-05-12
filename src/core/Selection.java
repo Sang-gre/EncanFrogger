@@ -124,7 +124,7 @@ public abstract class Selection extends JPanel {
         levelLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         levelLabel.setVerticalTextPosition(SwingConstants.CENTER);
 
-        List<ScoreEntry> entries = LeaderboardManager.loadAll();
+       // List<ScoreEntry> entries = LeaderboardManager.loadAll();
         if (!entries.isEmpty()) {
             ScoreEntry latest = entries.get(0);
             coinLabel.setText(String.valueOf(latest.coins));

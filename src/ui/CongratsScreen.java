@@ -21,8 +21,7 @@ public class CongratsScreen {
         okImage = AssetManager.getInstance()
                 .getButton("playAgainButton");
 
-        levelClearedImage = AssetManager.getInstance()
-                .getCongrats("levelCleared");
+
     }
 
     public void draw(Graphics g, int w, int h) {

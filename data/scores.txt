@@ -1,0 +1,4 @@
+A,0,1,true,0
+SC,0,1,true,0
+TD,0,1,true,0
+HH,0,1,true,0

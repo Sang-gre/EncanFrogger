@@ -689,7 +689,7 @@ public class GamePanel extends JPanel implements KeyListener {
         showingLeaderboard = false;
         leaderboardScreen = null;
 
-        congratsScreen = new ui.CongratsScreen(previousScore, totalScore);
+        congratsScreen = new ui.CongratsScreen(true);
 
         repaint();
     }
