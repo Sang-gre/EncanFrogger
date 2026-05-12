@@ -337,8 +337,6 @@ public class AssetManager {
 
     private void loadGameOver() {
         gameover.put("background", loadImage("assets/Backgrounds/gameoverBackground.png"));
-        gameover.put("enterInitials", loadImage("assets/enterInitials.png"));
-        gameover.put("enterInitialsBlank", loadImage("assets/enterInitialsBlank.png"));
         gameover.put("okButton", loadImage("assets/Buttons/okButton.png"));
     }
 
