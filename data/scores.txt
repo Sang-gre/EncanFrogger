@@ -1,4 +1,0 @@
-G,380,1,false,10
-H,360,1,false,10
-S,0,1,false,10
-JH,0,1,true,0

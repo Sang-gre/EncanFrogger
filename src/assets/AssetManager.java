@@ -100,6 +100,9 @@ public class AssetManager {
 
     congrats.put("playAgainButton",
             loadImage("assets/Buttons/playAgainButton.png"));
+
+    congrats.put("levelCleared",
+            loadImage("assets/Backgrounds/levelCleared.png"));
 }
 
     private void loadLogo() {
