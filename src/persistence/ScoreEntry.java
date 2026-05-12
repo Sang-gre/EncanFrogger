@@ -1,6 +1,7 @@
 package persistence;
 
 public class ScoreEntry {
+
     public String initials;
     public int score;
     public int level;

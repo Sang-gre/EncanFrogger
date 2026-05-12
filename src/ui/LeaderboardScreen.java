@@ -22,24 +22,30 @@ public class LeaderboardScreen {
     public LeaderboardScreen() {
         panelImg = AssetManager.getInstance().getBackground("leaderboard");
         playAgainImg = AssetManager.getInstance().getButton("playAgain");
-        entries = LeaderboardManager.loadAll();
         backImg = AssetManager.getInstance().getButton("back");
+
+        entries = LeaderboardManager.loadAll();
     }
 
     public void scroll(int direction) {
+        if (entries == null) return;
+
         int maxOffset = Math.max(0, entries.size() - VISIBLE_ROWS);
         scrollOffset = Math.max(0, Math.min(scrollOffset + direction, maxOffset));
     }
 
     public void draw(Graphics g, int screenW, int screenH) {
         Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
+        if (entries == null) return;
 
         // Dim background
         g2.setColor(new Color(0, 0, 0, 180));
         g2.fillRect(0, 0, screenW, screenH);
 
-        /* Panel */
         int panelW = screenW;
         int panelH = screenH;
         int panelY = (screenH - panelH) / 2;
@@ -47,7 +53,6 @@ public class LeaderboardScreen {
         if (panelImg != null)
             g2.drawImage(panelImg, 0, panelY, panelW, panelH, null);
 
-        /* Column Layout */
         int contentTop = panelY + (int) (panelH * 0.33);
         int contentH = (int) (panelH * 0.48);
         int rowHeight = contentH / VISIBLE_ROWS;
@@ -63,6 +68,8 @@ public class LeaderboardScreen {
         Font baseFont = AssetManager.getInstance().getFont("proffaliceHandwrite");
         Font font = baseFont.deriveFont((float) fontSize);
         g2.setFont(font);
+
+        FontMetrics fm = g2.getFontMetrics();
 
         for (int i = 0; i < VISIBLE_ROWS; i++) {
             int entryIndex = i + scrollOffset;
@@ -83,59 +90,15 @@ public class LeaderboardScreen {
                 g2.drawString("#" + (entryIndex + 1), rankX, textY);
 
                 g2.setColor(Color.WHITE);
-                g2.drawString(e.initials.toUpperCase(), nameX, textY);
+                g2.drawString(e.initials, nameX, textY);
 
-                String scoreStr = String.format("%06d", e.score);
-                FontMetrics fm = g2.getFontMetrics();
+                String scoreStr = Integer.toString(e.score);
                 int scoreDrawX = scoreX - fm.stringWidth(scoreStr);
                 g2.drawString(scoreStr, scoreDrawX, textY);
-
-            } else {
-                g2.setColor(new Color(180, 180, 180, 100));
-                g2.drawString("---", nameX, textY);
-                g2.drawString("---", scoreX - g2.getFontMetrics().stringWidth("---"), textY);
             }
         }
 
-        /* Scroll indicators */
-        if (entries.size() > VISIBLE_ROWS) {
-            int arrowW = (int) (panelW * 0.04);
-            int arrowH = (int) (panelH * 0.025);
-            int arrowX = panelW / 2;
-
-            // Up arrow
-            int upAlpha = scrollOffset > 0 ? 220 : 50;
-            int upY = contentTop - (int) (panelH * 0.05);
-            g2.setColor(new Color(255, 215, 0, upAlpha));
-            g2.fillPolygon(
-                    new int[] { arrowX, arrowX + arrowW, arrowX - arrowW },
-                    new int[] { upY - arrowH, upY, upY },
-                    3);
-            g2.setColor(new Color(180, 130, 0, upAlpha));
-            g2.setStroke(new BasicStroke(2));
-            g2.drawPolygon(
-                    new int[] { arrowX, arrowX + arrowW, arrowX - arrowW },
-                    new int[] { upY - arrowH, upY, upY },
-                    3);
-
-            // Down arrow
-            int downAlpha = scrollOffset < maxOffset ? 220 : 50;
-            int downY = contentTop + contentH + (int) (panelH * 0.04);
-            g2.setColor(new Color(255, 215, 0, downAlpha));
-            g2.fillPolygon(
-                    new int[] { arrowX, arrowX + arrowW, arrowX - arrowW },
-                    new int[] { downY + arrowH, downY, downY },
-                    3);
-            g2.setColor(new Color(180, 130, 0, downAlpha));
-            g2.drawPolygon(
-                    new int[] { arrowX, arrowX + arrowW, arrowX - arrowW },
-                    new int[] { downY + arrowH, downY, downY },
-                    3);
-
-            g2.setStroke(new BasicStroke(1));
-        }
-
-        // --- Back button ---
+        // Back button
         int backH = (int) (screenH * 0.20);
         int backW = (int) (backH * ((double) backImg.getWidth(null) / backImg.getHeight(null)));
         int backX = (int) (screenW * 0.02);
@@ -145,7 +108,7 @@ public class LeaderboardScreen {
         if (backImg != null)
             g2.drawImage(backImg, backX, backY, backW, backH, null);
 
-        // --- Play Again button ---
+        // Play again button
         int btnH = (int) (screenH * 0.20);
         int btnW = (int) (btnH * ((double) playAgainImg.getWidth(null) / playAgainImg.getHeight(null)));
         int btnX = (int) (screenW * 0.79);
