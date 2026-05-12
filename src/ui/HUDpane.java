@@ -1,9 +1,8 @@
 package ui;
 
+import assets.AssetManager;
 import java.awt.*;
 import javax.swing.*;
-
-import assets.AssetManager;
 
 public class HUDpane extends JPanel {
 
@@ -26,7 +25,7 @@ public class HUDpane extends JPanel {
 
         /* Score Text */
         scoreValue = new JLabel("0");
-        scoreValue.setFont(AssetManager.getInstance().getFont("enchantedLand").deriveFont(24f));
+        scoreValue.setFont(AssetManager.getInstance().getFont("proffaliceHandwrite").deriveFont(24f));
         scoreValue.setForeground(new Color(246, 242, 195));
         scoreValue.setBounds(105, 4, 140, 50);
         scoreValue.setHorizontalAlignment(SwingConstants.LEFT);
