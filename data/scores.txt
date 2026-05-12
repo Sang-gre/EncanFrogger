@@ -1,5 +1,10 @@
-A,0,1,true,0
-SC,0,1,true,0
-TD,0,1,true,0
-HH,0,1,true,0
-R,0,1,false,0
+JED,170,1,false,0
+JADE,110,1,false,0
+DENES,90,1,false,0
+DENISE,40,1,false,0
+A,0,1,true,5
+SC,0,1,true,5
+TD,0,1,true,5
+HH,0,1,true,5
+R,0,1,false,5
+GHJF,0,1,true,0
