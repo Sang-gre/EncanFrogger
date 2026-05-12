@@ -8,7 +8,7 @@ import main.GameLauncher;
 
 public class InstructionsPanel extends JPanel {
 
-    private GameLauncher parent;
+    private GameLauncher launcher;
     private Image[] pages;
     private Image background;
 
@@ -22,8 +22,14 @@ public class InstructionsPanel extends JPanel {
     private JButton rightButton;
     private JButton xButton;
 
-    public InstructionsPanel(GameLauncher parent) {
-        this.parent = parent;
+    private Runnable onExit = () -> launcher.showMainMenu(); // default
+
+    public void setOnExit(Runnable onExit) {
+        this.onExit = onExit;
+    }
+
+    public InstructionsPanel(GameLauncher launcher) {
+        this.launcher = launcher;
 
         setFocusable(true);
         setLayout(null);
@@ -38,7 +44,6 @@ public class InstructionsPanel extends JPanel {
     @Override
     public void addNotify() {
         super.addNotify();
-
         SwingUtilities.invokeLater(this::requestFocusInWindow);
     }
 
@@ -49,9 +54,7 @@ public class InstructionsPanel extends JPanel {
 
     private void animateButtonPress(JButton btn) {
         Point original = btn.getLocation();
-
         btn.setLocation(original.x, original.y + 5);
-
         Timer timer = new Timer(80, e -> btn.setLocation(original));
         timer.setRepeats(false);
         timer.start();
@@ -63,7 +66,6 @@ public class InstructionsPanel extends JPanel {
     }
 
     private void updateResponsiveLayout() {
-
         int w = getWidth();
         int h = getHeight();
 
@@ -73,29 +75,14 @@ public class InstructionsPanel extends JPanel {
         rightButton.setIcon(scaleIcon(rightImg, btnSize, btnSize));
         xButton.setIcon(scaleIcon(exitImg, btnSize, btnSize));
 
-        leftButton.setBounds(
-                w / 15,
-                h / 2 - btnSize / 2,
-                btnSize,
-                btnSize);
-
-        rightButton.setBounds(
-                w - btnSize - w / 12,
-                h / 2 - btnSize / 2,
-                btnSize,
-                btnSize);
+        leftButton.setBounds(w / 15, h / 2 - btnSize / 2, btnSize, btnSize);
+        rightButton.setBounds(w - btnSize - w / 12, h / 2 - btnSize / 2, btnSize, btnSize);
 
         int xMargin = w / 8;
-
-        xButton.setBounds(
-                w - btnSize - xMargin,
-                h / 25,
-                btnSize,
-                btnSize);
+        xButton.setBounds(w - btnSize - xMargin, h / 25, btnSize, btnSize);
     }
 
     private void setupButtons() {
-
         leftImg = AssetManager.getInstance().getButton("leftArrow");
         rightImg = AssetManager.getInstance().getButton("rightArrow");
         exitImg = AssetManager.getInstance().getButton("xButton");
@@ -104,7 +91,7 @@ public class InstructionsPanel extends JPanel {
         rightButton = new JButton();
         xButton = new JButton();
 
-        for (JButton btn : new JButton[]{leftButton, rightButton, xButton}) {
+        for (JButton btn : new JButton[] { leftButton, rightButton, xButton }) {
             btn.setBorderPainted(false);
             btn.setContentAreaFilled(false);
             btn.setFocusPainted(false);
@@ -114,39 +101,31 @@ public class InstructionsPanel extends JPanel {
         }
 
         leftButton.addActionListener(e -> {
-
             animateButtonPress(leftButton);
-
             if (currentPage > 0) {
                 currentPage--;
                 repaint();
                 updateButtonVisibility();
             }
-
             requestFocusInWindow();
         });
 
         rightButton.addActionListener(e -> {
-
             animateButtonPress(rightButton);
-
             if (currentPage < pages.length - 1) {
                 currentPage++;
                 repaint();
                 updateButtonVisibility();
             }
-
             requestFocusInWindow();
         });
 
         xButton.addActionListener(e -> {
-
             animateButtonPress(xButton);
-
-            Timer t = new Timer(100, ev -> parent.showMainMenu());
+            currentPage = 0; // reset page for next time
+            Timer t = new Timer(100, ev -> onExit.run());
             t.setRepeats(false);
             t.start();
-
             requestFocusInWindow();
         });
 
@@ -162,39 +141,27 @@ public class InstructionsPanel extends JPanel {
     }
 
     private void setupKeys() {
-
         addKeyListener(new KeyAdapter() {
-
             @Override
             public void keyPressed(KeyEvent e) {
-
                 switch (e.getKeyCode()) {
-
                     case KeyEvent.VK_RIGHT:
-
                         if (currentPage < pages.length - 1) {
                             currentPage++;
                             repaint();
                             updateButtonVisibility();
                         }
-
                         break;
-
                     case KeyEvent.VK_LEFT:
-
                         if (currentPage > 0) {
                             currentPage--;
                             repaint();
                             updateButtonVisibility();
                         }
-
                         break;
-
                     case KeyEvent.VK_ESCAPE:
-
                         currentPage = 0;
-                        parent.showMainMenu();
-
+                        onExit.run();
                         break;
                 }
             }
@@ -202,33 +169,23 @@ public class InstructionsPanel extends JPanel {
     }
 
     private void loadPages() {
-
-        pages = new Image[]{
-            AssetManager.getInstance().getInstructions("instruction1"),
-            AssetManager.getInstance().getInstructions("instruction2"),
-            AssetManager.getInstance().getInstructions("instruction3"),
-            AssetManager.getInstance().getInstructions("instruction4"),
-            AssetManager.getInstance().getInstructions("instruction5")
+        pages = new Image[] {
+                AssetManager.getInstance().getInstructions("instruction1"),
+                AssetManager.getInstance().getInstructions("instruction2"),
+                AssetManager.getInstance().getInstructions("instruction3"),
+                AssetManager.getInstance().getInstructions("instruction4"),
+                AssetManager.getInstance().getInstructions("instruction5")
         };
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-
         super.paintComponent(g);
-
         if (background != null) {
             g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
         }
-
         if (pages != null && pages[currentPage] != null) {
-            g.drawImage(
-                    pages[currentPage],
-                    0,
-                    0,
-                    getWidth(),
-                    getHeight(),
-                    this);
+            g.drawImage(pages[currentPage], 0, 0, getWidth(), getHeight(), this);
         }
     }
 }

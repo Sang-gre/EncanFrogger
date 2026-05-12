@@ -261,12 +261,9 @@ public class GamePanel extends JPanel implements KeyListener {
                 },
                 // Menu: instructions
                 () -> {
-                    state = GameState.PLAYING;
-                    pauseScreen.setVisible(false);
-                    pauseScreen.revalidate();
                     stopThreads();
                     sound.stopBGM();
-                    launcher.showInstructions();
+                    launcher.showInstructions(true);
                 },
                 // Exit: main menu
                 () -> {
@@ -524,6 +521,13 @@ public class GamePanel extends JPanel implements KeyListener {
             scoreManager.onReachedTop(currentLevel);
             hud.updateScore(scoreManager.getScore());
             
+            if (currentLevel < player.getMaxLevels()) {
+                currentLevel++;
+                stopThreads();
+                SwingUtilities.invokeLater(() -> showCharacterSelectNextLevel());
+            } else {
+                showFinalVictory();
+            }
             // save progress before moving to character select
             new Thread(() -> LeaderboardManager
                     .upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true))).start();
@@ -729,9 +733,8 @@ public class GamePanel extends JPanel implements KeyListener {
         stopThreads();
         state = GameState.GAME_OVER;
 
-    LeaderboardManager.saveEntry(
-            new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true)
-    );
+        LeaderboardManager.saveEntry(
+                new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true));
         leaderboardScreen = new ui.LeaderboardScreen();
         showingLeaderboard = true;
         repaint();
@@ -740,4 +743,14 @@ public class GamePanel extends JPanel implements KeyListener {
     public void setSelectedLevel(int level) {
         this.selectedLevel = level;
 }
+    public void resumeFromInstructions() {
+        sound.playBGM("game");
+        logicThread = new GameLogicThread(this);
+        renderThread = new RenderThread(this);
+        logicThread.start();
+        renderThread.start();
+        pauseScreen.setVisible(true);
+        state = GameState.PAUSED;
+        requestFocusInWindow();
+    }
 }
