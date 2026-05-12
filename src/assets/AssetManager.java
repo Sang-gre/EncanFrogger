@@ -65,6 +65,10 @@ public class AssetManager {
     /* INSTRUCTIONS */
     private final Map<String, Image> instructions = new HashMap<>();
 
+    /* TRACKER */
+    private final Map<String, Image> tracker = new HashMap<>();
+
+
     private AssetManager() {
         loadLogo();
         loadBackgrounds();
@@ -84,6 +88,7 @@ public class AssetManager {
         loadPopups();
         loadInstructions();
         loadCongrats();
+        loadTracker();
     }
 
     public static AssetManager getInstance() {
@@ -104,6 +109,11 @@ public class AssetManager {
 
     private void loadLogo() {
         logo.put("logo", new ImageIcon("assets/gameLogo.png"));
+    }
+
+    private void loadTracker() {
+        tracker.put("coinTrack", loadImage("assets/Buttons/coinTrackLabel.png"));
+        tracker.put("levelTrack", loadImage("assets/Buttons/levelTrackLabel.png"));
     }
 
     private void loadBackgrounds() {
@@ -433,6 +443,10 @@ public class AssetManager {
 
     public Image getInstructions(String key) {
         return instructions.get(key);
+    }
+
+    public Image getTracker(String key) {
+        return tracker.get(key);
     }
 
     public Image getLevelButtonImage(int level) {

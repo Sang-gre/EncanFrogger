@@ -1,18 +1,11 @@
 package core;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.List;
-
-import javax.swing.*;
-
 import assets.AssetManager;
 import assets.SoundManager;
-import level.LevelManager;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.List;
+import javax.swing.*;
 import persistence.LeaderboardManager;
 import persistence.ScoreEntry;
 import ui.PopupDialog;
@@ -22,6 +15,9 @@ public abstract class Selection extends JPanel {
     private final GamePanel gamePanel;
     protected final Runnable onBack;
     private SoundManager sound = new SoundManager();
+
+    protected JLabel coinLabel;
+    protected JLabel levelLabel;
 
     public Selection(GamePanel gamePanel, Runnable onBack) {
         this.gamePanel = gamePanel;
@@ -84,37 +80,42 @@ public abstract class Selection extends JPanel {
         panel.add(nextBtn);
 
         JButton finalBackBtn = backBtn;
-    
-
-        //LABELS 
-
-        JLabel coinLabel = new JLabel();
-        JLabel levelLabel = new JLabel();
 
         AssetManager am = AssetManager.getInstance();
+
+        Image coinImg = am.getTracker("coinTrack");
+        Image levelImg = am.getTracker("levelTrack");
+
+        Image scaledCoin = coinImg.getScaledInstance(120, 60, Image.SCALE_SMOOTH);
+        Image scaledLevel = levelImg.getScaledInstance(160, 60, Image.SCALE_SMOOTH);
+
+        coinLabel = new JLabel(new ImageIcon(scaledCoin));
+        levelLabel = new JLabel(new ImageIcon(scaledLevel));
+
         Font font = am.getFont("proffaliceHandwrite");
-        if (font == null)
-            font = new Font("Serif", Font.BOLD, 20);
-            font = font.deriveFont(18f);
+        if (font == null) font = new Font("Serif", Font.BOLD, 20);
+        font = font.deriveFont(18f);
+
         coinLabel.setFont(font);
         coinLabel.setForeground(new Color(246, 242, 195));
+        coinLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        coinLabel.setVerticalAlignment(SwingConstants.CENTER);
+        coinLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        coinLabel.setVerticalTextPosition(SwingConstants.CENTER);
 
-        
-        List<ScoreEntry> entries = LeaderboardManager.loadAll();
-
-        if (!entries.isEmpty()) {
-
-            ScoreEntry latest = entries.get(0);
-
-            levelLabel.setText("LEVEL " + latest.level);
-            coinLabel.setText(String.valueOf(latest.coins));
-        }
-
-        //int level = new LevelManager(getWidth(), getHeight()).getCurrentLevel();
-
-        
         levelLabel.setFont(font);
         levelLabel.setForeground(new Color(246, 242, 195));
+        levelLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        levelLabel.setVerticalAlignment(SwingConstants.CENTER);
+        levelLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        levelLabel.setVerticalTextPosition(SwingConstants.CENTER);
+
+        List<ScoreEntry> entries = LeaderboardManager.loadAll();
+        if (!entries.isEmpty()) {
+            ScoreEntry latest = entries.get(0);
+            coinLabel.setText(String.valueOf(latest.coins));
+            levelLabel.setText("LEVEL " + latest.level);
+        }
 
         panel.add(coinLabel);
         panel.add(levelLabel);
@@ -122,58 +123,36 @@ public abstract class Selection extends JPanel {
         panel.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-
                 int w = panel.getWidth();
                 int h = panel.getHeight();
 
                 if (finalBackBtn != null) {
-                    finalBackBtn.setBounds(
-                            margin,
-                            h - btnHeight,
-                            btnWidth,
-                            btnHeight);
+                    finalBackBtn.setBounds(margin, h - btnHeight, btnWidth, btnHeight);
                 }
 
-                nextBtn.setBounds(
-                        w - btnWidth - margin,
-                        h - btnHeight,
-                        btnWidth,
-                        btnHeight);
+                nextBtn.setBounds(w - btnWidth - margin, h - btnHeight, btnWidth, btnHeight);
 
-
-                //for the labels din po
-                coinLabel.setBounds((getWidth()/2) - 50, h - btnHeight, btnWidth,
-                        btnHeight);
-
-
-                levelLabel.setBounds((getWidth()/2) + 33, h - btnHeight, btnWidth,
-                        btnHeight);
-                
+                coinLabel.setBounds((w / 2) - 140, h - btnHeight, 120, 60);
+                levelLabel.setBounds((w / 2) + 20, h - btnHeight, 160, 60);
             }
         });
 
-        
         return panel;
     }
 
     protected abstract void onNext();
 
-    
     public JButton createImageButton(Image img, int width, int height) {
-
-        if (img == null)
-            return new JButton("?");
+        if (img == null) return new JButton("?");
         Image scaled = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 
         JButton button = new JButton(new ImageIcon(scaled));
-
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.setFocusPainted(false);
         button.setOpaque(false);
 
         button.addMouseListener(new MouseAdapter() {
-
             @Override
             public void mouseEntered(MouseEvent e) {
                 button.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -198,9 +177,7 @@ public abstract class Selection extends JPanel {
         return button;
     }
 
-
     public abstract JPanel createSelectionButtons();
-
     public abstract boolean validateSelection();
 
     protected String getPopupKey() {
