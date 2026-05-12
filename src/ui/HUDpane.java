@@ -15,7 +15,7 @@ public class HUDpane extends JPanel {
     private final Image scoreImg;
     private final Image heartImg;
 
-    private int lastHeight = -1;
+    private Dimension lastSize = new Dimension();
 
     public HUDpane() {
         this(null);
@@ -67,12 +67,19 @@ public class HUDpane extends JPanel {
     public void doLayout() {
         super.doLayout();
 
-        int h = getHeight();
-        if (h <= 0)
+        Dimension size = getSize();
+
+        if (size.width <= 0 || size.height <= 0)
             return;
-        if (h == lastHeight)
+
+        if (size.equals(lastSize))
             return;
-        lastHeight = h;
+
+        lastSize = size;
+
+        int h = size.height;
+        //int w = size.width;
+        
         System.out.println("pauseImg=" + pauseImg + " scoreImg=" + scoreImg + " heartImg=" + heartImg);
 
         // scale everything relative to HUD height
@@ -123,6 +130,6 @@ public class HUDpane extends JPanel {
     @Override
     public void addNotify() {
         super.addNotify();
-        lastHeight = -1; // force relayout when added to panel
+        lastSize = new Dimension();
     }
 }

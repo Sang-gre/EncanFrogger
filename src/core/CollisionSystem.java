@@ -79,7 +79,7 @@ public class CollisionSystem {
         }
     }
 
-    public int getCoinsCollected() {
+    public static int getCoinsCollected() {
         System.out.println("Coins Collected: " + coinsCollected);
         return coinsCollected;
     }

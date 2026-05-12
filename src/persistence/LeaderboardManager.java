@@ -9,8 +9,7 @@ public class LeaderboardManager {
 
     private static final String FILE_PATH = "data/scores.txt";
     private static final int MAX_ENTRIES = 100;
-    private static CollisionSystem cs = new CollisionSystem();
-    private static int coins = cs.getCoinsCollected();
+
 
     public static void saveEntry(ScoreEntry entry) {
         List<ScoreEntry> entries = loadAll();
@@ -59,11 +58,13 @@ public class LeaderboardManager {
                         int score = Integer.parseInt(parts[1].trim());
                         int level = Integer.parseInt(parts[2].trim());
                         boolean isAlive = Boolean.parseBoolean(parts[3].trim());
+                        int coins = Integer.parseInt(parts[4].trim());
 
                         if (!seen.contains(initials.toLowerCase())) {
-                            entries.add(new ScoreEntry(initials, score, level, isAlive, coins));
+                            entries.add(new ScoreEntry(initials, score, level, isAlive, CollisionSystem.getCoinsCollected()));
                             seen.add(initials.toLowerCase());
                         }
+
                     } catch (NumberFormatException ex) {
                         System.err.println("Skipping corrupted line: " + line);
                     }
@@ -78,7 +79,7 @@ public class LeaderboardManager {
     private static void writeAll(List<ScoreEntry> entries) {
         try (PrintWriter pw = new PrintWriter(new FileWriter(FILE_PATH))) {
             for (ScoreEntry e : entries) {
-                pw.printf("%s,%d,%d,%b%n,%d", e.initials, e.score, e.level, e.isAlive, coins);
+                pw.printf("%s,%d,%d,%b,%d%n", e.initials, e.score, e.level, e.isAlive, e.coins);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
