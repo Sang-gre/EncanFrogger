@@ -1,5 +1,13 @@
+<<<<<<< Updated upstream
 KJ,2790,2,true,1
 JJ,2700,2,true,1
 HDHF,2660,1,true,1
 JF,0,1,true,1
 TEST,0,1,true,0
+=======
+HG,2890,2,true,3
+KJ,2790,2,true,3
+Y,2740,1,true,0
+HDHF,2660,1,true,3
+JF,0,1,true,3
+>>>>>>> Stashed changes

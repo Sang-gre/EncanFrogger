@@ -107,7 +107,10 @@ public class GamePanel extends JPanel implements KeyListener {
         });
     }
 
+<<<<<<< Updated upstream
    
+=======
+>>>>>>> Stashed changes
     public void showMapSelect(Player selectedPlayer) {
         showMapSelect(selectedPlayer, currentMap != null ? currentMap : GameMap.LIREO);
     }
