@@ -1,7 +1,7 @@
 package ui;
 
-import java.awt.*;
 import assets.AssetManager;
+import java.awt.*;
 
 public class CongratsScreen {
 
