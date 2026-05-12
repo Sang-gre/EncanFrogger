@@ -1,139 +1,82 @@
 package gameobjects;
 
+import assets.AssetManager;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
-import assets.AssetManager;
 import level.Direction;
 
 public abstract class Player extends GameObject {
 
-    private int animationFrame = 0;
-    private int animationCounter = 0;
+    // --- Animation ---
+    private BufferedImage[] currentFrames;
+    private int frameIndex = 0;
+    private int frameTimer = 0;
+    private final int frameDelay = 7;
+    private int idleTimer = 0;
+    private static final int IDLE_DELAY = 15;
+
+    // --- Identity ---
     protected PlayerType type;
+    protected int maxLevels;
+
+    // --- Stats ---
     private int lives;
     private int coins;
-    private int level;
-    private int cooldownTimer;
-    private boolean abilityReady;
+
+    // --- Movement ---
     private Direction direction;
     private int stepX;
     private int stepY;
     protected Direction lastDirection = Direction.DOWN;
-    private int invincibilityFrames = 0;
-    private boolean onPlatform = false;
-    private int directionResetTimer = 0;
-    private static final int DIRECTION_RESET_DELAY = 20;
     private boolean movedThisTick = false;
+
+    // --- Visual ---
     private int visualWidth = 80;
     private int visualHeight = 80;
-    protected int maxLevels;
 
+    // --- Damage ---
+    private int invincibilityFrames = 0;
+    private boolean onPlatform = false;
+    
     public Player(int x, int y, PlayerType type) {
         super(x, y, 40, 40, 5);
+        this.type = type;
         this.stepX = 40;
         this.stepY = 40;
-
         this.lives = 3;
         this.coins = 0;
-        this.level = 1;
-        this.abilityReady = true;
-        this.type = type;
+
+        // Default standing frames
+        currentFrames = AssetManager.getInstance()
+                .getPlayerAnimation(type, Direction.DOWN);
     }
 
-    @Override
-    public void move() {
-        
-        if (direction == null)
-            return;
-
-        lastDirection = direction;
-
-
-        switch (direction) {
-            case UP:
-                y -= stepY;
-                break;
-            case DOWN:
-                y += stepY;
-                break;
-            case LEFT:
-                x -= stepX;
-                break;
-            case RIGHT:
-                x += stepX;
-                break;
-        }
-
-        direction = null;
-    }
-
-    public abstract void useAbility();
-
-    public void loseLife() {
-        if (invincibilityFrames > 0)
-            return;
-        lives--;
-        invincibilityFrames = 60;
-    }
-
-    public boolean isAlive() {
-        return lives > 0;
-    }
-
-    public void addCoins(int amount) {
-        coins += amount;
-    }
-
+    // -------------------------------------------------------------------------
+    // Core lifecycle
+    // -------------------------------------------------------------------------
     @Override
     public void update() {
+        // Invincibility countdown
         if (invincibilityFrames > 0)
             invincibilityFrames--;
 
-        boolean isMoving = (direction != null);
+        // Move, then sync animation direction
         move();
+        syncAnimation();
 
-        if (isMoving) {
-            animationCounter++;
-            if (animationCounter > 10) {
-                animationFrame++;
-                animationCounter = 0;
-            }
-        } else {
-            animationFrame = 0;
-        }
-
-        // Direction reset timer
-        if (movedThisTick) {
-            directionResetTimer = DIRECTION_RESET_DELAY;
-        } else {
-            if (directionResetTimer > 0) {
-                directionResetTimer--;
-                if (directionResetTimer == 0) {
-                    lastDirection = Direction.DOWN;
-                }
-            }
-        }
-        movedThisTick = false; // auto-reset each update
-
-        if (!abilityReady) {
-            cooldownTimer--;
-            if (cooldownTimer <= 0) {
-                setAbilityReady(true);
-            }
-        }
-    }
-
-    protected void startCooldown(int frames) {
-        setAbilityReady(false);
-        cooldownTimer = frames;
+        // Reset per-tick flag
+        movedThisTick = false;
     }
 
     @Override
     public void draw(Graphics g) {
-        BufferedImage[] currentFrames = getCurrentFrames();
-        int currentIndex = getCurrentFrameIndex();
-        
+        if (currentFrames == null || currentFrames.length == 0) {
+            // Fallback: solid rectangle so broken assets are obvious
+            g.setColor(Color.GREEN);
+            g.fillRect(x, y, visualWidth, visualHeight);
+            return;
+        }
+
         int drawX = x - (visualWidth - width) / 2;
         int drawY = isOnPlatform()
                 ? (y + height) - visualHeight
@@ -142,20 +85,8 @@ public abstract class Player extends GameObject {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
                 RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-
-        if (currentFrames != null && currentFrames.length > 0) {
-            g2d.drawImage(currentFrames[currentIndex % currentFrames.length],
-                    drawX, drawY, visualWidth, visualHeight, null);
-        } else {
-            g2d.setColor(Color.GREEN);
-            g2d.fillRect(drawX, drawY, visualWidth, visualHeight);
-        }
-
-        /* g2d.setColor(new Color(255, 0, 0, 60));
-        g2d.fillRect(x, y, width, height);
-        g2d.setColor(Color.RED);
-        g2d.setStroke(new BasicStroke(2));
-        g2d.drawRect(x, y, width, height); */
+        g2d.drawImage(currentFrames[frameIndex], drawX, drawY,
+                visualWidth, visualHeight, null);
     }
 
     @Override
@@ -168,19 +99,77 @@ public abstract class Player extends GameObject {
         }
     }
 
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-        if (direction != null) {
-            lastDirection = direction;
+    // -------------------------------------------------------------------------
+    // Movement
+    // -------------------------------------------------------------------------
+    @Override
+    public void move() {
+        if (direction == null)
+            return;
+
+        lastDirection = direction;
+        movedThisTick = true;
+
+        switch (direction) {
+            case UP -> y -= stepY;
+            case DOWN -> y += stepY;
+            case LEFT -> x -= stepX;
+            case RIGHT -> x += stepX;
+        }
+
+        direction = null;
+    }
+
+    // -------------------------------------------------------------------------
+    // Animation
+    // -------------------------------------------------------------------------
+    private void syncAnimation() {
+        if (movedThisTick) {
+            idleTimer = IDLE_DELAY;
+        } else if (idleTimer > 0) {
+            idleTimer--;
+        }
+
+        Direction displayDirection = (idleTimer > 0) ? lastDirection : Direction.DOWN;
+
+        BufferedImage[] desired = AssetManager.getInstance()
+                .getPlayerAnimation(type, displayDirection);
+
+        if (desired != currentFrames) {
+            currentFrames = desired;
+            frameIndex = 0;
+            frameTimer = 0;
+        }
+
+        if (currentFrames != null && currentFrames.length > 0) {
+            if (++frameTimer >= frameDelay) {
+                frameTimer = 0;
+                frameIndex = (frameIndex + 1) % currentFrames.length;
+            }
         }
     }
 
-    protected BufferedImage[] getCurrentFrames() {
-        return AssetManager.getInstance().getPlayerAnimation(type, getLastDirection());
+    // -------------------------------------------------------------------------
+    // Damage
+    // -------------------------------------------------------------------------
+    public void loseLife() {
+        if (invincibilityFrames > 0)
+            return;
+        lives--;
+        invincibilityFrames = 60;
     }
 
-    protected int getCurrentFrameIndex() {
-        return animationFrame;
+    public boolean isAlive() {
+        return lives > 0;
+    }
+
+    // -------------------------------------------------------------------------
+    // Accessors
+    // -------------------------------------------------------------------------
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+        if (direction != null)
+            lastDirection = direction;
     }
 
     public Direction getDirection() {
@@ -199,21 +188,17 @@ public abstract class Player extends GameObject {
         return coins;
     }
 
-    public int getLevel() {
-        return level;
+    public int getMaxLevels() {
+        return maxLevels;
+    }
+
+    public void addCoins(int amount) {
+        coins += amount;
     }
 
     public void setStepSize(int stepX, int stepY) {
         this.stepX = stepX;
         this.stepY = stepY;
-    }
-
-    public boolean isAbilityReady() {
-        return abilityReady;
-    }
-
-    protected void setAbilityReady(boolean ready) {
-        this.abilityReady = ready;
     }
 
     public void setOnPlatform(boolean onPlatform) {
@@ -224,12 +209,12 @@ public abstract class Player extends GameObject {
         return onPlatform;
     }
 
-    public void setLastDirection(Direction direction) {
-        this.lastDirection = direction;
+    public void setLastDirection(Direction d) {
+        this.lastDirection = d;
     }
 
-    public void setMovedThisTick(boolean moved) {
-        this.movedThisTick = moved;
+    public void setMovedThisTick(boolean b) {
+        this.movedThisTick = b;
     }
 
     public void setVisualSize(int w, int h) {
@@ -243,9 +228,5 @@ public abstract class Player extends GameObject {
 
     public int getVisualHeight() {
         return visualHeight;
-    }
-
-    public int getMaxLevels() {
-        return maxLevels;
     }
 }

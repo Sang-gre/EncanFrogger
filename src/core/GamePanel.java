@@ -646,10 +646,6 @@ public class GamePanel extends JPanel implements KeyListener {
             return;
         }
 
-        if (key == KeyEvent.VK_SPACE && player != null) {
-            player.useAbility();
-        }
-
         if (state == GameState.GAME_OVER && showingLeaderboard && leaderboardScreen != null) {
             if (key == KeyEvent.VK_UP) {
                 leaderboardScreen.scroll(-1);
