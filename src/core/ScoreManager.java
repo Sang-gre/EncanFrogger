@@ -39,7 +39,8 @@ public class ScoreManager {
     }
 
     public void updateTimer(float deltaSeconds) {
-        if (!timerRunning) return;
+        if (!timerRunning)
+            return;
 
         timeRemaining -= deltaSeconds;
 
@@ -57,22 +58,14 @@ public class ScoreManager {
     }
 
     public void onReachedTop(int currentLevel) {
+        previousScore = totalScore;
 
-        previousScore = levelScore;
-
-        int bonus =
-                POINTS_REACH_TOP
+        int bonus = POINTS_REACH_TOP
                 + currentLevel * POINTS_LEVEL_BONUS
                 + Math.round(timeRemaining) * POINTS_TIME_BONUS;
 
-        if (currentLevel == 1 && totalScore == 0) {
-            totalScore = previousScore;
-        } else {
-            totalScore += previousScore + bonus;
-        }
-
+        totalScore = previousScore + levelScore + bonus;
         levelScore = 0;
-
         resetCrossing();
     }
 

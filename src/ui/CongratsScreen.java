@@ -11,11 +11,13 @@ public class CongratsScreen {
 
     private int previousScore;
     private int totalScore;
+    private int coins;
     private Font customFont;
 
-    public CongratsScreen(int previousScore, int totalScore) {
+    public CongratsScreen(int previousScore, int totalScore, int coins) {
         this.previousScore = previousScore;
         this.totalScore = totalScore;
+        this.coins = coins;
 
         bgImage = AssetManager.getInstance().getCongrats("levelClearedBackground");
         okImage = AssetManager.getInstance().getButton("playAgainButton");
@@ -38,14 +40,18 @@ public class CongratsScreen {
 
         String prevText = String.valueOf(previousScore);
         String totalText = String.valueOf(totalScore);
+        String coinsText = String.valueOf(coins);
 
+        int prevLabelX = (int)(w * 0.53);
         int prevLabelY = (int)(h * 0.60);
-        int totalLabelY = (int)(h * 0.879);
-        int prevLabelX = (int)(w * 0.52);
         int totalLabelX = (int)(w * 0.485);
+        int totalLabelY = (int)(h * 0.879);
+        int coinsLabelX = (int)(w * 0.55); 
+        int coinsLabelY = (int)(h * 0.74);
 
         g2.drawString(prevText, prevLabelX, prevLabelY);
         g2.drawString(totalText, totalLabelX, totalLabelY);
+        g2.drawString(coinsText, coinsLabelX, coinsLabelY);
 
         // --- Draw button ---
         int btnW = (int)(w * 0.12);

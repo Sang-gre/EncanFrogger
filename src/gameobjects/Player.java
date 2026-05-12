@@ -37,7 +37,7 @@ public abstract class Player extends GameObject {
     // --- Damage ---
     private int invincibilityFrames = 0;
     private boolean onPlatform = false;
-    
+
     public Player(int x, int y, PlayerType type) {
         super(x, y, 40, 40, 5);
         this.type = type;
@@ -157,6 +157,10 @@ public abstract class Player extends GameObject {
             return;
         lives--;
         invincibilityFrames = 60;
+    }
+
+    public void resetLives() {
+        this.lives = 3;
     }
 
     public boolean isAlive() {

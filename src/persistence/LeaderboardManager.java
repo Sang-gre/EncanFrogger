@@ -5,7 +5,8 @@ import java.util.*;
 
 public class LeaderboardManager {
 
-    private static final String FILE_PATH = "data/scores.txt";
+    private static final Object LOCK = new Object();
+    private static final String FILE_PATH = "data/data.txt";
     private static final int MAX_ENTRIES = 100;
 
     public static void saveEntry(ScoreEntry entry) {
@@ -21,36 +22,33 @@ public class LeaderboardManager {
     }
 
     public static void upsertEntry(ScoreEntry newEntry) {
-        List<ScoreEntry> entries = loadAll();
-        boolean found = false;
+        synchronized (LOCK) {
+            List<ScoreEntry> entries = loadAll();
+            boolean found = false;
 
-        for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).initials.trim().equalsIgnoreCase(newEntry.initials.trim())) {
-                ScoreEntry existing = entries.get(i);
+            for (int i = 0; i < entries.size(); i++) {
+                if (entries.get(i).initials.trim().equalsIgnoreCase(newEntry.initials.trim())) {
+                    ScoreEntry existing = entries.get(i);
 
-                // Add the new score to the existing total
-                int totalScore = existing.score + newEntry.score;
-                int totalCoins = existing.coins + newEntry.coins;
-
-                entries.set(i, new ScoreEntry(
-                        existing.initials,
-                        totalScore,
-                        newEntry.level, // keep latest level
-                        newEntry.isAlive, // keep latest alive status
-                        totalCoins));
-                found = true;
-                break;
+                    entries.set(i, new ScoreEntry(
+                            existing.initials,
+                            newEntry.score, // accumulate all-time
+                            newEntry.level,
+                            newEntry.isAlive,
+                            existing.coins + newEntry.coins));
+                    found = true;
+                    break;
+                }
             }
-        }
 
-        if (!found) {
-            entries.add(newEntry);
-        }
+            if (!found)
+                entries.add(newEntry);
 
-        entries.sort((a, b) -> b.score - a.score);
-        if (entries.size() > MAX_ENTRIES)
-            entries = entries.subList(0, MAX_ENTRIES);
-        writeAll(entries);
+            entries.sort((a, b) -> b.score - a.score);
+            if (entries.size() > MAX_ENTRIES)
+                entries = entries.subList(0, MAX_ENTRIES);
+            writeAll(entries);
+        }
     }
 
     public static List<ScoreEntry> loadAll() {
@@ -94,19 +92,21 @@ public class LeaderboardManager {
     }
 
     private static void writeAll(List<ScoreEntry> entries) {
-        File f = new File(FILE_PATH);
-        f.getParentFile().mkdirs();
-        try (PrintWriter pw = new PrintWriter(new FileWriter(f))) {
-            for (ScoreEntry e : entries) {
-                pw.printf("%s,%d,%d,%b,%d%n",
-                        e.initials,
-                        e.score,
-                        e.level,
-                        e.isAlive,
-                        e.coins);
+        synchronized (LOCK) {
+            File f = new File(FILE_PATH);
+            f.getParentFile().mkdirs();
+            try (PrintWriter pw = new PrintWriter(new FileWriter(f))) {
+                for (ScoreEntry e : entries) {
+                    pw.printf("%s,%d,%d,%b,%d%n",
+                            e.initials,
+                            e.score,
+                            e.level,
+                            e.isAlive,
+                            e.coins);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
     }
 }

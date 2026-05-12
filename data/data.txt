@@ -1,3 +1,4 @@
+HELLO,13780,3,true,142
 JED,170,1,false,0
 JADE,110,1,false,0
 DENES,90,1,false,0
@@ -8,3 +9,5 @@ TD,0,1,true,5
 HH,0,1,true,5
 R,0,1,false,5
 GHJF,0,1,true,0
+THIS,0,1,false,4
+CRAZY,0,1,true,0
