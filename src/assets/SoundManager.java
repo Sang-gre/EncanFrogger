@@ -23,7 +23,6 @@ public class SoundManager {
        loadSound("menu", "assets/sounds/bgm/menuBGM.wav");
     }
 
-    //play
     public void loadSound (String name, String path){
        
         try {
@@ -43,8 +42,7 @@ public class SoundManager {
             sounds.put(name, clip); //adding it to the hashmap
 
         } catch (Exception e ){
-            //TO BE DELETED, for debugging onlyyyyyyy
-            System.out.println("error loading sound po" + name);// 
+            System.out.println("Error Loading Sound " + name);
             e.printStackTrace();
         }
        
@@ -56,7 +54,7 @@ public class SoundManager {
 
         //making sure it exists
         if (clip == null){
-            System.out.println("sound not found po" + name);
+            System.out.println("Sound Not Found" + name);
             return;
         }
 
@@ -88,7 +86,7 @@ public class SoundManager {
         currentMusic = sounds.get(name);
 
         if (currentMusic == null){
-            System.out.println("current BGM does snot exist po:( " + name);
+            System.out.println("Current BGM does not exist " + name);
             return;
         }
 
@@ -114,8 +112,4 @@ public class SoundManager {
         clip.setFramePosition(0);
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
-
-    //to be added:
-        //mute
-        //volumeish
 }

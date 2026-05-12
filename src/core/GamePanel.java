@@ -51,7 +51,7 @@ public class GamePanel extends JPanel implements KeyListener {
     private String playerInitials;
     private boolean playerIsAlive = true;
     private boolean freshStart = true;
-    private int coins = new CollisionSystem().getCoinsCollected();
+    private int coins = CollisionSystem.getCoinsCollected();
 
     private int previousScore = 0;
     private int totalScore = 0;

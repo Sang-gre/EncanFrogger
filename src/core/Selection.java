@@ -113,9 +113,6 @@ public abstract class Selection extends JPanel {
             levelLabel.setText("LEVEL " + latest.level);
             coinLabel.setText(String.valueOf(latest.coins * 50));
         }
-
-        //int level = new LevelManager(getWidth(), getHeight()).getCurrentLevel();
-
         
         levelLabel.setFont(font);
         levelLabel.setForeground(new Color(246, 242, 195));
@@ -124,7 +121,6 @@ public abstract class Selection extends JPanel {
         levelLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         levelLabel.setVerticalTextPosition(SwingConstants.CENTER);
 
-       // List<ScoreEntry> entries = LeaderboardManager.loadAll();
         if (!entries.isEmpty()) {
             ScoreEntry latest = entries.get(0);
             coinLabel.setText(String.valueOf(latest.coins*50));
