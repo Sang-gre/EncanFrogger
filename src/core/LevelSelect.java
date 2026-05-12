@@ -109,6 +109,7 @@ public class LevelSelect extends Selection {
 
                 selection.setBounds(0, 0, w, h - 50);
                 nav.setBounds(0, h - 100, w, 100);
+                
 
                 resizeButtons(w, h - 100);
             }

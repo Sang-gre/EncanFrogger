@@ -107,7 +107,7 @@ public class GamePanel extends JPanel implements KeyListener {
         });
     }
 
-    // ✅ Overload: allows calling with only Player
+   
     public void showMapSelect(Player selectedPlayer) {
         showMapSelect(selectedPlayer, currentMap != null ? currentMap : GameMap.LIREO);
     }
@@ -456,21 +456,7 @@ public class GamePanel extends JPanel implements KeyListener {
 
         // player reaches top lane — award completion bonus then advance
         if (!levelTransitioning && playerLane == 0) {
-            levelTransitioning = true;
-            scoreManager.onReachedTop(currentLevel);
-            hud.updateScore(scoreManager.getScore());
-            
-            if (currentLevel < player.getMaxLevels()) {
-                currentLevel++;
-                stopThreads();
-                SwingUtilities.invokeLater(() -> showCharacterSelectNextLevel());
-            } else {
-                showFinalVictory();
-            }
-            // save progress before moving to character select
-            new Thread(() -> LeaderboardManager
-                    .upsertEntry(new ScoreEntry(playerInitials, scoreManager.getScore(), currentLevel, true, coins))).start();
-            stopThreads();
+    levelTransitioning = true;
 
     scoreManager.onReachedTop(currentLevel);
     hud.updateScore(scoreManager.getScore());
@@ -478,7 +464,9 @@ public class GamePanel extends JPanel implements KeyListener {
     stopThreads();
 
     SwingUtilities.invokeLater(() -> {
-        showFinalVictory(); // THIS shows CongratsScreen
+        congratsScreen = new ui.CongratsScreen();
+        state = GameState.WIN;
+        repaint();
     });
 
     return;
@@ -628,6 +616,8 @@ public class GamePanel extends JPanel implements KeyListener {
             renderThread = null;
         }
     }
+
+    
 
     public GameState getState() {
         return state;
