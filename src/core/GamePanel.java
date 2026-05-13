@@ -101,11 +101,7 @@ public class GamePanel extends JPanel {
         logicController = new GameLogicController(
                 this, stateManager, scoreManager, collisionSystem, inputHandler, sound);
     }
-
-    public void enterGameplay(Player player, GameMap map, int level) {
-        startLevel(player, map, level);
-    }
-
+    
     // -------------------------------------------------------------------------
     // Game loop (GameLogicThread)
     // -------------------------------------------------------------------------

@@ -4,11 +4,7 @@ import gameobjects.Player;
 import java.awt.BorderLayout;
 import javax.swing.SwingUtilities;
 
-/**
- * Handles all screen transitions: swapping out Swing panels and updating
- * GameStateManager accordingly. GamePanel delegates every "show X screen"
- * call here so it stays free of layout/navigation logic.
- */
+/* Handles all screen transitions */
 public class ScreenNavigator {
 
     private final GamePanel gamePanel;

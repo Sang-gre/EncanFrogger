@@ -83,7 +83,7 @@ public class LevelSetup {
                 gamePanel.getPauseScreen().setVisible(true);
                 gamePanel.getPauseScreen().revalidate();
             } else if (stateManager.getState() == GameState.PAUSED) {
-                gamePanel.enterGameplay(player, stateManager.getCurrentMap(), stateManager.getSelectedLevel());
+                gamePanel.startLevel(player, stateManager.getCurrentMap(), stateManager.getSelectedLevel());
                 gamePanel.getPauseScreen().setVisible(false);
                 gamePanel.getPauseScreen().revalidate();
             }
