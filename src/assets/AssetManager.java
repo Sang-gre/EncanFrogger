@@ -5,7 +5,11 @@ import gameobjects.Direction;
 import gameobjects.PlayerType;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +40,7 @@ public final class AssetManager {
 
     /* SCREEN BACKGROUNDS */
     private final Map<String, Image> backgrounds = new HashMap<>();
-    
+
     /* BUTTONS */
     private final Map<String, Image> buttons = new HashMap<>();
 
@@ -70,7 +74,6 @@ public final class AssetManager {
     /* TRACKER */
     private final Map<String, Image> tracker = new HashMap<>();
 
-
     private AssetManager() {
         loadLogo();
         loadBackgrounds();
@@ -102,15 +105,12 @@ public final class AssetManager {
 
     private void loadCongrats() {
 
-    congrats.put("levelClearedBackground",
-            loadImage("assets/Backgrounds/levelClearedBackground.png"));
+        congrats.put("levelClearedBackground",
+                loadImage("assets/Backgrounds/levelClearedBackground.png"));
 
-    congrats.put("playAgainButton",
-            loadImage("assets/Buttons/playAgainButton.png"));
-
-    congrats.put("levelCleared",
-            loadImage("assets/Backgrounds/levelCleared.png"));
-}
+        congrats.put("levelCleared",
+                loadImage("assets/Backgrounds/levelCleared.png"));
+    }
 
     private void loadLogo() {
         logo.put("logo", new ImageIcon("assets/gameLogo.png"));
@@ -317,12 +317,21 @@ public final class AssetManager {
         for (int row = 0; row < rows; row++) {
             BufferedImage[] frames = new BufferedImage[columns];
             for (int col = 0; col < columns; col++) {
-                frames[col] = sheet.getSubimage(col * frameW, row * frameH, frameW, frameH);
+                BufferedImage sub = sheet.getSubimage(col * frameW, row * frameH, frameW, frameH);
+
+                // copy into an independent image so it doesn't rely on sheet's pixel data
+                BufferedImage copy = new BufferedImage(frameW, frameH, sheet.getType());
+                Graphics2D g = copy.createGraphics();
+                g.drawImage(sub, 0, 0, null);
+                g.dispose();
+
+                frames[col] = copy;
             }
             dirMap.put(rowOrder[row], frames);
         }
 
         playerAnimations.put(type, dirMap);
+        sheet.flush(); // safe to flush now — all frames are independent copies
     }
 
     private void loadFonts() {
@@ -351,7 +360,7 @@ public final class AssetManager {
     }
 
     private void loadPopups() {
-        popups.put("characterSelect", loadImage("assets/popups/characterSelectPopup.png"));
+        popups.put("characterSelect", loadImage("assets/Popups/characterSelectPopup.png"));
         popups.put("mapSelect", loadImage("assets/Popups/mapSelectPopup.png"));
         popups.put("initialsInput", loadImage("assets/Popups/initialsInputPopup.png"));
         popups.put("initialsTaken", loadImage("assets/Popups/initialsTakenPopup.png"));
@@ -370,7 +379,23 @@ public final class AssetManager {
     // Convenience loader: returns null and prints a warning instead of throwing.
     private Image loadImage(String path) {
         try {
-            return ImageIO.read(new File(path));
+            BufferedImage raw = ImageIO.read(new File(path));
+
+            GraphicsConfiguration gc = GraphicsEnvironment
+                    .getLocalGraphicsEnvironment()
+                    .getDefaultScreenDevice()
+                    .getDefaultConfiguration();
+
+            BufferedImage optimized = gc.createCompatibleImage(
+                    raw.getWidth(), raw.getHeight(), Transparency.TRANSLUCENT);
+
+            Graphics2D g = optimized.createGraphics();
+            g.drawImage(raw, 0, 0, null);
+            g.dispose();
+
+            raw.flush();
+            return optimized;
+
         } catch (IOException e) {
             System.err.println("[AssetManager] Failed to load: " + path);
             return null;
