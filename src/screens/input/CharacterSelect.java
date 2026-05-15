@@ -8,9 +8,15 @@ import characters.Paopao;
 import characters.Terra;
 import core.GamePanel;
 import gameobjects.Player;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import ui.CharacterSelectUI;
 
 public class CharacterSelect extends Selection {

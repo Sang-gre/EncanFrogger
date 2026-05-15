@@ -2,12 +2,14 @@ package screens.menu;
 
 import assets.AssetManager;
 import assets.SoundManager;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import main.GameLauncher;
-
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-
 
 public class MainPanel extends JPanel {
 

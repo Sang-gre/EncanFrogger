@@ -2,11 +2,23 @@ package screens.input;
 
 import assets.AssetManager;
 import assets.SoundManager;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import ui.PopupDialog;
 
 public class InitialsPanel extends JPanel {

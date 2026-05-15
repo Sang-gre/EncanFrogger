@@ -3,14 +3,16 @@ package assets;
 import core.level.GameMap;
 import gameobjects.Direction;
 import gameobjects.PlayerType;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.ImageIcon;
 
 public class AssetManager {
 

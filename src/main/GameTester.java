@@ -4,8 +4,7 @@ import characters.Paopao;
 import core.GamePanel;
 import core.level.GameMap;
 import core.logic.GameState;
-
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 
 public class GameTester {
 

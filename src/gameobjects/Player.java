@@ -1,7 +1,10 @@
 package gameobjects;
 
 import assets.AssetManager;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 public abstract class Player extends GameObject {

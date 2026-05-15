@@ -1,9 +1,9 @@
 package gameobjects;
 
-import java.awt.*;
-
 import assets.AssetManager;
-
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
 
 public class Coin extends GameObject {
     private boolean isCollected;

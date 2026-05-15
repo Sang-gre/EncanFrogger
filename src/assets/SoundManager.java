@@ -1,9 +1,11 @@
 package assets;
 
-import javax.sound.sampled.*;
 import java.io.File;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 public class SoundManager {
 

@@ -1,7 +1,18 @@
 package main;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Image;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JWindow;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
 
 public class SplashScreen extends JWindow {
 
@@ -14,7 +25,8 @@ public class SplashScreen extends JWindow {
         // Upper panel: image
         ImageIcon rawIcon = new ImageIcon("assets/gameLogo.png");
         Image scaled = rawIcon.getImage().getScaledInstance(600, 350, Image.SCALE_SMOOTH);
-        JLabel imageLabel = new JLabel(new ImageIcon(scaled), SwingConstants.CENTER);
+        JLabel imageLabel;
+        imageLabel = new JLabel(new ImageIcon(scaled), SwingConstants.CENTER);
         panel.add(imageLabel, BorderLayout.CENTER);
 
         // Bottom panel: loading + text

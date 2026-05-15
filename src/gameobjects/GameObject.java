@@ -1,6 +1,8 @@
 package gameobjects;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
 
 public abstract class GameObject {
     protected int x, y;

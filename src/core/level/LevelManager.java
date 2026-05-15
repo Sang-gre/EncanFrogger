@@ -5,9 +5,16 @@ import gameobjects.Coin;
 import gameobjects.Direction;
 import gameobjects.Obstacle;
 import gameobjects.Platform;
-import java.awt.*;
-import java.util.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LevelManager {
