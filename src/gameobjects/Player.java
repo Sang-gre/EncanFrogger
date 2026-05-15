@@ -72,6 +72,9 @@ public abstract class Player extends GameObject {
 
     @Override
     public void draw(Graphics g) {
+        g.setColor(Color.RED);
+        g.drawRect(x, y, width, height);
+
         if (currentFrames == null || currentFrames.length == 0) {
             // Fallback: solid rectangle so broken assets are obvious
             g.setColor(Color.GREEN);
@@ -149,6 +152,26 @@ public abstract class Player extends GameObject {
                 frameIndex = (frameIndex + 1) % currentFrames.length;
             }
         }
+    }
+
+    public void resize(int laneHeight, int columnWidth) {
+        int visualHeight = (int) (laneHeight * 1.4f);
+
+        // get the image to calculate aspect ratio
+        BufferedImage[] frames = AssetManager.getInstance().getPlayerAnimation(type, Direction.DOWN);
+        if (frames != null && frames.length > 0) {
+            BufferedImage img = frames[0];
+            float aspectRatio = (float) img.getWidth() / img.getHeight();
+            int visualWidth = (int) (visualHeight * aspectRatio);
+            setVisualSize(visualWidth, visualHeight);
+        } else {
+            setVisualSize(visualHeight, visualHeight); // fallback square
+        }
+
+        width = (int) (laneHeight * 0.5f);
+        height = (int) (laneHeight * 0.5f);
+        stepX = columnWidth;
+        stepY = laneHeight;
     }
 
     // -------------------------------------------------------------------------

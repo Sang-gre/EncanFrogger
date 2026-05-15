@@ -62,7 +62,7 @@ public class LevelManager {
 
     private final Map<Integer, List<List<Obstacle>>> obstacleGroups = new HashMap<>();
     private final Map<Integer, List<List<Platform>>> platformGroups = new HashMap<>();
-    
+
     private Image background;
     private GameMap currentMap;
 
@@ -83,7 +83,6 @@ public class LevelManager {
         }
         return offsets;
     }
-
 
     public void resize(int newWidth, int newHeight) {
         this.screenWidth = newWidth;
@@ -181,8 +180,6 @@ public class LevelManager {
 
         currentLevel = n;
 
-        
-
         obstacles.clear();
         obstacleLanes.clear();
 
@@ -202,17 +199,17 @@ public class LevelManager {
         spawnCoins();
 
         background = AssetManager.getInstance().getMapBackground(map);
-        
+
     }
 
     private float computeSpeed(int level, GameMap map) {
-    int max = getMaxLevel(map);
+        int max = getMaxLevel(map);
 
-    // reset cycle per map
-    int cycleLevel = ((level - 1) % max) + 1;
+        // reset cycle per map
+        int cycleLevel = ((level - 1) % max) + 1;
 
-    return BASE_SPEED + (cycleLevel - 1) * SPEED_INCREMENT;
-}
+        return BASE_SPEED + (cycleLevel - 1) * SPEED_INCREMENT;
+    }
 
     private void assignLaneTypesForMap(GameMap map) {
         Arrays.fill(laneObstacleType, null);
@@ -256,60 +253,53 @@ public class LevelManager {
 
         mapObstacleTypes.put(
                 GameMap.ADAMYA,
-                new String[]{"adamyaRock", "ball"}
-        );
+                new String[] { "adamyaRock", "ball" });
 
         mapObstacleTypes.put(
                 GameMap.HATHORIA,
-                new String[]{"lava", "hathoriaRock"}
-        );
+                new String[] { "lava", "hathoriaRock" });
 
         mapObstacleTypes.put(
                 GameMap.LIREO,
-                new String[]{"storm", "wind"}
-        );
+                new String[] { "storm", "wind" });
 
         mapObstacleTypes.put(
                 GameMap.SAPIRO,
-                new String[]{"sapiroRock", "tumbleweed"}
-        );
+                new String[] { "sapiroRock", "tumbleweed" });
 
         mapObstacleTypes.put(
                 GameMap.MINEAVE,
-                new String[]{"snowball", "mineaveSpike"}
-        );
+                new String[] { "snowball", "mineaveSpike" });
 
         mapPlatformTypes.put(
                 GameMap.ADAMYA,
-                new String[]{"log", "lily", "lily2"}
-        );
+                new String[] { "log", "lily", "lily2" });
 
         mapPlatformTypes.put(
                 GameMap.HATHORIA,
-                new String[]{"hathoriaPlatform", "hathoriaPlatform2"}
-        );
+                new String[] { "hathoriaPlatform", "hathoriaPlatform2" });
 
         mapPlatformTypes.put(
                 GameMap.LIREO,
-                new String[]{"lireoPlatform", "cloud"}
-        );
+                new String[] { "lireoPlatform", "cloud" });
 
         mapPlatformTypes.put(
                 GameMap.SAPIRO,
-                new String[]{"sand", "sapiroPlatform"}
-        );
+                new String[] { "sand", "sapiroPlatform" });
 
         mapPlatformTypes.put(
                 GameMap.MINEAVE,
-                new String[]{"mineavePlatform", "glacier"}
-        );
+                new String[] { "mineavePlatform", "glacier" });
     }
 
     private void spawnObstacles() {
         for (int lane = 0; lane < LANE_COUNT; lane++) {
-            if (isPlatformLane[lane]) continue;
-            if (lane == 0 || lane == 9) continue;
-            if (isSafeLane[lane]) continue;
+            if (isPlatformLane[lane])
+                continue;
+            if (lane == 0 || lane == 9)
+                continue;
+            if (isSafeLane[lane])
+                continue;
 
             Direction dir = (lane % 2 == 0) ? Direction.RIGHT : Direction.LEFT;
 
@@ -342,8 +332,7 @@ public class LevelManager {
                             lane,
                             obstacleSpeed,
                             dir,
-                            assignedType
-                    );
+                            assignedType);
                     o.setImage(img);
 
                     obstacles.add(o);
@@ -359,12 +348,13 @@ public class LevelManager {
 
     public void spawnPlatforms() {
         for (int lane = 0; lane < LANE_COUNT; lane++) {
-            if (!isPlatformLane[lane]) continue;
+            if (!isPlatformLane[lane])
+                continue;
 
             Direction dir = (lane % 2 == 0) ? Direction.RIGHT : Direction.LEFT;
 
-            int groupsPerLane = 2;   // fixed number of groups
-            int groupSize = 2;       // items per group
+            int groupsPerLane = 2; // fixed number of groups
+            int groupSize = 2; // items per group
 
             List<List<Platform>> laneGroups = new ArrayList<>();
 
@@ -395,8 +385,7 @@ public class LevelManager {
                             lane,
                             obstacleSpeed * 0.7f,
                             dir,
-                            assignedType
-                    );
+                            assignedType);
                     p.setImage(img);
 
                     platforms.add(p);
@@ -410,88 +399,85 @@ public class LevelManager {
         }
     }
 
-
-
-
     public void spawnCoins() {
 
-    coins.clear();
+        coins.clear();
 
-    int count = BASE_COIN_COUNT + Math.max(0, (currentLevel - 1));
+        int count = BASE_COIN_COUNT + Math.max(0, (currentLevel - 1));
 
-    for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
 
-        boolean placed = false;
-        int attempts = 0;
+            boolean placed = false;
+            int attempts = 0;
 
-        while (!placed && attempts < 15) {
+            while (!placed && attempts < 15) {
 
-            int lane = rng.nextInt(LANE_COUNT);
+                int lane = rng.nextInt(LANE_COUNT);
 
-            if (isTopTwoLanes(lane)) {
+                if (isTopTwoLanes(lane)) {
+                    attempts++;
+                    continue;
+                }
+
+                int col = rng.nextInt(COLUMN_COUNT);
+                int x = getColumnCenteredX(col);
+
+                int y = centeredY(lane, COIN_SIZE);
+
+                Coin coin = new Coin(x, y, COIN_SIZE, COIN_SIZE);
+                coin.setScaledSize((int) (laneHeight * 0.5f));
+
+                if (isPlatformLane(lane)) {
+
+                    List<Platform> candidates = new ArrayList<>();
+
+                    for (Platform p : platforms) {
+                        if (platformLanes.get(p) == lane) {
+                            candidates.add(p);
+                        }
+                    }
+
+                    if (!candidates.isEmpty()) {
+
+                        Platform pf = candidates.get(rng.nextInt(candidates.size()));
+
+                        int platformCenterX = pf.getX() + (pf.getWidth() / 2) - (COIN_SIZE / 2);
+
+                        int platformCenterY = pf.getY() + (pf.getHeight() / 2) - (COIN_SIZE / 2);
+
+                        coin.setPosition(platformCenterX, platformCenterY);
+                        coin.attachToPlatform(pf);
+
+                        coins.add(coin);
+                        placed = true;
+                    }
+
+                } else {
+
+                    boolean collides = false;
+
+                    for (Obstacle obs : obstacles) {
+                        if (obs.getBounds().intersects(coin.getBounds())) {
+                            collides = true;
+                            break;
+                        }
+                    }
+
+                    if (!collides) {
+                        coins.add(coin);
+                        placed = true;
+                    }
+                }
+
                 attempts++;
-                continue;
             }
-
-            int col = rng.nextInt(COLUMN_COUNT);
-            int x = getColumnCenteredX(col);
-
-            int y = centeredY(lane, COIN_SIZE);
-
-            Coin coin = new Coin(x, y, COIN_SIZE, COIN_SIZE);
-
-            if (isPlatformLane(lane)) {
-
-                List<Platform> candidates = new ArrayList<>();
-
-                for (Platform p : platforms) {
-                    if (platformLanes.get(p) == lane) {
-                        candidates.add(p);
-                    }
-                }
-
-                if (!candidates.isEmpty()) {
-
-                    Platform pf = candidates.get(rng.nextInt(candidates.size()));
-
-                    int platformCenterX =
-                            pf.getX() + (pf.getWidth() / 2) - (COIN_SIZE / 2);
-
-                    int platformCenterY =
-                            pf.getY() + (pf.getHeight() / 2) - (COIN_SIZE / 2);
-
-                    coin.setPosition(platformCenterX, platformCenterY);
-                    coin.attachToPlatform(pf);
-
-                    coins.add(coin);
-                    placed = true;
-                }
-
-            } else {
-
-                boolean collides = false;
-
-                for (Obstacle obs : obstacles) {
-                    if (obs.getBounds().intersects(coin.getBounds())) {
-                        collides = true;
-                        break;
-                    }
-                }
-
-                if (!collides) {
-                    coins.add(coin);
-                    placed = true;
-                }
-            }
-
-            attempts++;
         }
     }
-}
 
     private void respawnObstacleGroup(List<Obstacle> group) {
 
-        if (group.isEmpty()) return;
+        if (group.isEmpty())
+            return;
 
         Obstacle first = group.get(0);
         Direction dir = first.getDirection();
@@ -526,7 +512,8 @@ public class LevelManager {
 
     private void respawnPlatformGroup(List<Platform> group) {
 
-        if (group.isEmpty()) return;
+        if (group.isEmpty())
+            return;
 
         Platform first = group.get(0);
         Direction dir = first.getDirection();
@@ -568,7 +555,8 @@ public class LevelManager {
 
         for (Obstacle o : obstacles) {
 
-            if (!o.isActive()) continue;
+            if (!o.isActive())
+                continue;
 
             o.update();
 
@@ -599,7 +587,8 @@ public class LevelManager {
 
         for (Platform p : platforms) {
 
-            if (!p.isActive()) continue;
+            if (!p.isActive())
+                continue;
 
             p.update();
 
@@ -641,15 +630,18 @@ public class LevelManager {
         }
 
         for (Obstacle o : obstacles) {
-            if (o.isActive()) o.draw(g);
+            if (o.isActive())
+                o.draw(g);
         }
 
         for (Platform p : platforms) {
-            if (p.isActive()) p.draw(g);
+            if (p.isActive())
+                p.draw(g);
         }
 
         for (Coin c : coins) {
-            if (c.isActive()) c.draw(g);
+            if (c.isActive())
+                c.draw(g);
         }
     }
 
@@ -691,42 +683,43 @@ public class LevelManager {
     }
 
     private int getGroupsPerLane() {
-    switch (currentLevel) {
-        case 1:
-            return 4;
+        switch (currentLevel) {
+            case 1:
+                return 4;
 
-        case 2:
-            return 4;
-        case 3:
-            return 3;
-        case 4:
-            return 4;
+            case 2:
+                return 4;
+            case 3:
+                return 3;
+            case 4:
+                return 4;
 
-        default:
-            return 3;
+            default:
+                return 3;
+        }
     }
-}
+
     private int getGroupSize() {
-    switch (currentLevel) {
-        case 1:
-            return 1;
+        switch (currentLevel) {
+            case 1:
+                return 1;
 
-        case 2:
-            return 2;
+            case 2:
+                return 2;
 
-        case 3:
-            return 3;
-        case 4:
-            return 3;
+            case 3:
+                return 3;
+            case 4:
+                return 3;
 
-        default:
-            return 4;
+            default:
+                return 4;
+        }
     }
-}
 
     private int centeredY(int lane, int entityHeight) {
-    return laneY[lane] + (laneHeight - entityHeight) / 2;
-}
+        return laneY[lane] + (laneHeight - entityHeight) / 2;
+    }
 
     public boolean isPlayerOnPlatform(gameobjects.Player player) {
 
@@ -744,7 +737,8 @@ public class LevelManager {
 
         int lane0Height = screenHeight / 6;
 
-        if (y < lane0Height) return 0;
+        if (y < lane0Height)
+            return 0;
 
         for (int i = 1; i < LANE_COUNT; i++) {
 
@@ -759,22 +753,22 @@ public class LevelManager {
     }
 
     private int getMaxLevel(GameMap map) {
-    switch (map) {
-        case LIREO:
-        case HATHORIA:
-            return 3;
+        switch (map) {
+            case LIREO:
+            case HATHORIA:
+                return 3;
 
-        case ADAMYA:
-        case SAPIRO:
-            return 4;
+            case ADAMYA:
+            case SAPIRO:
+                return 4;
 
-        case MINEAVE:
-            return 5;
+            case MINEAVE:
+                return 5;
 
-        default:
-            return 3;
+            default:
+                return 3;
+        }
     }
-}
 
     public List<Obstacle> getObstacles() {
         return Collections.unmodifiableList(obstacles);
@@ -827,14 +821,14 @@ public class LevelManager {
     }
 
     public int centerPlayerY(int lane, int height) {
-    return laneY[lane] + (laneHeight - height) / 2;
-}
+        return laneY[lane] + (laneHeight - height) / 2;
+    }
 
     private int getColumnCenteredX(int col) {
-    return columnX[col] + (columnWidth - COIN_SIZE) / 2;
-}
+        return columnX[col] + (columnWidth - COIN_SIZE) / 2;
+    }
 
     private boolean isTopTwoLanes(int lane) {
-    return lane == 0 || lane == 1;
-}
+        return lane == 0 || lane == 1;
+    }
 }

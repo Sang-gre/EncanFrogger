@@ -78,6 +78,7 @@ public class LevelSetup {
         int spawnX = levelManager.getColumnX()[spawnCol]
                 + (levelManager.getColumnWidth() - player.getWidth()) / 2;
         player.setPosition(spawnX, spawnY);
+        player.resize(levelManager.getLaneHeight(), levelManager.getColumnWidth());
     }
 
     private void buildHUD(Player player) {
@@ -170,6 +171,8 @@ public class LevelSetup {
                 gamePanel.getHud().setBounds(0, 0, gamePanel.getWidth(), hudHeight);
                 gamePanel.getHud().revalidate();
                 gamePanel.getPauseScreen().setBounds(0, 0, gamePanel.getWidth(), gamePanel.getHeight());
+                
+                player.resize(levelManager.getLaneHeight(), levelManager.getColumnWidth());
             }
         });
     }

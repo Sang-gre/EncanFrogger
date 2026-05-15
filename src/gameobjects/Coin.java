@@ -10,6 +10,7 @@ public class Coin extends GameObject {
     private Platform attachedPlatform;
     private int offsetX;
     private int offsetY;
+    private int scaledSize = 30;
 
     public Coin(int x, int y, int width, int height) {
         super(x, y, width, height, 0);
@@ -23,7 +24,7 @@ public class Coin extends GameObject {
 
     @Override
     public void update() {
-        if (attachedPlatform != null && attachedPlatform.isActive()){
+        if (attachedPlatform != null && attachedPlatform.isActive()) {
             this.x = attachedPlatform.getX() + offsetX;
             this.y = attachedPlatform.getY() + offsetY;
         }
@@ -31,20 +32,38 @@ public class Coin extends GameObject {
 
     @Override
     public void draw(Graphics g) {
-        if (!isActive()) return;
+        if (!isActive())
+            return;
 
         Image coinImage = AssetManager.getInstance().getCoin("coin");
-        int scaledWidth = 30; 
-        int scaledHeight = 30;
+
+        int scaledHeight = scaledSize;
+        int scaledWidth = scaledHeight; // fallback square
 
         if (coinImage != null) {
-            g.drawImage(coinImage, x, y, scaledWidth, scaledHeight, null);
+            int origW = coinImage.getWidth(null);
+            int origH = coinImage.getHeight(null);
+            if (origW > 0 && origH > 0) {
+                float aspectRatio = (float) origW / origH;
+                scaledWidth = (int) (scaledHeight * aspectRatio);
+            }
+        }
+
+        int drawY = (attachedPlatform != null)
+                ? y - scaledHeight
+                : y;
+
+        if (coinImage != null) {
+            g.drawImage(coinImage, x, drawY, scaledWidth, scaledHeight, null);
         } else {
             g.setColor(Color.YELLOW);
-            g.fillOval(x, y, scaledWidth, scaledHeight);
+            g.fillOval(x, drawY, scaledWidth, scaledHeight);
         }
-    }
 
+        // debug hitbox
+        g.setColor(Color.CYAN);
+        g.drawRect(x, y, width, height);
+    }
 
     @Override
     public void onCollide(GameObject other) {
@@ -54,15 +73,22 @@ public class Coin extends GameObject {
         }
     }
 
-    public void attachToPlatform(Platform p){
+    public void attachToPlatform(Platform p) {
         this.attachedPlatform = p;
-        this.offsetX= this.x - p.getX(); //get distance from platform
+        this.offsetX = this.x - p.getX(); // get distance from platform
         this.offsetY = this.y - p.getY();
     }
 
-    public Platform getAttachedPlatform(){
+    public Platform getAttachedPlatform() {
         return attachedPlatform;
     }
-    public boolean isCollected() { return isCollected;}
+
+    public boolean isCollected() {
+        return isCollected;
+    }
+
+    public void setScaledSize(int size) {
+        this.scaledSize = size;
+    }
 
 }
