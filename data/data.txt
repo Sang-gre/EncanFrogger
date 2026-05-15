@@ -4,6 +4,7 @@ TD,1440,2,true,8
 HELLO,180,4,false,350
 JED,170,1,false,0
 HG,140,1,false,100
+HWVD,120,2,false,50
 JADE,110,1,false,0
 DENES,90,1,false,0
 DENISE,40,1,false,0
