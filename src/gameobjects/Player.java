@@ -73,6 +73,7 @@ public abstract class Player extends GameObject {
 
     @Override
     public void draw(Graphics g) {
+        if (!isActive()) return;
         if (currentFrames == null || currentFrames.length == 0) {
             // Fallback: solid rectangle so broken assets are obvious
             g.setColor(Color.GREEN);
@@ -238,6 +239,10 @@ public abstract class Player extends GameObject {
 
     public void setLastDirection(Direction d) {
         this.lastDirection = d;
+    }
+
+    public boolean isMovedThisTick() {
+        return movedThisTick;
     }
 
     public void setMovedThisTick(boolean b) {

@@ -21,11 +21,11 @@ public class GameLogicController {
     private int platformDeltaX = 0;
 
     public GameLogicController(GamePanel gamePanel,
-                               GameStateManager stateManager,
-                               ScoreManager scoreManager,
-                               CollisionSystem collisionSystem,
-                               InputHandler inputHandler,
-                               assets.SoundManager sound) {
+            GameStateManager stateManager,
+            ScoreManager scoreManager,
+            CollisionSystem collisionSystem,
+            InputHandler inputHandler,
+            assets.SoundManager sound) {
         this.gamePanel = gamePanel;
         this.stateManager = stateManager;
         this.scoreManager = scoreManager;
@@ -42,17 +42,19 @@ public class GameLogicController {
         LevelManager levelManager = gamePanel.getLevelManager();
         ui.HUDpane hud = gamePanel.getHud();
 
+        int prevX = player.getX();
         inputHandler.handleHeldKeys(player, levelManager, scoreManager, hud);
+        boolean playerMoved = player.getX() != prevX;
 
         if (player != null)
             player.update();
         if (levelManager != null)
             levelManager.update();
 
-        checkGameConditions(player, levelManager, hud);
+        checkGameConditions(player, levelManager, hud, playerMoved);
     }
 
-    private void checkGameConditions(Player player, LevelManager levelManager, ui.HUDpane hud) {
+    private void checkGameConditions(Player player, LevelManager levelManager, ui.HUDpane hud, boolean playerMoved) {
         if (player == null || levelManager == null)
             return;
 
@@ -63,7 +65,10 @@ public class GameLogicController {
                 levelManager.getObstacles(),
                 levelManager.getPlatforms(),
                 levelManager.getCoins());
-        collisionSystem.checkCoinsAlongPath(player, levelManager.getCoins());
+
+        if (playerMoved) {
+            collisionSystem.checkCoinsAlongPath(player, levelManager.getCoins());
+        }
 
         // Coin collection
         int coinsAfter = collisionSystem.getCoinsCollected();
@@ -113,6 +118,7 @@ public class GameLogicController {
         // Reached top — win
         if (!stateManager.isLevelTransitioning() && playerLane == 0) {
             stateManager.setLevelTransitioning(true);
+            player.setActive(false);
             scoreManager.onReachedTop(stateManager.getCurrentLevel());
             hud.updateScore(scoreManager.getScore());
             stateManager.incrementLevel();
@@ -138,6 +144,7 @@ public class GameLogicController {
     }
 
     private void resetPlayerPosition(Player player, LevelManager levelManager) {
+        player.setActive(true);
         int col = levelManager.getColumnCount() / 2;
         int lane = levelManager.getLaneCount() - 1;
 

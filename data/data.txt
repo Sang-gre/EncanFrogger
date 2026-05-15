@@ -6,6 +6,8 @@ SC,3000,2,true,17
 TD,1440,2,true,8
 JBJK,1440,2,true,150
 SDSD,1440,2,true,400
+NAME,1440,2,true,150
+STINKY,430,11,false,3950
 V,300,1,false,150
 DD,200,1,false,0
 HELLO,180,4,false,350
@@ -13,7 +15,6 @@ JED,170,1,false,0
 HG,140,1,false,100
 HWVD,120,2,false,50
 JADE,110,1,false,0
-NAME,110,1,false,50
 DENES,90,1,false,0
 GHJ,50,2,false,50
 DENISE,40,1,false,0

@@ -71,6 +71,7 @@ public class LevelSetup {
     }
 
     private void spawnPlayer(Player player, LevelManager levelManager) {
+        player.setActive(true);
         int spawnCol = levelManager.getColumnCount() / 2;
         int spawnLane = levelManager.getLaneCount() - 1;
         int spawnY = levelManager.getLaneY()[spawnLane]
