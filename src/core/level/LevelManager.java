@@ -195,15 +195,13 @@ public class LevelManager {
 
         assignLaneTypesForMap(currentMap);
 
-        obstacleSpeed = computeSpeed(n, map);
-
         spawnObstacles();
         spawnPlatforms();
         spawnCoins();
 
         background = AssetManager.getInstance().getMapBackground(map);
 
-        
+        obstacleSpeed = computeSpeed(n, map);
 
         
     }
@@ -694,30 +692,17 @@ public class LevelManager {
     }
 
     private int getGroupsPerLane() {
-
     switch (currentLevel) {
-
-        case 1:
-            return 4;
-
-        case 2:
-            return 4;
-
         case 3:
+        case 5:
             return 3;
-
-        case 4:
-            return 4;
 
         default:
-            return 3;
+            return 4;
     }
 }
-
     private int getGroupSize() {
-
     switch (currentLevel) {
-
         case 1:
             return 1;
 
@@ -725,8 +710,6 @@ public class LevelManager {
             return 2;
 
         case 3:
-            return 3;
-
         case 4:
             return 3;
 
