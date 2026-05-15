@@ -36,7 +36,7 @@ public final class AssetManager {
 
     /* SCREEN BACKGROUNDS */
     private final Map<String, Image> backgrounds = new HashMap<>();
-
+    
     /* BUTTONS */
     private final Map<String, Image> buttons = new HashMap<>();
 
