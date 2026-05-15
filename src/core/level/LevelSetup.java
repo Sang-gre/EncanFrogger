@@ -35,7 +35,7 @@ public class LevelSetup {
     public void startLevel(Player selectedPlayer, GameMap map, int level) {
         if (stateManager.isFreshStart()) {
             stateManager.setCurrentLevel(launcher.getStartingLevel());
-            scoreManager.setScore(launcher.getStartingScore());
+            scoreManager.setTotalScore(launcher.getStartingScore());
             stateManager.setFreshStart(false);
         }
 
@@ -98,7 +98,7 @@ public class LevelSetup {
         int hudHeight = gamePanel.getHeight() / 9;
         hud.setBounds(0, 0, gamePanel.getWidth(), hudHeight);
         hud.revalidate();
-        hud.updateScore(scoreManager.getScore());
+        hud.updateScore(0);
         hud.updateLives(player.getLives());
 
         gamePanel.add(hud);

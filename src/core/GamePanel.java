@@ -190,7 +190,7 @@ public class GamePanel extends JPanel {
             return;
         }
 
-        if (state == GameState.GAME_OVER && stateManager.isShowingLeaderboard() && leaderboardScreen != null) {
+        if (stateManager.isShowingLeaderboard() && leaderboardScreen != null) {
             if (key == KeyEvent.VK_UP) {
                 leaderboardScreen.scroll(-1);
                 repaint();

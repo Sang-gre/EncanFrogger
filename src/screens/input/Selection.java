@@ -30,7 +30,7 @@ public abstract class Selection extends JPanel {
 
     private final GamePanel gamePanel;
     protected final Runnable onBack;
-    private SoundManager sound = SoundManager.getInstance();
+    private final SoundManager sound = SoundManager.getInstance();
 
     protected JLabel coinLabel;
     protected JLabel levelLabel;

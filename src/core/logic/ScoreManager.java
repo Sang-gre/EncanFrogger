@@ -93,6 +93,10 @@ public class ScoreManager {
         return totalScore;
     }
 
+    public void setTotalScore(int score) {
+        this.totalScore = score;
+    }
+
     public float getTimeRemaining() {
         return timeRemaining;
     }

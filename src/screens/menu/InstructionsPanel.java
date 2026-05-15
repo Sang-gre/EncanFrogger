@@ -163,7 +163,7 @@ public class InstructionsPanel extends JPanel {
             @Override
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_RIGHT:
+                    case KeyEvent.VK_RIGHT -> {
                         sound.play("click");
 
                         if (currentPage < pages.length - 1) {
@@ -171,19 +171,20 @@ public class InstructionsPanel extends JPanel {
                             repaint();
                             updateButtonVisibility();
                         }
-                        break;
-                    case KeyEvent.VK_LEFT:
+                    }
+                    case KeyEvent.VK_LEFT -> {
                         sound.play("click");
                         if (currentPage > 0) {
                             currentPage--;
                             repaint();
                             updateButtonVisibility();
                         }
-                        break;
-                    case KeyEvent.VK_ESCAPE:
+                    }
+                    case KeyEvent.VK_ESCAPE -> {
                         sound.play("click");
                         currentPage = 0;
                         onExit.run();
+                    }
                     }
                 }
             });

@@ -11,13 +11,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 public class LeaderboardManager {
 
     private static final Object LOCK = new Object();
     private static final String FILE_PATH = "data/data.txt";
     private static final int MAX_ENTRIES = 100;
 
+    // Adds a new entry, sorts by score, trims to max
     public static void saveEntry(ScoreEntry entry) {
         List<ScoreEntry> entries = loadAll();
         entries.add(entry);
@@ -30,6 +30,7 @@ public class LeaderboardManager {
         writeAll(entries);
     }
 
+    // Updates existing entry by initials, or adds new if not found
     public static void upsertEntry(ScoreEntry newEntry) {
         synchronized (LOCK) {
             List<ScoreEntry> entries = loadAll();
@@ -66,6 +67,7 @@ public class LeaderboardManager {
         }
     }
 
+    // Reads all entries from file, skipping duplicates and corrupted lines
     public static List<ScoreEntry> loadAll() {
         List<ScoreEntry> entries = new ArrayList<>();
         Set<String> seen = new HashSet<>();
@@ -93,19 +95,20 @@ public class LeaderboardManager {
                             seen.add(initials.toLowerCase());
                         }
 
-                    } catch (Exception ex) {
+                    } catch (NumberFormatException ex) {
                         System.err.println("Skipping corrupted line: " + line);
                     }
                 }
             }
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.err.println("Failed to read leaderboard: " + ex.getMessage());
         }
 
         return entries;
     }
 
+    // Writes all entries to file
     private static void writeAll(List<ScoreEntry> entries) {
         synchronized (LOCK) {
             File f = new File(FILE_PATH);
@@ -120,7 +123,7 @@ public class LeaderboardManager {
                             e.coins);
                 }
             } catch (IOException ex) {
-                ex.printStackTrace();
+                System.err.println("Failed to read leaderboard: " + ex.getMessage());
             }
         }
     }

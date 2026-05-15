@@ -1,5 +1,6 @@
 package persistence;
 
+// Data container that hols information for a leaderboard entry
 public class ScoreEntry {
 
     public String initials;
