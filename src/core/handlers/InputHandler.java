@@ -1,13 +1,15 @@
-package core;
+package core.handlers;
 
 import assets.SoundManager;
+import core.GamePanel;
+import core.level.LevelManager;
+import core.logic.ScoreManager;
+import gameobjects.Direction;
 import gameobjects.Player;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashSet;
 import java.util.Set;
-import level.Direction;
-import level.LevelManager;
 
 /* Handles key inputs */
 public class InputHandler implements KeyListener {

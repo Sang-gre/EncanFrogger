@@ -1,9 +1,12 @@
-package core;
+package core.logic;
 
+import core.GamePanel;
+import core.handlers.CollisionSystem;
+import core.handlers.InputHandler;
+import core.level.LevelManager;
 import gameobjects.Platform;
 import gameobjects.Player;
 import javax.swing.SwingUtilities;
-import level.LevelManager;
 
 /* Owns the per-tick game update logic */
 public class GameLogicController {

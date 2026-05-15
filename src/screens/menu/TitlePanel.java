@@ -1,7 +1,9 @@
-package main;
+package screens.menu;
 
 import assets.AssetManager;
 import assets.SoundManager;
+import main.GameLauncher;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

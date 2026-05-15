@@ -1,4 +1,4 @@
-package ui;
+package screens.menu;
 
 import assets.AssetManager;
 import assets.SoundManager;

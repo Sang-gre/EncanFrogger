@@ -1,4 +1,4 @@
-package ui;
+package screens.gameplay;
 
 import java.awt.*;
 

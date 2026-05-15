@@ -1,4 +1,4 @@
-package core;
+package core.handlers;
 
 import assets.SoundManager;
 import gameobjects.Coin;

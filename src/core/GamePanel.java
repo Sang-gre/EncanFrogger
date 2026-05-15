@@ -1,11 +1,21 @@
 package core;
 
 import assets.SoundManager;
+import core.handlers.CollisionSystem;
+import core.handlers.GameRenderer;
+import core.handlers.InputHandler;
+import core.handlers.ScreenNavigator;
+import core.level.GameMap;
+import core.level.LevelManager;
+import core.level.LevelSetup;
+import core.logic.GameLogicController;
+import core.logic.GameState;
+import core.logic.GameStateManager;
+import core.logic.ScoreManager;
 import gameobjects.Player;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import level.LevelManager;
 import main.GameLauncher;
 import persistence.LeaderboardManager;
 import persistence.ScoreEntry;
@@ -34,10 +44,10 @@ public class GamePanel extends JPanel {
 
     // --- UI overlays ---
     private ui.HUDpane hud;
-    private ui.PauseScreen pauseScreen;
-    private ui.GameOverScreen gameOverScreen;
-    private ui.LeaderboardScreen leaderboardScreen;
-    private ui.CongratsScreen congratsScreen;
+    private screens.gameplay.PauseScreen pauseScreen;
+    private screens.gameplay.GameOverScreen gameOverScreen;
+    private screens.menu.LeaderboardScreen leaderboardScreen;
+    private screens.gameplay.CongratsScreen congratsScreen;
 
     // --- Threads ---
     private GameLogicThread logicThread;
@@ -85,10 +95,6 @@ public class GamePanel extends JPanel {
         screenNavigator.showCharacterSelectNextLevel();
     }
 
-    public void showLevelSelect(Player player, GameMap map) {
-        screenNavigator.showLevelSelect(player, map);
-    }
-
     // -------------------------------------------------------------------------
     // Level start (LevelSetup)
     // -------------------------------------------------------------------------
@@ -125,7 +131,7 @@ public class GamePanel extends JPanel {
         new Thread(() -> LeaderboardManager.upsertEntry(
                 new ScoreEntry(playerInitials, runScore, stateManager.getCurrentLevel(), false, runCoins))).start();
 
-        gameOverScreen = new ui.GameOverScreen();
+        gameOverScreen = new screens.gameplay.GameOverScreen();
         if (hud != null)
             hud.setVisible(false);
         requestFocusInWindow();
@@ -150,7 +156,7 @@ public class GamePanel extends JPanel {
         if (hud != null)
             hud.setVisible(false);
 
-        congratsScreen = new ui.CongratsScreen(prev, total, runCoins);
+        congratsScreen = new screens.gameplay.CongratsScreen(prev, total, runCoins);
         repaint();
     }
 
@@ -204,7 +210,7 @@ public class GamePanel extends JPanel {
                             new ScoreEntry(gameOverScreen.getInitials(), scoreManager.getScore(),
                                     stateManager.getCurrentLevel(), false, coins)))
                             .start();
-                    leaderboardScreen = new ui.LeaderboardScreen();
+                    leaderboardScreen = new screens.menu.LeaderboardScreen();
                     stateManager.setShowingLeaderboard(true);
                     requestFocusInWindow();
                 }
@@ -218,7 +224,7 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     private void handleMouseClick(MouseEvent e) {
         if (congratsScreen != null) {
-            leaderboardScreen = new ui.LeaderboardScreen();
+            leaderboardScreen = new screens.menu.LeaderboardScreen();
             stateManager.setShowingLeaderboard(true);
             congratsScreen = null;
             repaint();
@@ -234,7 +240,7 @@ public class GamePanel extends JPanel {
                 return;
             }
             if (gameOverScreen.isNoClicked(e.getPoint())) {
-                leaderboardScreen = new ui.LeaderboardScreen();
+                leaderboardScreen = new screens.menu.LeaderboardScreen();
                 stateManager.setShowingLeaderboard(true);
                 requestFocusInWindow();
                 repaint();
@@ -354,15 +360,15 @@ public class GamePanel extends JPanel {
         this.hud = hud;
     }
 
-    public ui.PauseScreen getPauseScreen() {
+    public screens.gameplay.PauseScreen getPauseScreen() {
         return pauseScreen;
     }
 
-    public void setPauseScreen(ui.PauseScreen pauseScreen) {
+    public void setPauseScreen(screens.gameplay.PauseScreen pauseScreen) {
         this.pauseScreen = pauseScreen;
     }
 
-    public void setLeaderboardScreen(ui.LeaderboardScreen leaderboardScreen) {
+    public void setLeaderboardScreen(screens.menu.LeaderboardScreen leaderboardScreen) {
         this.leaderboardScreen = leaderboardScreen;
     }
 

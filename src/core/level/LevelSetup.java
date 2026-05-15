@@ -1,10 +1,14 @@
-package core;
+package core.level;
 
+import core.GamePanel;
+import core.handlers.CollisionSystem;
+import core.logic.GameState;
+import core.logic.GameStateManager;
+import core.logic.ScoreManager;
 import gameobjects.Player;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.SwingUtilities;
-import level.LevelManager;
 import main.GameLauncher;
 
 /* Responsible for everything on start level */
@@ -102,7 +106,7 @@ public class LevelSetup {
     }
 
     private void buildPauseScreen(Player selectedPlayer, GameMap map) {
-        ui.PauseScreen pauseScreen = new ui.PauseScreen(
+        screens.gameplay.PauseScreen pauseScreen = new screens.gameplay.PauseScreen(
                 () -> {
                     stateManager.setState(GameState.PLAYING);
                     gamePanel.getPauseScreen().setVisible(false);

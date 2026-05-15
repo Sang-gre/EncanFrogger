@@ -1,4 +1,4 @@
-package core;
+package screens.input;
 
 import assets.AssetManager;
 import assets.SoundManager;

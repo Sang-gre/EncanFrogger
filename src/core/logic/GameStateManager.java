@@ -1,4 +1,6 @@
-package core;
+package core.logic;
+
+import core.level.GameMap;
 
 public class GameStateManager {
 

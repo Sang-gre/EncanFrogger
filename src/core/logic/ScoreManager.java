@@ -1,4 +1,4 @@
-package core;
+package core.logic;
 
 public class ScoreManager {
 

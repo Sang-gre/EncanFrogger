@@ -1,8 +1,10 @@
-package core;
+package core.handlers;
 
+import core.level.LevelManager;
+import core.logic.GameState;
+import core.logic.GameStateManager;
 import gameobjects.Player;
 import java.awt.Graphics;
-import level.LevelManager;
 
 /* Handles rendering */
 public class GameRenderer {
@@ -18,10 +20,10 @@ public class GameRenderer {
                        int height,
                        LevelManager levelManager,
                        Player player,
-                       ui.GameOverScreen gameOverScreen,
-                       ui.LeaderboardScreen leaderboardScreen,
-                       ui.PauseScreen pauseScreen,
-                       ui.CongratsScreen congratsScreen) {
+                       screens.gameplay.GameOverScreen gameOverScreen,
+                       screens.menu.LeaderboardScreen leaderboardScreen,
+                       screens.gameplay.PauseScreen pauseScreen,
+                       screens.gameplay.CongratsScreen congratsScreen) {
 
         if (levelManager != null)
             levelManager.draw(g, width, height);

@@ -1,7 +1,10 @@
-package core;
+package screens.input;
 
 import assets.AssetManager;
+import core.GamePanel;
+import core.level.GameMap;
 import gameobjects.Player;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

@@ -1,9 +1,10 @@
 package main;
 
 import characters.Paopao;
-import core.GameMap;
 import core.GamePanel;
-import core.GameState;
+import core.level.GameMap;
+import core.logic.GameState;
+
 import javax.swing.*;
 
 public class GameTester {

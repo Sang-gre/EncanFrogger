@@ -2,15 +2,17 @@ package main;
 
 import assets.AssetManager;
 import core.GamePanel;
-import core.InitialsPanel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 import javax.swing.*;
 import persistence.LeaderboardManager;
 import persistence.ScoreEntry;
+import screens.input.InitialsPanel;
+import screens.menu.InstructionsPanel;
+import screens.menu.MainPanel;
+import screens.menu.TitlePanel;
 import ui.CursorGlassPane;
-import ui.InstructionsPanel;
 
 public class GameLauncher extends JFrame {
 

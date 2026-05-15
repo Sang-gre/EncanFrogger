@@ -1,7 +1,8 @@
-package core;
+package screens.input;
 
 import assets.AssetManager;
 import assets.SoundManager;
+import core.GamePanel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;

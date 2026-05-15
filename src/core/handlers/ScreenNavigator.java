@@ -1,8 +1,14 @@
-package core;
+package core.handlers;
 
+import core.GamePanel;
+import core.level.GameMap;
+import core.logic.GameState;
+import core.logic.GameStateManager;
 import gameobjects.Player;
 import java.awt.BorderLayout;
 import javax.swing.SwingUtilities;
+import screens.input.CharacterSelect;
+import screens.input.MapSelect;
 
 /* Handles all screen transitions */
 public class ScreenNavigator {
@@ -75,24 +81,11 @@ public class ScreenNavigator {
         gamePanel.revalidate();
         gamePanel.repaint();
     }
-
-    public void showLevelSelect(Player player, GameMap map) {
-        gamePanel.stopThreads();
-        stateManager.setState(GameState.LEVEL_SELECT);
-
-        gamePanel.removeAll();
-        gamePanel.setLayout(new BorderLayout());
-        gamePanel.add(
-                new LevelSelect(gamePanel, () -> showMapSelect(player), player, map),
-                BorderLayout.CENTER);
-        gamePanel.revalidate();
-        gamePanel.repaint();
-    }
-
+    
     public void showLeaderboard() {
         stateManager.setShowingLeaderboard(true);
         SwingUtilities.invokeLater(() -> {
-            gamePanel.setLeaderboardScreen(new ui.LeaderboardScreen());
+            gamePanel.setLeaderboardScreen(new screens.menu.LeaderboardScreen());
             gamePanel.requestFocusInWindow();
             gamePanel.repaint();
         });

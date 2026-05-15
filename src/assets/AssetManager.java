@@ -1,6 +1,7 @@
 package assets;
 
-import core.GameMap;
+import core.level.GameMap;
+import gameobjects.Direction;
 import gameobjects.PlayerType;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -10,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import level.Direction;
 
 public class AssetManager {
 

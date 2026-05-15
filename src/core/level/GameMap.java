@@ -1,4 +1,4 @@
-package core;
+package core.level;
 
 public enum GameMap {
     LIREO(1, 3),

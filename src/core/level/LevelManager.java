@@ -1,16 +1,14 @@
-package level;
+package core.level;
 
-import core.GameMap;
+import assets.AssetManager;
 import gameobjects.Coin;
+import gameobjects.Direction;
 import gameobjects.Obstacle;
 import gameobjects.Platform;
-
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import assets.AssetManager;
 
 public class LevelManager {
 

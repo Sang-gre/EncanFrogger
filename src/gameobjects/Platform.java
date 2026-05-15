@@ -1,7 +1,6 @@
 package gameobjects;
 
 import java.awt.*;
-import level.Direction;
 
 public class Platform extends GameObject {
 
