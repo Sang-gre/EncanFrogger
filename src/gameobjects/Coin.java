@@ -59,10 +59,6 @@ public class Coin extends GameObject {
             g.setColor(Color.YELLOW);
             g.fillOval(x, drawY, scaledWidth, scaledHeight);
         }
-
-        // debug hitbox
-        g.setColor(Color.CYAN);
-        g.drawRect(x, y, width, height);
     }
 
     @Override

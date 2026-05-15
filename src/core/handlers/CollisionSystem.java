@@ -79,6 +79,22 @@ public class CollisionSystem {
         }
     }
 
+    public void checkCoinsAlongPath(Player player, List<Coin> coins) {
+        int minX = Math.min(player.getPreviousX(), player.getX());
+        int maxX = Math.max(player.getPreviousX(), player.getX()) + player.getWidth();
+
+        for (Coin c : coins) {
+            if (!c.isActive() || c.isCollected())
+                continue;
+
+            Rectangle swept = new Rectangle(minX, player.getY(), maxX - minX, player.getHeight());
+
+            if (swept.intersects(c.getBounds())) {
+                handleCollision(player, c);
+            }
+        }
+    }
+
     public static int getCoinsCollected() {
         return coinsCollected;
     }

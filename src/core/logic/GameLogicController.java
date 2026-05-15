@@ -63,6 +63,7 @@ public class GameLogicController {
                 levelManager.getObstacles(),
                 levelManager.getPlatforms(),
                 levelManager.getCoins());
+        collisionSystem.checkCoinsAlongPath(player, levelManager.getCoins());
 
         // Coin collection
         int coinsAfter = collisionSystem.getCoinsCollected();

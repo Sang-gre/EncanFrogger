@@ -31,6 +31,7 @@ public abstract class Player extends GameObject {
     private int stepY;
     protected Direction lastDirection = Direction.DOWN;
     private boolean movedThisTick = false;
+    private int previousX;
 
     // --- Visual ---
     private int visualWidth = 80;
@@ -72,9 +73,6 @@ public abstract class Player extends GameObject {
 
     @Override
     public void draw(Graphics g) {
-        g.setColor(Color.RED);
-        g.drawRect(x, y, width, height);
-
         if (currentFrames == null || currentFrames.length == 0) {
             // Fallback: solid rectangle so broken assets are obvious
             g.setColor(Color.GREEN);
@@ -257,5 +255,16 @@ public abstract class Player extends GameObject {
 
     public int getVisualHeight() {
         return visualHeight;
+    }
+
+    @Override
+    public void setPosition(int x, int y) {
+        this.previousX = this.x;
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getPreviousX() {
+        return previousX;
     }
 }
