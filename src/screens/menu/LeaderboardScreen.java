@@ -1,6 +1,8 @@
 package screens.menu;
 
 import assets.AssetManager;
+
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -36,7 +38,9 @@ public class LeaderboardScreen {
     }
 
     public void scroll(int direction) {
-        if (entries == null) return;
+        if (entries == null)
+
+            return;
 
         int maxOffset = Math.max(0, entries.size() - VISIBLE_ROWS);
         scrollOffset = Math.max(0, Math.min(scrollOffset + direction, maxOffset));
@@ -48,7 +52,8 @@ public class LeaderboardScreen {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        if (entries == null) return;
+        if (entries == null)
+            return;
 
         // Dim background
         g2.setColor(new Color(0, 0, 0, 180));
@@ -66,7 +71,7 @@ public class LeaderboardScreen {
         int rowHeight = contentH / VISIBLE_ROWS;
 
         int rankX = (int) (panelW * 0.335);
-        int nameX = (int) (panelW * 0.37);
+        int nameX = (int) (panelW * 0.4);
         int scoreX = (int) (panelW * 0.655);
 
         int maxOffset = Math.max(0, entries.size() - VISIBLE_ROWS);
@@ -125,6 +130,37 @@ public class LeaderboardScreen {
         playAgainBounds = new Rectangle(btnX, btnY, btnW, btnH);
         if (playAgainImg != null)
             g2.drawImage(playAgainImg, btnX, btnY, btnW, btnH, null);
+
+        if (entries.size() > VISIBLE_ROWS) {
+            int arrowW = (int) (panelW * 0.04);
+            int arrowH = (int) (panelH * 0.025);
+            int arrowX = panelW / 2;
+
+            int upAlpha = scrollOffset > 0 ? 220 : 50;
+            int upY = contentTop - (int) (panelH * 0.05);
+            g2.setColor(new Color(255, 215, 0, upAlpha));
+            g2.fillPolygon(
+                    new int[] { arrowX, arrowX + arrowW, arrowX - arrowW },
+                    new int[] { upY - arrowH, upY, upY }, 3);
+            g2.setColor(new Color(180, 130, 0, upAlpha));
+            g2.setStroke(new BasicStroke(2));
+            g2.drawPolygon(
+                    new int[] { arrowX, arrowX + arrowW, arrowX - arrowW },
+                    new int[] { upY - arrowH, upY, upY }, 3);
+
+            int downAlpha = scrollOffset < Math.max(0, entries.size() - VISIBLE_ROWS) ? 220 : 50;
+            int downY = contentTop + contentH + (int) (panelH * 0.04);
+            g2.setColor(new Color(255, 215, 0, downAlpha));
+            g2.fillPolygon(
+                    new int[] { arrowX, arrowX + arrowW, arrowX - arrowW },
+                    new int[] { downY + arrowH, downY, downY }, 3);
+            g2.setColor(new Color(180, 130, 0, downAlpha));
+            g2.drawPolygon(
+                    new int[] { arrowX, arrowX + arrowW, arrowX - arrowW },
+                    new int[] { downY + arrowH, downY, downY }, 3);
+
+            g2.setStroke(new BasicStroke(1));
+        }
     }
 
     public boolean isPlayAgainClicked(Point p) {

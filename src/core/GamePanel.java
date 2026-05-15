@@ -109,7 +109,7 @@ public class GamePanel extends JPanel {
         logicController = new GameLogicController(
                 this, stateManager, scoreManager, collisionSystem, inputHandler, sound);
     }
-    
+
     // -------------------------------------------------------------------------
     // Game loop (GameLogicThread)
     // -------------------------------------------------------------------------

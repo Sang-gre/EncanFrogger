@@ -1,5 +1,4 @@
 HJ,4770,4,true,650
-NAME,3190,3,true,400
 HAII,3010,3,true,250
 SC,3000,2,true,17
 TESTO,1450,2,true,100
@@ -13,9 +12,11 @@ JED,170,1,false,0
 HG,140,1,false,100
 HWVD,120,2,false,50
 JADE,110,1,false,0
+NAME,110,1,false,50
 DENES,90,1,false,0
 GHJ,50,2,false,50
 DENISE,40,1,false,0
+SDS,30,1,false,0
 A,0,1,true,5
 HH,0,1,true,5
 R,0,1,false,5

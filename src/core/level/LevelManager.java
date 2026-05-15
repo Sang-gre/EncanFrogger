@@ -203,12 +203,7 @@ public class LevelManager {
     }
 
     private float computeSpeed(int level, GameMap map) {
-        int max = getMaxLevel(map);
-
-        // reset cycle per map
-        int cycleLevel = ((level - 1) % max) + 1;
-
-        return BASE_SPEED + (cycleLevel - 1) * SPEED_INCREMENT;
+        return BASE_SPEED + (level - 1) * SPEED_INCREMENT;
     }
 
     private void assignLaneTypesForMap(GameMap map) {
