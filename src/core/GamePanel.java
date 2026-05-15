@@ -31,7 +31,7 @@ public class GamePanel extends JPanel {
     // --- Managers ---
     private final GameStateManager stateManager = new GameStateManager();
     private final ScoreManager scoreManager = new ScoreManager();
-    private final SoundManager sound = new SoundManager();
+    private final SoundManager sound = SoundManager.getInstance();
     private final GameRenderer renderer = new GameRenderer(stateManager);
 
     private final InputHandler inputHandler;

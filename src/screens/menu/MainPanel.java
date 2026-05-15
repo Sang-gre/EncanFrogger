@@ -19,7 +19,7 @@ public class MainPanel extends JPanel {
 
     private JPanel buttonPanel;
     private GameLauncher parent;
-    private SoundManager sound = new SoundManager();
+    private SoundManager sound = SoundManager.getInstance();
 
     private Image background;
 

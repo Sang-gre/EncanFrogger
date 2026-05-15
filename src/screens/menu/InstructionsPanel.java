@@ -33,7 +33,7 @@ public class InstructionsPanel extends JPanel {
     private JButton xButton;
 
     private Runnable onExit = () -> launcher.showMainMenu(); // default
-    SoundManager sound = new SoundManager();
+    SoundManager sound = SoundManager.getInstance();
 
     public void setOnExit(Runnable onExit) {
         this.onExit = onExit;

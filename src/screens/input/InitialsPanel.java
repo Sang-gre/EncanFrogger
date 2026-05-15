@@ -65,7 +65,7 @@ public class InitialsPanel extends JPanel {
         okBtn.addActionListener(e -> {
             requestFocusInWindow();
 
-            SoundManager sound = new SoundManager();
+            SoundManager sound = SoundManager.getInstance();
             sound.play("click");
             
             tryConfirm();

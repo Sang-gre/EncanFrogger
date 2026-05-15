@@ -12,7 +12,7 @@ import java.util.List;
 public class CollisionSystem {
 
     private static int coinsCollected = 0;
-    private SoundManager sound = new SoundManager();
+    private SoundManager sound = SoundManager.getInstance();
 
     public boolean checkAABB(GameObject a, GameObject b) {
         if (a == null || b == null)

@@ -16,7 +16,7 @@ public class TitlePanel extends JPanel {
     private final Image titleFont;
 
     public TitlePanel(GameLauncher parent) {
-        sound = new SoundManager();
+        sound = SoundManager.getInstance();
 
         background = AssetManager.getInstance().getBackground("title");
         titleFont = AssetManager.getInstance().getBackground("titleFont");

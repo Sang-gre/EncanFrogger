@@ -27,7 +27,7 @@ public class PauseScreen extends JPanel {
 
     private int lastBtnH = -1;
 
-    private SoundManager sound = new SoundManager();
+    private SoundManager sound = SoundManager.getInstance();
 
     public PauseScreen(Runnable onResume, Runnable onMenu, Runnable onExit) {
         setLayout(null);

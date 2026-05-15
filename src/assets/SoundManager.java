@@ -1,18 +1,23 @@
 package assets;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class SoundManager {
+public final class SoundManager {
 
-    private Map<String, Clip> sounds;
+    private static SoundManager instance; 
+
+    private final Map<String, Clip> sounds;
     private Clip currentMusic;
 
-    public SoundManager(){
+    private SoundManager(){
         sounds = new HashMap<> ();
 
        loadSound("click", "assets/sounds/sfx/click.wav");
@@ -23,6 +28,13 @@ public class SoundManager {
 
        loadSound("game", "assets/sounds/bgm/gameBGM.wav");
        loadSound("menu", "assets/sounds/bgm/menuBGM.wav");
+    }
+
+    public static SoundManager getInstance() {
+        if (instance == null) {
+            instance = new SoundManager();
+        }
+        return instance;
     }
 
     public void loadSound (String name, String path){
@@ -43,9 +55,8 @@ public class SoundManager {
             clip.open(audioStream);
             sounds.put(name, clip); //adding it to the hashmap
 
-        } catch (Exception e ){
+        } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e ){
             System.out.println("Error Loading Sound " + name);
-            e.printStackTrace();
         }
        
     }
@@ -60,13 +71,13 @@ public class SoundManager {
             return;
         }
 
-        //if it's alr playing, stop playbacck
+        //if it's already playing, stop playbacck
         if (clip.isRunning()){
             clip.stop();
         }
 
-        clip.setFramePosition(0);//rewind 
-        clip.start();// play the sound 
+        clip.setFramePosition(0);   //rewind 
+        clip.start();   // play the sound 
     }
 
     public void stop (String name){

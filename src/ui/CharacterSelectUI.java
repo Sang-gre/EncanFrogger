@@ -29,7 +29,7 @@ public class CharacterSelectUI {
     private JLabel detailInfoLabel;
     private JLabel selectBtn;
     private final Rectangle[] cardBounds = new Rectangle[5];
-    private final SoundManager sound = new SoundManager();
+    private final SoundManager sound = SoundManager.getInstance();
 
     private final JRadioButton[] buttons;
     private int selectedIndex = -1;     // no card is selected

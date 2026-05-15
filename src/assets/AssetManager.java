@@ -14,7 +14,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-public class AssetManager {
+public final class AssetManager {
 
     private static AssetManager instance;
 
