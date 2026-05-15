@@ -2,7 +2,6 @@ package screens.menu;
 
 import assets.AssetManager;
 import assets.SoundManager;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -188,7 +187,9 @@ public class InstructionsPanel extends JPanel {
                 AssetManager.getInstance().getInstructions("instruction2"),
                 AssetManager.getInstance().getInstructions("instruction3"),
                 AssetManager.getInstance().getInstructions("instruction4"),
-                AssetManager.getInstance().getInstructions("instruction5")
+                AssetManager.getInstance().getInstructions("instruction5"),
+                AssetManager.getInstance().getInstructions("instruction6"),
+                AssetManager.getInstance().getInstructions("instruction7")
         };
     }
 

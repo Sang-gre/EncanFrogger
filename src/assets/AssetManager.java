@@ -361,6 +361,8 @@ public class AssetManager {
         instructions.put("instruction3", loadImage("assets/instructions/page3.png"));
         instructions.put("instruction4", loadImage("assets/instructions/page4.png"));
         instructions.put("instruction5", loadImage("assets/instructions/page5.png"));
+        instructions.put("instruction6", loadImage("assets/instructions/page6.png"));
+        instructions.put("instruction7", loadImage("assets/instructions/page7.png"));
     }
 
     // Convenience loader: returns null and prints a warning instead of throwing.
