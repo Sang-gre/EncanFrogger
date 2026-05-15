@@ -5,8 +5,10 @@ import core.GamePanel;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -45,8 +47,24 @@ public class GameLauncher extends JFrame {
 
     public GameLauncher() {
         setTitle("EncanFrogger");
-        setSize(850, 500);
-        setMinimumSize(new Dimension(850, 500));
+
+        Rectangle screenBounds = GraphicsEnvironment
+                .getLocalGraphicsEnvironment()
+                .getMaximumWindowBounds();
+
+        int screenWidth = screenBounds.width;
+        int screenHeight = screenBounds.height;
+
+        int windowWidth = (int) (screenWidth * 0.8);
+        int windowHeight = (int) (screenHeight * 0.8);
+
+        setSize(windowWidth, windowHeight);
+
+        setMinimumSize(new Dimension(
+                (int) (screenWidth * 0.6),
+                (int) (screenHeight * 0.6)
+        ));
+
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -71,6 +89,7 @@ public class GameLauncher extends JFrame {
         mainPanel.add(gamePanel, "Game");
 
         add(mainPanel);
+
         initLaunch();
         initCursor();
 
