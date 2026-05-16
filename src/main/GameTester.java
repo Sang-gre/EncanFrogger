@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities;
 public class GameTester {
 
     private static final GameMap TEST_MAP = GameMap.LIREO;
+    private static final int TEST_LEVEL = 1;
 
     public static void launch() {
         GameLauncher launcher = new GameLauncher();
@@ -19,7 +20,7 @@ public class GameTester {
 
         SwingUtilities.invokeLater(() -> {
             Player player = new Player(0, 0, PlayerType.PAOPAO);
-            gamePanel.startLevel(player, TEST_MAP, TEST_MAP.getStartLevel());
+            gamePanel.startLevel(player, TEST_MAP, TEST_LEVEL);
             gamePanel.setState(GameState.PLAYING);
             launcher.startGame();
             gamePanel.requestFocusInWindow();

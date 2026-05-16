@@ -14,12 +14,14 @@ import main.GameLauncher;
 /* Responsible for everything on start level */
 public class LevelSetup {
 
+    // --- Dependencies ---
     private final GamePanel gamePanel;
     private final GameStateManager stateManager;
     private final ScoreManager scoreManager;
     private final assets.SoundManager sound;
     private final GameLauncher launcher;
 
+    // --- Misc state ---
     private ComponentAdapter resizeListener;
 
     public LevelSetup(GamePanel gamePanel,
@@ -34,6 +36,9 @@ public class LevelSetup {
         this.launcher = launcher;
     }
 
+    // -------------------------------------------------------------------------
+    // Level start
+    // -------------------------------------------------------------------------
     public void startLevel(Player selectedPlayer, GameMap map, int level) {
         if (stateManager.isFreshStart()) {
             stateManager.setCurrentLevel(launcher.getStartingLevel());
@@ -52,18 +57,42 @@ public class LevelSetup {
         sound.stopBGM();
         sound.playBGM("game");
 
-        LevelManager oldLevelManager = gamePanel.getLevelManager();
-        if (oldLevelManager != null) {
-            oldLevelManager.clear();
-        }
+        initLevelManager(map);
+        spawnPlayer(selectedPlayer, gamePanel.getLevelManager());
+        buildUI(selectedPlayer);
+
+        gamePanel.startThreads();
+        SwingUtilities.invokeLater(gamePanel::requestFocusInWindow);
+    }
+
+    // -------------------------------------------------------------------------
+    // Setup helpers
+    // -------------------------------------------------------------------------
+    private void initLevelManager(GameMap map) {
+        LevelManager old = gamePanel.getLevelManager();
+        if (old != null)
+            old.clear();
 
         LevelManager levelManager = new LevelManager(gamePanel.getWidth(), gamePanel.getHeight());
         levelManager.loadLevel(stateManager.getCurrentLevel(), map);
+
         gamePanel.setLevelManager(levelManager);
         gamePanel.setCollisionSystem(new CollisionSystem());
+    }
 
-        spawnPlayer(selectedPlayer, levelManager);
+    private void spawnPlayer(Player player, LevelManager lm) {
+        player.setActive(true);
+        int spawnCol = lm.getColumnCount() / 2;
+        int spawnLane = lm.getLaneCount() - 1;
 
+        int spawnX = lm.getColumnX()[spawnCol] + (lm.getColumnWidth() - player.getWidth()) / 2;
+        int spawnY = lm.getLaneY()[spawnLane] + (lm.getLaneHeight() - player.getHeight()) / 2;
+
+        player.setPosition(spawnX, spawnY);
+        player.resize(lm.getLaneHeight(), lm.getColumnWidth());
+    }
+
+    private void buildUI(Player selectedPlayer) {
         gamePanel.setHud(null);
         gamePanel.setPauseScreen(null);
         gamePanel.removeAll();
@@ -72,23 +101,8 @@ public class LevelSetup {
         gamePanel.setLayout(null);
 
         buildHUD(selectedPlayer);
-        buildPauseScreen(selectedPlayer, map);
+        buildPauseScreen();
         attachResizeListener(selectedPlayer);
-
-        gamePanel.startThreads();
-        SwingUtilities.invokeLater(gamePanel::requestFocusInWindow);
-    }
-
-    private void spawnPlayer(Player player, LevelManager levelManager) {
-        player.setActive(true);
-        int spawnCol = levelManager.getColumnCount() / 2;
-        int spawnLane = levelManager.getLaneCount() - 1;
-        int spawnY = levelManager.getLaneY()[spawnLane]
-                + (levelManager.getLaneHeight() - player.getHeight()) / 2;
-        int spawnX = levelManager.getColumnX()[spawnCol]
-                + (levelManager.getColumnWidth() - player.getWidth()) / 2;
-        player.setPosition(spawnX, spawnY);
-        player.resize(levelManager.getLaneHeight(), levelManager.getColumnWidth());
     }
 
     private void buildHUD(Player player) {
@@ -116,7 +130,7 @@ public class LevelSetup {
         gamePanel.setHud(hud);
     }
 
-    private void buildPauseScreen(Player selectedPlayer, GameMap map) {
+    private void buildPauseScreen() {
         screens.gameplay.PauseScreen pauseScreen = new screens.gameplay.PauseScreen(
                 () -> {
                     stateManager.setState(GameState.PLAYING);
@@ -144,49 +158,52 @@ public class LevelSetup {
         gamePanel.setPauseScreen(pauseScreen);
     }
 
+    // -------------------------------------------------------------------------
+    // Resize listener
+    // -------------------------------------------------------------------------
     private void attachResizeListener(Player player) {
-        if (resizeListener != null) {
+        if (resizeListener != null)
             gamePanel.removeComponentListener(resizeListener);
-        }
 
         resizeListener = new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                LevelManager levelManager = gamePanel.getLevelManager();
+                LevelManager lm = gamePanel.getLevelManager();
 
+                // Pause immediately on resize
                 if (stateManager.getState() == GameState.PLAYING) {
                     stateManager.setState(GameState.PAUSED);
                     gamePanel.getPauseScreen().setVisible(true);
                     gamePanel.getPauseScreen().revalidate();
                 }
 
-                if (levelManager == null || player == null)
+                if (lm == null || player == null)
                     return;
 
-                int currentLane = levelManager.getLaneIndex(player.getY());
-                int currentCol = Math.round((float) player.getX() / levelManager.getColumnWidth());
+                // Remember where the player was before resize
+                int lane = lm.getLaneIndex(player.getY());
+                int col = Math.round((float) player.getX() / lm.getColumnWidth());
 
-                levelManager.resize(gamePanel.getWidth(), gamePanel.getHeight());
-                player.setSize(
-                        (int) (levelManager.getColumnWidth() * 0.5),
-                        (int) (levelManager.getLaneHeight() * 0.5));
-                player.setVisualSize(levelManager.getColumnWidth(), (int) (levelManager.getLaneHeight() * 1.8));
+                lm.resize(gamePanel.getWidth(), gamePanel.getHeight());
 
-                currentLane = Math.max(0, Math.min(currentLane, levelManager.getLaneCount() - 1));
-                currentCol = Math.max(0, Math.min(currentCol, levelManager.getColumnCount() - 1));
+                // Clamp to valid range after resize
+                lane = Math.max(0, Math.min(lane, lm.getLaneCount() - 1));
+                col = Math.max(0, Math.min(col, lm.getColumnCount() - 1));
 
-                int centeredX = levelManager.getColumnX()[currentCol]
-                        + (levelManager.getColumnWidth() - player.getWidth()) / 2;
-                int centeredY = levelManager.getLaneY()[currentLane]
-                        + (levelManager.getLaneHeight() - player.getHeight()) / 2;
+                // Reposition player in the same lane/column
+                int centeredX = lm.getColumnX()[col] + (lm.getColumnWidth() - player.getWidth()) / 2;
+                int centeredY = lm.getLaneY()[lane] + (lm.getLaneHeight() - player.getHeight()) / 2;
                 player.setPosition(centeredX, centeredY);
+                player.setSize(
+                        (int) (lm.getColumnWidth() * 0.5),
+                        (int) (lm.getLaneHeight() * 0.5));
+                player.setVisualSize(lm.getColumnWidth(), (int) (lm.getLaneHeight() * 1.8));
+                player.resize(lm.getLaneHeight(), lm.getColumnWidth());
 
-                int hudHeight = gamePanel.getHeight() / 10;
-                gamePanel.getHud().setBounds(0, 0, gamePanel.getWidth(), hudHeight);
+                // Resize UI overlays
+                gamePanel.getHud().setBounds(0, 0, gamePanel.getWidth(), gamePanel.getHeight() / 10);
                 gamePanel.getHud().revalidate();
                 gamePanel.getPauseScreen().setBounds(0, 0, gamePanel.getWidth(), gamePanel.getHeight());
-
-                player.resize(levelManager.getLaneHeight(), levelManager.getColumnWidth());
             }
         };
 
