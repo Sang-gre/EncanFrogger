@@ -1,7 +1,6 @@
 package screens.menu;
 
 import assets.AssetManager;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -29,7 +28,15 @@ public class LeaderboardScreen {
     private static final int VISIBLE_ROWS = 4;
     private List<ScoreEntry> entries;
 
+    private final boolean showPlayAgain;
+
     public LeaderboardScreen() {
+        this(true);
+    }
+
+    public LeaderboardScreen(boolean showPlayAgain) {
+        this.showPlayAgain = showPlayAgain;
+
         panelImg = AssetManager.getInstance().getBackground("leaderboard");
         playAgainImg = AssetManager.getInstance().getButton("playAgain");
         backImg = AssetManager.getInstance().getButton("back");
@@ -39,7 +46,6 @@ public class LeaderboardScreen {
 
     public void scroll(int direction) {
         if (entries == null)
-
             return;
 
         int maxOffset = Math.max(0, entries.size() - VISIBLE_ROWS);
@@ -55,7 +61,6 @@ public class LeaderboardScreen {
         if (entries == null)
             return;
 
-        // Dim background
         g2.setColor(new Color(0, 0, 0, 180));
         g2.fillRect(0, 0, screenW, screenH);
 
@@ -111,25 +116,28 @@ public class LeaderboardScreen {
             }
         }
 
-        // Back button
+        // Back button — always on the left
         int backH = (int) (screenH * 0.20);
         int backW = (int) (backH * ((double) backImg.getWidth(null) / backImg.getHeight(null)));
-        int backX = (int) (screenW * 0.02);
         int backY = (int) (screenH * 0.8);
+        int backX = (int) (screenW * 0.02);
 
         backBounds = new Rectangle(backX, backY, backW, backH);
         if (backImg != null)
             g2.drawImage(backImg, backX, backY, backW, backH, null);
 
-        // Play again button
-        int btnH = (int) (screenH * 0.20);
-        int btnW = (int) (btnH * ((double) playAgainImg.getWidth(null) / playAgainImg.getHeight(null)));
-        int btnX = (int) (screenW * 0.79);
-        int btnY = (int) (screenH * 0.8);
+        // Play again button — only shown when showPlayAgain is true
+        if (showPlayAgain && playAgainImg != null) {
+            int btnH = (int) (screenH * 0.20);
+            int btnW = (int) (btnH * ((double) playAgainImg.getWidth(null) / playAgainImg.getHeight(null)));
+            int btnX = (int) (screenW * 0.79);
+            int btnY = (int) (screenH * 0.8);
 
-        playAgainBounds = new Rectangle(btnX, btnY, btnW, btnH);
-        if (playAgainImg != null)
+            playAgainBounds = new Rectangle(btnX, btnY, btnW, btnH);
             g2.drawImage(playAgainImg, btnX, btnY, btnW, btnH, null);
+        } else {
+            playAgainBounds = null;
+        }
 
         if (entries.size() > VISIBLE_ROWS) {
             int arrowW = (int) (panelW * 0.04);
@@ -164,7 +172,7 @@ public class LeaderboardScreen {
     }
 
     public boolean isPlayAgainClicked(Point p) {
-        return playAgainBounds != null && playAgainBounds.contains(p);
+        return showPlayAgain && playAgainBounds != null && playAgainBounds.contains(p);
     }
 
     public boolean isBackClicked(Point p) {

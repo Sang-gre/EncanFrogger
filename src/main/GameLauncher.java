@@ -62,8 +62,7 @@ public class GameLauncher extends JFrame {
 
         setMinimumSize(new Dimension(
                 (int) (screenWidth * 0.6),
-                (int) (screenHeight * 0.6)
-        ));
+                (int) (screenHeight * 0.6)));
 
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,7 +79,10 @@ public class GameLauncher extends JFrame {
         secondPage = new MainPanel(this);
         instructionsPanel = new InstructionsPanel(this);
         gamePanel = new GamePanel(this);
-        initialsPanel = new InitialsPanel(this::showMainMenu, this::handleInitialsSubmit);
+        initialsPanel = new InitialsPanel(
+                this::showMainMenu,
+                this::handleInitialsSubmit,
+                this::showLeaderboardFromInitials);
 
         mainPanel.add(gameLaunch, "Launch");
         mainPanel.add(secondPage, "Menu");
@@ -170,6 +172,11 @@ public class GameLauncher extends JFrame {
         startGame();
     }
 
+    private void showLeaderboardFromInitials() {
+        startGame();
+        gamePanel.showLeaderboard();
+    }
+
     private void initLaunch() {
         cardLayout.show(mainPanel, "Launch");
     }
@@ -217,7 +224,6 @@ public class GameLauncher extends JFrame {
     // -------------------------------------------------------------------------
     // Getters / Setters
     // -------------------------------------------------------------------------
-
     private Component getActivePanel() {
         for (Component c : mainPanel.getComponents()) {
             if (c.isVisible())

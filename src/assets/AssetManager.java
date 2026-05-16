@@ -163,6 +163,9 @@ public final class AssetManager {
         buttons.put("resume", loadImage("assets/Buttons/resumeButton.png"));
         buttons.put("pause", loadImage("assets/Buttons/pauseButton.png"));
 
+        //leaderboard Buttons
+        buttons.put("leaderboardBtn", loadImage("assets/Buttons/leaderboardButton.png"));
+
     }
 
     private void loadObstacles() {

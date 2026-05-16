@@ -64,7 +64,7 @@ public class GamePanel extends JPanel {
         this.launcher = launcher;
 
         inputHandler = new InputHandler(this, sound);
-        screenNavigator = new ScreenNavigator(this, stateManager, launcher);
+        screenNavigator = new ScreenNavigator(this, stateManager, sound, launcher);
         levelSetup = new LevelSetup(this, stateManager, scoreManager, sound, launcher);
 
         setFocusable(true);
@@ -109,8 +109,13 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Screen navigation (ScreenNavigator)
     // -------------------------------------------------------------------------
+
     public void showMapSelect(Player selectedPlayer) {
         screenNavigator.showMapSelect(selectedPlayer);
+    }
+
+    public void showMapSelect(Player selectedPlayer, GameMap map) {
+        screenNavigator.showMapSelect(selectedPlayer, map);
     }
 
     public void showCharacterSelect() {
@@ -118,12 +123,23 @@ public class GamePanel extends JPanel {
         screenNavigator.showCharacterSelect();
     }
 
+    public void showLeaderboard() {
+        leaderboardScreen = new screens.menu.LeaderboardScreen();
+        stateManager.setShowingLeaderboard(true);
+        requestFocusInWindow();
+        repaint();
+    }
+
+    public void showCharacterSelectNextLevel() {
+        screenNavigator.showCharacterSelectNextLevel();
+    }
+
     // -------------------------------------------------------------------------
     // Level start (LevelSetup)
     // -------------------------------------------------------------------------
+
     public void startLevel(Player selectedPlayer, GameMap map, int level) {
         playerInitials = launcher.getPlayerInitials();
-
         levelSetup.startLevel(selectedPlayer, map, level);
         logicController = new GameLogicController(
                 this, stateManager, scoreManager, collisionSystem, inputHandler, sound);
@@ -147,9 +163,10 @@ public class GamePanel extends JPanel {
         stateManager.setPlayerAlive(false);
 
         int runScore = scoreManager.getScore();
-        int runCoins = getCoinsCollected();
+        int runCoins = collisionSystem != null ? collisionSystem.getCoinsCollected() : 0;
 
-        saveScoreAsync(new ScoreEntry(playerInitials, runScore, stateManager.getCurrentLevel(), false, runCoins));
+        new Thread(() -> LeaderboardManager.upsertEntry(
+                new ScoreEntry(playerInitials, runScore, stateManager.getCurrentLevel(), false, runCoins))).start();
 
         gameOverScreen = new screens.gameplay.GameOverScreen();
         if (hud != null)
@@ -162,9 +179,10 @@ public class GamePanel extends JPanel {
         stopThreads();
         stateManager.setState(GameState.WIN);
 
-        int runCoins = getCoinsCollected();
+        int runCoins = collisionSystem != null ? collisionSystem.getCoinsCollected() : 0;
 
-        saveScoreAsync(new ScoreEntry(playerInitials, runScore, stateManager.getCurrentLevel(), true, runCoins));
+        new Thread(() -> LeaderboardManager.upsertEntry(
+                new ScoreEntry(playerInitials, runScore, stateManager.getCurrentLevel(), true, runCoins))).start();
 
         int prev = scoreManager.getPreviousScore();
         int total = scoreManager.getTotalScore();
@@ -181,17 +199,12 @@ public class GamePanel extends JPanel {
 
     public void resetGameOverState() {
         stateManager.resetGameOverState();
-        CollisionSystem.resetCoins();
         leaderboardScreen = null;
         gameOverScreen = null;
         if (levelManager != null) {
             levelManager.clear();
             levelManager = null;
         }
-    }
-
-    private void saveScoreAsync(ScoreEntry entry) {
-        new Thread(() -> LeaderboardManager.upsertEntry(entry)).start();
     }
 
     // -------------------------------------------------------------------------
@@ -201,62 +214,49 @@ public class GamePanel extends JPanel {
         int key = e.getKeyCode();
         GameState state = stateManager.getState();
 
-        if (stateManager.isShowingLeaderboard()) {
-            handleLeaderboardKeyPress(key);
-            return;
-        }
-
-        switch (state) {
-            case PLAYING -> handlePlayingKeyPress(key);
-            case PAUSED -> handlePausedKeyPress(key);
-            case GAME_OVER -> handleGameOverKeyPress(e);
-            default -> {}
-        }
-    }
-
-    private void handleLeaderboardKeyPress(int key) {
-        if (leaderboardScreen == null)
-            return;
-        if (key == KeyEvent.VK_UP)
-            leaderboardScreen.scroll(-1);
-        if (key == KeyEvent.VK_DOWN)
-            leaderboardScreen.scroll(1);
-        repaint();
-    }
-
-    private void handlePlayingKeyPress(int key) {
-        if (key == KeyEvent.VK_ESCAPE) {
+        if (state == GameState.PLAYING && key == KeyEvent.VK_ESCAPE) {
             stateManager.setState(GameState.PAUSED);
             pauseScreen.setVisible(true);
             pauseScreen.revalidate();
+            return;
         }
-    }
 
-    private void handlePausedKeyPress(int key) {
-        if (key == KeyEvent.VK_ESCAPE) {
+        if (state == GameState.PAUSED && key == KeyEvent.VK_ESCAPE) {
             stateManager.setState(GameState.PLAYING);
             pauseScreen.setVisible(false);
             pauseScreen.revalidate();
-        }
-    }
-
-    private void handleGameOverKeyPress(KeyEvent e) {
-        if (gameOverScreen == null || gameOverScreen.isShowingPlayAgain())
             return;
-
-        boolean handled = gameOverScreen.handleKey(e.getKeyCode(), e.getKeyChar());
-        if (!handled) {
-            saveScoreAsync(new ScoreEntry(
-                    gameOverScreen.getInitials(),
-                    scoreManager.getScore(),
-                    stateManager.getCurrentLevel(),
-                    false,
-                    getCoinsCollected()));
-            leaderboardScreen = new screens.menu.LeaderboardScreen();
-            stateManager.setShowingLeaderboard(true);
-            requestFocusInWindow();
         }
-        repaint();
+
+        if (stateManager.isShowingLeaderboard() && leaderboardScreen != null) {
+            if (key == KeyEvent.VK_UP) {
+                leaderboardScreen.scroll(-1);
+                repaint();
+                return;
+            }
+            if (key == KeyEvent.VK_DOWN) {
+                leaderboardScreen.scroll(1);
+                repaint();
+                return;
+            }
+        }
+
+        if (state == GameState.GAME_OVER && gameOverScreen != null && !stateManager.isShowingLeaderboard()) {
+            if (!gameOverScreen.isShowingPlayAgain()) {
+                boolean handled = gameOverScreen.handleKey(e.getKeyCode(), e.getKeyChar());
+                if (!handled) {
+                    int coins = collisionSystem != null ? collisionSystem.getCoinsCollected() : 0;
+                    new Thread(() -> LeaderboardManager.upsertEntry(
+                            new ScoreEntry(gameOverScreen.getInitials(), scoreManager.getScore(),
+                                    stateManager.getCurrentLevel(), false, coins)))
+                            .start();
+                    leaderboardScreen = new screens.menu.LeaderboardScreen();
+                    stateManager.setShowingLeaderboard(true);
+                    requestFocusInWindow();
+                }
+                repaint();
+            }
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -264,57 +264,47 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     private void handleMouseClick(MouseEvent e) {
         if (congratsScreen != null) {
-            handleCongratsClick();
-            return;
-        }
-
-        if (stateManager.isShowingLeaderboard()) {
-            handleLeaderboardClick(e);
-            return;
-        }
-
-        if (stateManager.getState() == GameState.GAME_OVER && gameOverScreen != null) {
-            handleGameOverClick(e);
-        }
-    }
-
-    private void handleCongratsClick() {
-        leaderboardScreen = new screens.menu.LeaderboardScreen();
-        stateManager.setShowingLeaderboard(true);
-        congratsScreen = null;
-        repaint();
-    }
-
-    private void handleLeaderboardClick(MouseEvent e) {
-        if (leaderboardScreen.isPlayAgainClicked(e.getPoint())) {
-            stateManager.setShowingLeaderboard(false);
-            leaderboardScreen = null;
-            resetGameOverState();
-            if (!stateManager.isPlayerAlive()) {
-                launcher.showInitialsPanel();
-            } else {
-                if (player != null)
-                    showMapSelect(player);
-            }
-            return;
-        }
-        if (leaderboardScreen.isBackClicked(e.getPoint())) {
-            resetGameOverState();
-            launcher.showMainMenu();
-        }
-    }
-
-    private void handleGameOverClick(MouseEvent e) {
-        if (gameOverScreen.isYesClicked(e.getPoint())) {
-            resetGameOverState();
-            launcher.showInitialsPanel();
-            return;
-        }
-        if (gameOverScreen.isNoClicked(e.getPoint())) {
             leaderboardScreen = new screens.menu.LeaderboardScreen();
             stateManager.setShowingLeaderboard(true);
-            requestFocusInWindow();
+            congratsScreen = null;
             repaint();
+            return;
+        }
+
+        if (stateManager.getState() == GameState.GAME_OVER
+                && gameOverScreen != null
+                && !stateManager.isShowingLeaderboard()) {
+            if (gameOverScreen.isYesClicked(e.getPoint())) {
+                resetGameOverState();
+                launcher.showInitialsPanel();
+                return;
+            }
+            if (gameOverScreen.isNoClicked(e.getPoint())) {
+                leaderboardScreen = new screens.menu.LeaderboardScreen();
+                stateManager.setShowingLeaderboard(true);
+                requestFocusInWindow();
+                repaint();
+                return;
+            }
+        }
+
+        if (leaderboardScreen != null) {
+            if (leaderboardScreen.isPlayAgainClicked(e.getPoint())) {
+                stateManager.setShowingLeaderboard(false);
+                leaderboardScreen = null;
+                resetGameOverState();
+                if (!stateManager.isPlayerAlive()) {
+                    launcher.showInitialsPanel();
+                } else {
+                    if (player != null)
+                        showMapSelect(player);
+                }
+                return;
+            }
+            if (leaderboardScreen.isBackClicked(e.getPoint())) {
+                resetGameOverState();
+                launcher.showMainMenu();
+            }
         }
     }
 
@@ -333,6 +323,7 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Thread management
     // -------------------------------------------------------------------------
+
     public void startThreads() {
         logicThread = new GameLogicThread(this);
         renderThread = new RenderThread(this);
@@ -368,12 +359,17 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Getters / Setters
     // -------------------------------------------------------------------------
+
     public GameState getState() {
         return stateManager.getState();
     }
 
     public void setState(GameState state) {
         stateManager.setState(state);
+    }
+
+    public GameStateManager getStateManager() {
+        return stateManager;
     }
 
     public Player getPlayer() {
@@ -426,9 +422,5 @@ public class GamePanel extends JPanel {
 
     public void setPlayerInitials(String initials) {
         this.playerInitials = initials;
-    }
-
-    private int getCoinsCollected() {
-        return CollisionSystem.getCoinsCollected();
     }
 }
