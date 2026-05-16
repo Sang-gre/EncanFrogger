@@ -116,7 +116,7 @@ public class LeaderboardScreen {
             }
         }
 
-        // Back button — always on the left
+        // Back button
         int backH = (int) (screenH * 0.20);
         int backW = (int) (backH * ((double) backImg.getWidth(null) / backImg.getHeight(null)));
         int backY = (int) (screenH * 0.8);
