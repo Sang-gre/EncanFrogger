@@ -14,7 +14,7 @@ import java.util.Set;
 public class LeaderboardManager {
 
     private static final Object LOCK = new Object();
-    private static final String FILE_PATH = "data/data.txt";
+    private static final String FILE_PATH = getDataPath();
     private static final int MAX_ENTRIES = 100;
 
     // Adds a new entry, sorts by score, trims to max
@@ -57,8 +57,7 @@ public class LeaderboardManager {
                         newEntry.score,
                         newEntry.level,
                         newEntry.isAlive,
-                        newEntry.coins * 50
-                ));
+                        newEntry.coins * 50));
 
             entries.sort((a, b) -> b.score - a.score);
             if (entries.size() > MAX_ENTRIES)
@@ -126,5 +125,23 @@ public class LeaderboardManager {
                 System.err.println("Failed to read leaderboard: " + ex.getMessage());
             }
         }
+    }
+
+    // Returns appropriate path for data file
+    private static String getDataPath() {
+        String os = System.getProperty("os.name").toLowerCase();
+        String base;
+
+        if (os.contains("win")) {
+            base = System.getenv("APPDATA");
+            if (base == null)
+                base = System.getProperty("user.home");     // fallback
+        } else if (os.contains("mac")) {
+            base = System.getProperty("user.home") + "/Library/Application Support";
+        } else {
+            base = System.getProperty("user.home") + "/.config";    // Linux and others
+        }
+
+        return base + File.separator + "EncanFrogger" + File.separator + "data.txt";
     }
 }
