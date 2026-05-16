@@ -14,7 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import main.GameLauncher;
+import launch.GameLauncher;
 
 public class InstructionsPanel extends JPanel {
 

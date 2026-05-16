@@ -1,4 +1,4 @@
-package main;
+package launch;
 
 import assets.AssetManager;
 import core.GamePanel;
@@ -23,7 +23,6 @@ import persistence.ScoreEntry;
 import screens.input.InitialsPanel;
 import screens.menu.InstructionsPanel;
 import screens.menu.MainPanel;
-import screens.menu.TitlePanel;
 import ui.CursorGlassPane;
 
 public class GameLauncher extends JFrame {

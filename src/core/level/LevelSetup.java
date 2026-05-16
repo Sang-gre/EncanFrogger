@@ -9,7 +9,7 @@ import gameobjects.Player;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.SwingUtilities;
-import main.GameLauncher;
+import launch.GameLauncher;
 
 /* Responsible for everything on start level */
 public class LevelSetup {

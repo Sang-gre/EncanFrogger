@@ -1,28 +1,37 @@
 package core.logic;
 
+/* Tracks score, time, and lane progress for every run */
 public class ScoreManager {
 
-    private int levelScore;
-    private int previousScore;
-    private int totalScore;
-
-    private int highestLaneReached;
+    // --- Constants ---
     private static final int LANES = 10;
-
+    private static final int TIME_LIMIT_SECONDS = 30;
     private static final int POINTS_FORWARD_HOP = 10;
     private static final int POINTS_COIN = 50;
     private static final int POINTS_REACH_TOP = 500;
     private static final int POINTS_TIME_BONUS = 20;
     private static final int POINTS_LEVEL_BONUS = 100;
 
-    private static final int TIME_LIMIT_SECONDS = 30;
+    // --- State ---
+    private int levelScore;
+    private int previousScore;
+    private int totalScore;
+    private int highestLaneReached;
     private float timeRemaining;
     private boolean timerRunning;
 
     public ScoreManager() {
-        reset();
+        levelScore = 0;
+        previousScore = 0;
+        totalScore = 0;
+        highestLaneReached = LANES - 1;
+        timeRemaining = TIME_LIMIT_SECONDS;
+        timerRunning = true;
     }
 
+    // -------------------------------------------------------------------------
+    // Reset
+    // -------------------------------------------------------------------------
     public void reset() {
         levelScore = 0;
         previousScore = 0;
@@ -38,19 +47,10 @@ public class ScoreManager {
         timerRunning = true;
     }
 
-    public void updateTimer(float deltaSeconds) {
-        if (!timerRunning)
-            return;
-
-        timeRemaining -= deltaSeconds;
-
-        if (timeRemaining < 0) {
-            timeRemaining = 0;
-        }
-    }
-
+    // -------------------------------------------------------------------------
+    // Game events
+    // -------------------------------------------------------------------------
     public void onPlayerMovedToLane(int laneIndex) {
-
         if (laneIndex < highestLaneReached) {
             levelScore += POINTS_FORWARD_HOP;
             highestLaneReached = laneIndex;
@@ -77,6 +77,18 @@ public class ScoreManager {
         resetCrossing();
     }
 
+    // -------------------------------------------------------------------------
+    // Timer
+    // -------------------------------------------------------------------------
+    public void updateTimer(float deltaSeconds) {
+        if (!timerRunning)
+            return;
+        timeRemaining = Math.max(0, timeRemaining - deltaSeconds);
+    }
+
+    // -------------------------------------------------------------------------
+    // Getters / Setters
+    // -------------------------------------------------------------------------
     public int getScore() {
         return levelScore;
     }

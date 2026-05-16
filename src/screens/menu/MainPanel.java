@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import main.GameLauncher;
+import launch.GameLauncher;
 
 public class MainPanel extends JPanel {
 

@@ -3,6 +3,9 @@ package main;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import launch.GameLauncher;
+import launch.GameTester;
+import launch.SplashScreen;
 
 public class Main {
 

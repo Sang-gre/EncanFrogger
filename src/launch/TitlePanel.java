@@ -1,13 +1,13 @@
-package screens.menu;
+package launch;
 
 import assets.AssetManager;
 import assets.SoundManager;
+
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
-import main.GameLauncher;
 
 public class TitlePanel extends JPanel {
 

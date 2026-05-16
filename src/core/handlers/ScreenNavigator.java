@@ -7,7 +7,7 @@ import core.logic.GameStateManager;
 import gameobjects.Player;
 import java.awt.BorderLayout;
 import java.awt.event.ComponentListener;
-import main.GameLauncher;
+import launch.GameLauncher;
 import screens.input.CharacterSelect;
 import screens.input.MapSelect;
 import screens.menu.LeaderboardScreen;
