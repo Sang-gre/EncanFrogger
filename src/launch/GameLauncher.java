@@ -80,8 +80,7 @@ public class GameLauncher extends JFrame {
         gamePanel = new GamePanel(this);
         initialsPanel = new InitialsPanel(
                 this::showMainMenu,
-                this::handleInitialsSubmit,
-                this::showLeaderboardFromInitials);
+                this::handleInitialsSubmit);
 
         mainPanel.add(gameLaunch, "Launch");
         mainPanel.add(secondPage, "Menu");
@@ -169,11 +168,6 @@ public class GameLauncher extends JFrame {
         gamePanel.setPlayerInitials(initials);
         gamePanel.showCharacterSelect();
         startGame();
-    }
-
-    private void showLeaderboardFromInitials() {
-        startGame();
-        gamePanel.showLeaderboard();
     }
 
     private void initLaunch() {

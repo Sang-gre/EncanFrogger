@@ -40,18 +40,14 @@ public class InitialsPanel extends JPanel {
     private final StringBuilder initials = new StringBuilder();
 
     private final Image bgImage;
-    private Image okImage;
-    private Image leaderboardImage;
+    private final Image okImage;
+    private final Image leaderboardImage;
     private final Image popupImage;
     private final Image usedPopupImage;
-    private JButton okBtn;
-    private JButton leaderboardBtn;
+    private final JButton okBtn;
+    private final JButton leaderboardBtn;
 
     private LeaderboardScreen leaderboardOverlay;
-
-    public InitialsPanel(Runnable onBack, Consumer<String> onDone, Runnable unused) {
-        this(onBack, onDone);
-    }
 
     public InitialsPanel(Runnable onBack, Consumer<String> onDone) {
         this.onBack = onBack;
@@ -197,14 +193,18 @@ public class InitialsPanel extends JPanel {
         char ch = e.getKeyChar();
 
         if (leaderboardOverlay != null) {
-            if (code == KeyEvent.VK_UP) {
-                leaderboardOverlay.scroll(-1);
-                repaint();
-            } else if (code == KeyEvent.VK_DOWN) {
-                leaderboardOverlay.scroll(1);
-                repaint();
-            } else if (code == KeyEvent.VK_ESCAPE) {
-                hideLeaderboardOverlay();
+            switch (code) {
+                case KeyEvent.VK_UP -> {
+                    leaderboardOverlay.scroll(-1);
+                    repaint();
+                }
+                case KeyEvent.VK_DOWN -> {
+                    leaderboardOverlay.scroll(1);
+                    repaint();
+                }
+                case KeyEvent.VK_ESCAPE -> hideLeaderboardOverlay();
+                default -> {
+                }
             }
             return;
         }

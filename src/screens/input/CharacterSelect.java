@@ -24,6 +24,9 @@ public class CharacterSelect extends Selection {
         super(gamePanel, onBack);
     }
 
+    // -------------------------------------------------------------------------
+    // Selection panel
+    // -------------------------------------------------------------------------
     @Override
     public JPanel createSelectionButtons() {
         paopao = createBtn(0);
@@ -48,18 +51,21 @@ public class CharacterSelect extends Selection {
                 return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
             }
         };
+
         btn.setOpaque(false);
         btn.setBorderPainted(false);
         btn.setContentAreaFilled(false);
         btn.setFocusPainted(false);
         btn.setHorizontalAlignment(SwingConstants.CENTER);
         btn.setVerticalAlignment(SwingConstants.CENTER);
-
         btn.addActionListener(e -> charUI.setSelectedIndex(index));
 
         return btn;
     }
 
+    // -------------------------------------------------------------------------
+    // Background / layout
+    // -------------------------------------------------------------------------
     @Override
     public JPanel createBackground() {
         JPanel background = new JPanel(null) {
@@ -81,25 +87,43 @@ public class CharacterSelect extends Selection {
         background.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                int w = background.getWidth();
-                int h = background.getHeight();
-                selection.setBounds(0, 0, w, h - 100);
-                nav.setBounds(0, h - 100, w, 100);
-                charUI.layoutAll();
+                layoutPanels(background, selection, nav);
             }
         });
 
-        SwingUtilities.invokeLater(() -> {
-            int w = background.getWidth();
-            int h = background.getHeight();
-            if (w > 0 && h > 0) {
-                selection.setBounds(0, 0, w, h - 100);
-                nav.setBounds(0, h - 100, w, 100);
-                charUI.layoutAll();
-            }
-        });
+        SwingUtilities.invokeLater(() -> layoutPanels(background, selection, nav));
 
         return background;
+    }
+
+    private void layoutPanels(JPanel background, JPanel selection, JPanel nav) {
+        int w = background.getWidth();
+        int h = background.getHeight();
+        if (w <= 0 || h <= 0)
+            return;
+
+        selection.setBounds(0, 0, w, h - 100);
+        nav.setBounds(0, h - 100, w, 100);
+        charUI.layoutAll();
+    }
+
+    // -------------------------------------------------------------------------
+    // Selection logic
+    // -------------------------------------------------------------------------
+    @Override
+    protected void onNext() {
+        if (charUI.isCharacterConfirmed())
+            getGamePanel().showMapSelect(getSelectedPlayer());
+    }
+
+    @Override
+    public boolean validateSelection() {
+        return charUI.isCharacterConfirmed();
+    }
+
+    @Override
+    protected String getPopupKey() {
+        return "characterSelect";
     }
 
     protected Player getSelectedPlayer() {
@@ -114,22 +138,5 @@ public class CharacterSelect extends Selection {
         if (deia.isSelected())
             return new Player(0, 0, PlayerType.DEIA);
         return null;
-    }
-
-    @Override
-    protected void onNext() {
-        if (charUI.isCharacterConfirmed()) {
-            getGamePanel().showMapSelect(getSelectedPlayer());
-        }
-    }
-
-    @Override
-    public boolean validateSelection() {
-        return charUI.isCharacterConfirmed();
-    }
-
-    @Override
-    protected String getPopupKey() {
-        return "characterSelect";
     }
 }
