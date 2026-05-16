@@ -1,9 +1,10 @@
 package main;
 
-import characters.Paopao;
 import core.GamePanel;
 import core.level.GameMap;
 import core.logic.GameState;
+import gameobjects.Player;
+import gameobjects.PlayerType;
 import javax.swing.SwingUtilities;
 
 public class GameTester {
@@ -17,7 +18,7 @@ public class GameTester {
         GamePanel gamePanel = launcher.getGamePanel();
 
         SwingUtilities.invokeLater(() -> {
-            Paopao player = new Paopao(0, 0);
+            Player player = new Player(0, 0, PlayerType.PAOPAO);
             gamePanel.startLevel(player, TEST_MAP, TEST_MAP.getStartLevel());
             gamePanel.setState(GameState.PLAYING);
             launcher.startGame();

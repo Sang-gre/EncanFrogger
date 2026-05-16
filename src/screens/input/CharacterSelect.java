@@ -1,13 +1,9 @@
 package screens.input;
 
 import assets.AssetManager;
-import characters.Adamus;
-import characters.Deia;
-import characters.Flamara;
-import characters.Paopao;
-import characters.Terra;
 import core.GamePanel;
 import gameobjects.Player;
+import gameobjects.PlayerType;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ComponentAdapter;
@@ -22,7 +18,7 @@ import ui.CharacterSelectUI;
 public class CharacterSelect extends Selection {
 
     private JRadioButton paopao, terra, flammara, adamus, deia;
-    private CharacterSelectUI ui;
+    private CharacterSelectUI charUI;
 
     public CharacterSelect(GamePanel gamePanel, Runnable onBack) {
         super(gamePanel, onBack);
@@ -41,8 +37,8 @@ public class CharacterSelect extends Selection {
         for (JRadioButton btn : buttons)
             group.add(btn);
 
-        ui = new CharacterSelectUI(buttons, null);
-        return ui.getPanel();
+        charUI = new CharacterSelectUI(buttons, null);
+        return charUI.getPanel();
     }
 
     private JRadioButton createBtn(int index) {
@@ -59,7 +55,7 @@ public class CharacterSelect extends Selection {
         btn.setHorizontalAlignment(SwingConstants.CENTER);
         btn.setVerticalAlignment(SwingConstants.CENTER);
 
-        btn.addActionListener(e -> ui.setSelectedIndex(index));
+        btn.addActionListener(e -> charUI.setSelectedIndex(index));
 
         return btn;
     }
@@ -89,7 +85,7 @@ public class CharacterSelect extends Selection {
                 int h = background.getHeight();
                 selection.setBounds(0, 0, w, h - 100);
                 nav.setBounds(0, h - 100, w, 100);
-                ui.layoutAll();
+                charUI.layoutAll();
             }
         });
 
@@ -99,7 +95,7 @@ public class CharacterSelect extends Selection {
             if (w > 0 && h > 0) {
                 selection.setBounds(0, 0, w, h - 100);
                 nav.setBounds(0, h - 100, w, 100);
-                ui.layoutAll();
+                charUI.layoutAll();
             }
         });
 
@@ -108,28 +104,28 @@ public class CharacterSelect extends Selection {
 
     protected Player getSelectedPlayer() {
         if (paopao.isSelected())
-            return new Paopao(0, 0);
+            return new Player(0, 0, PlayerType.PAOPAO);
         if (terra.isSelected())
-            return new Terra(0, 0);
+            return new Player(0, 0, PlayerType.TERRA);
         if (flammara.isSelected())
-            return new Flamara(0, 0);
+            return new Player(0, 0, PlayerType.FLAMARA);
         if (adamus.isSelected())
-            return new Adamus(0, 0);
+            return new Player(0, 0, PlayerType.ADAMUS);
         if (deia.isSelected())
-            return new Deia(0, 0);
+            return new Player(0, 0, PlayerType.DEIA);
         return null;
     }
 
     @Override
     protected void onNext() {
-        if (ui.isCharacterConfirmed()) {
+        if (charUI.isCharacterConfirmed()) {
             getGamePanel().showMapSelect(getSelectedPlayer());
         }
     }
 
     @Override
     public boolean validateSelection() {
-        return ui.isCharacterConfirmed();
+        return charUI.isCharacterConfirmed();
     }
 
     @Override

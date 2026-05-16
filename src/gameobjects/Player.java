@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
-public abstract class Player extends GameObject {
+public class Player extends GameObject {
 
     // --- Animation ---
     private BufferedImage[] currentFrames;
@@ -19,7 +19,6 @@ public abstract class Player extends GameObject {
 
     // --- Identity ---
     protected PlayerType type;
-    protected int maxLevels;
 
     // --- Stats ---
     private int lives;
@@ -55,7 +54,7 @@ public abstract class Player extends GameObject {
     }
 
     // -------------------------------------------------------------------------
-    // Core lifecycle
+    // Core
     // -------------------------------------------------------------------------
     @Override
     public void update() {
@@ -71,6 +70,37 @@ public abstract class Player extends GameObject {
         movedThisTick = false;
     }
 
+    @Override
+    public void onCollide(GameObject other) {
+        if (other instanceof Obstacle) {
+            loseLife();
+        } else if (other instanceof Coin) {
+            addCoins(1);
+            other.setActive(false);
+        }
+    }
+
+    @Override
+    public void move() {
+        if (direction == null)
+            return;
+
+        lastDirection = direction;
+        movedThisTick = true;
+
+        switch (direction) {
+            case UP -> y -= stepY;
+            case DOWN -> y += stepY;
+            case LEFT -> x -= stepX;
+            case RIGHT -> x += stepX;
+        }
+
+        direction = null;
+    }
+
+    // -------------------------------------------------------------------------
+    // Rendering
+    // -------------------------------------------------------------------------
     @Override
     public void draw(Graphics g) {
         if (!isActive()) return;
@@ -93,40 +123,6 @@ public abstract class Player extends GameObject {
                 visualWidth, visualHeight, null);
     }
 
-    @Override
-    public void onCollide(GameObject other) {
-        if (other instanceof Obstacle) {
-            loseLife();
-        } else if (other instanceof Coin) {
-            addCoins(1);
-            other.setActive(false);
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Movement
-    // -------------------------------------------------------------------------
-    @Override
-    public void move() {
-        if (direction == null)
-            return;
-
-        lastDirection = direction;
-        movedThisTick = true;
-
-        switch (direction) {
-            case UP -> y -= stepY;
-            case DOWN -> y += stepY;
-            case LEFT -> x -= stepX;
-            case RIGHT -> x += stepX;
-        }
-
-        direction = null;
-    }
-
-    // -------------------------------------------------------------------------
-    // Animation
-    // -------------------------------------------------------------------------
     private void syncAnimation() {
         if (movedThisTick) {
             idleTimer = IDLE_DELAY;
@@ -154,17 +150,17 @@ public abstract class Player extends GameObject {
     }
 
     public void resize(int laneHeight, int columnWidth) {
-        int visualHeight = (int) (laneHeight * 1.4f);
+        visualHeight = (int) (laneHeight * 1.4f);
 
         // get the image to calculate aspect ratio
         BufferedImage[] frames = AssetManager.getInstance().getPlayerAnimation(type, Direction.DOWN);
         if (frames != null && frames.length > 0) {
             BufferedImage img = frames[0];
             float aspectRatio = (float) img.getWidth() / img.getHeight();
-            int visualWidth = (int) (visualHeight * aspectRatio);
+            visualWidth = (int) (visualHeight * aspectRatio);
             setVisualSize(visualWidth, visualHeight);
         } else {
-            setVisualSize(visualHeight, visualHeight); // fallback square
+            setVisualSize(visualHeight, visualHeight);  // fallback square
         }
 
         width = (int) (laneHeight * 0.5f);
@@ -174,7 +170,7 @@ public abstract class Player extends GameObject {
     }
 
     // -------------------------------------------------------------------------
-    // Damage
+    // Lives
     // -------------------------------------------------------------------------
     public void loseLife() {
         if (invincibilityFrames > 0)
@@ -214,10 +210,6 @@ public abstract class Player extends GameObject {
 
     public int getCoins() {
         return coins;
-    }
-
-    public int getMaxLevels() {
-        return maxLevels;
     }
 
     public void addCoins(int amount) {
@@ -260,6 +252,10 @@ public abstract class Player extends GameObject {
 
     public int getVisualHeight() {
         return visualHeight;
+    }
+
+    public PlayerType getType() {
+        return type;
     }
 
     @Override
