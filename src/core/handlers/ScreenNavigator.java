@@ -1,6 +1,5 @@
 package core.handlers;
 
-import assets.SoundManager;
 import core.GamePanel;
 import core.level.GameMap;
 import core.logic.GameState;
@@ -18,16 +17,13 @@ public class ScreenNavigator {
 
     private final GamePanel gamePanel;
     private final GameStateManager stateManager;
-    private final SoundManager sound;
     private final GameLauncher launcher;
 
     public ScreenNavigator(GamePanel gamePanel,
             GameStateManager stateManager,
-            SoundManager sound,
             GameLauncher launcher) {
         this.gamePanel = gamePanel;
         this.stateManager = stateManager;
-        this.sound = sound;
         this.launcher = launcher;
     }
 
