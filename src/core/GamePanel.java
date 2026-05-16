@@ -58,6 +58,8 @@ public class GamePanel extends JPanel {
     // --- Misc state ---
     private String playerInitials;
 
+    private final MouseAdapter mouseAdapter;
+
     public GamePanel(GameLauncher launcher) {
         this.launcher = launcher;
 
@@ -68,12 +70,40 @@ public class GamePanel extends JPanel {
         setFocusable(true);
         addKeyListener(inputHandler);
 
-        addMouseListener(new MouseAdapter() {
+        mouseAdapter = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 handleMouseClick(e);
             }
-        });
+        };
+        addMouseListener(mouseAdapter);
+    }
+
+    public void dispose() {
+        stopThreads();
+        removeKeyListener(inputHandler);
+        removeMouseListener(mouseAdapter);
+
+        if (hud != null) {
+            hud.setVisible(false);
+            hud = null;
+        }
+        if (pauseScreen != null) {
+            pauseScreen.setVisible(false);
+            pauseScreen = null;
+        }
+
+        if (levelManager != null) {
+            levelManager.clear();
+            levelManager = null;
+        }
+
+        logicController = null;
+        player = null;
+        collisionSystem = null;
+        gameOverScreen = null;
+        leaderboardScreen = null;
+        congratsScreen = null;
     }
 
     // -------------------------------------------------------------------------
@@ -105,7 +135,6 @@ public class GamePanel extends JPanel {
         playerInitials = launcher.getPlayerInitials();
 
         levelSetup.startLevel(selectedPlayer, map, level);
-
         logicController = new GameLogicController(
                 this, stateManager, scoreManager, collisionSystem, inputHandler, sound);
     }
@@ -166,7 +195,10 @@ public class GamePanel extends JPanel {
         stateManager.resetGameOverState();
         leaderboardScreen = null;
         gameOverScreen = null;
-        levelManager = null;
+        if (levelManager != null) {
+            levelManager.clear();
+            levelManager = null;
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -174,6 +206,7 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     public void onKeyPressed(KeyEvent e) {
         int key = e.getKeyCode();
+
         GameState state = stateManager.getState();
 
         if (state == GameState.PLAYING && key == KeyEvent.VK_ESCAPE) {

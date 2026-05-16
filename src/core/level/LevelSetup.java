@@ -20,6 +20,8 @@ public class LevelSetup {
     private final assets.SoundManager sound;
     private final GameLauncher launcher;
 
+    private ComponentAdapter resizeListener;
+
     public LevelSetup(GamePanel gamePanel,
             GameStateManager stateManager,
             ScoreManager scoreManager,
@@ -50,6 +52,11 @@ public class LevelSetup {
         sound.stopBGM();
         sound.playBGM("game");
 
+        LevelManager oldLevelManager = gamePanel.getLevelManager();
+        if (oldLevelManager != null) {
+            oldLevelManager.clear();
+        }
+
         LevelManager levelManager = new LevelManager(gamePanel.getWidth(), gamePanel.getHeight());
         levelManager.loadLevel(stateManager.getCurrentLevel(), map);
         gamePanel.setLevelManager(levelManager);
@@ -57,6 +64,8 @@ public class LevelSetup {
 
         spawnPlayer(selectedPlayer, levelManager);
 
+        gamePanel.setHud(null);
+        gamePanel.setPauseScreen(null);
         gamePanel.removeAll();
         gamePanel.revalidate();
         gamePanel.repaint();
@@ -136,7 +145,11 @@ public class LevelSetup {
     }
 
     private void attachResizeListener(Player player) {
-        gamePanel.addComponentListener(new ComponentAdapter() {
+        if (resizeListener != null) {
+            gamePanel.removeComponentListener(resizeListener);
+        }
+
+        resizeListener = new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 LevelManager levelManager = gamePanel.getLevelManager();
@@ -172,9 +185,11 @@ public class LevelSetup {
                 gamePanel.getHud().setBounds(0, 0, gamePanel.getWidth(), hudHeight);
                 gamePanel.getHud().revalidate();
                 gamePanel.getPauseScreen().setBounds(0, 0, gamePanel.getWidth(), gamePanel.getHeight());
-                
+
                 player.resize(levelManager.getLaneHeight(), levelManager.getColumnWidth());
             }
-        });
+        };
+
+        gamePanel.addComponentListener(resizeListener);
     }
 }
