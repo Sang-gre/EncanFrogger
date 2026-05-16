@@ -2,31 +2,33 @@ package threads;
 
 import core.GamePanel;
 
+/*  Runs the game logic update loop at a fixed 60 FPS
+    Calls GamePanel.updateGame() each frame */
 public class GameLogicThread extends Thread {
-
-    private GamePanel panel;
-    private boolean running = true;
 
     private static final int FPS = 60;
     private static final long FRAME_TIME = 1000 / FPS;
+
+    private final GamePanel panel;
+    private volatile boolean running = true;
 
     public GameLogicThread(GamePanel panel) {
         this.panel = panel;
     }
 
+    // -------------------------------------------------------------------------
+    // Thread loop
+    // -------------------------------------------------------------------------
+    @SuppressWarnings("BusyWait")
     @Override
     public void run() {
-
-        long start;
-        long frameTime = 1000 / 60;
-
         while (running) {
-            start = System.currentTimeMillis();
+            long start = System.currentTimeMillis();
 
             panel.updateGame();
 
             long elapsed = System.currentTimeMillis() - start;
-            long sleep = frameTime - elapsed;
+            long sleep = FRAME_TIME - elapsed;
 
             if (sleep > 0) {
                 try {
@@ -38,6 +40,9 @@ public class GameLogicThread extends Thread {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Thread control
+    // -------------------------------------------------------------------------
     public void stopThread() {
         running = false;
     }

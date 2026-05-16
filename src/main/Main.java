@@ -32,6 +32,7 @@ public class Main {
                     @Override
                     protected void done() {
                         splash.dismiss();
+                        @SuppressWarnings("unused")
                         GameLauncher launcher = new GameLauncher();
                     }
                 };
