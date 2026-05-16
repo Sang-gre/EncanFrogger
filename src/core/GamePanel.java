@@ -108,7 +108,6 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Screen navigation (ScreenNavigator)
     // -------------------------------------------------------------------------
-
     public void showMapSelect(Player selectedPlayer) {
         screenNavigator.showMapSelect(selectedPlayer);
     }
@@ -128,18 +127,16 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Level start (LevelSetup)
     // -------------------------------------------------------------------------
-
     public void startLevel(Player selectedPlayer, GameMap map, int level) {
         playerInitials = launcher.getPlayerInitials();
         levelSetup.startLevel(selectedPlayer, map, level);
         logicController = new GameLogicController(
-                this, stateManager, scoreManager, collisionSystem, inputHandler, sound);
+                this, stateManager, scoreManager, collisionSystem, inputHandler);
     }
 
     // -------------------------------------------------------------------------
     // Game loop (GameLogicThread)
     // -------------------------------------------------------------------------
-
     public void updateGame() {
         if (logicController != null)
             logicController.updateGame();
@@ -148,7 +145,6 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Win / lose
     // -------------------------------------------------------------------------
-
     public void showGameOver() {
         stopThreads();
         sound.play("gameover");
@@ -202,7 +198,6 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Key events (InputHandler)
     // -------------------------------------------------------------------------
-
     public void onKeyPressed(KeyEvent e) {
         int key = e.getKeyCode();
         GameState state = stateManager.getState();
@@ -251,7 +246,6 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Mouse routing
     // -------------------------------------------------------------------------
-
     private void handleMouseClick(MouseEvent e) {
         if (congratsScreen != null) {
             leaderboardScreen = new screens.menu.LeaderboardScreen();
@@ -299,7 +293,6 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Rendering
     // -------------------------------------------------------------------------
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -312,7 +305,6 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Thread management
     // -------------------------------------------------------------------------
-
     public void startThreads() {
         logicThread = new GameLogicThread(this);
         renderThread = new RenderThread(this);
@@ -348,7 +340,6 @@ public class GamePanel extends JPanel {
     // -------------------------------------------------------------------------
     // Getters / Setters
     // -------------------------------------------------------------------------
-
     public GameState getState() {
         return stateManager.getState();
     }

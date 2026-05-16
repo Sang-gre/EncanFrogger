@@ -11,29 +11,31 @@ import javax.swing.SwingUtilities;
 /* Owns the per-tick game update logic */
 public class GameLogicController {
 
+    // --- Dependencies ---
     private final GamePanel gamePanel;
     private final GameStateManager stateManager;
     private final ScoreManager scoreManager;
     private final CollisionSystem collisionSystem;
     private final InputHandler inputHandler;
-    private final assets.SoundManager sound;
 
+    // --- Misc state ---
     private int platformDeltaX = 0;
 
     public GameLogicController(GamePanel gamePanel,
             GameStateManager stateManager,
             ScoreManager scoreManager,
             CollisionSystem collisionSystem,
-            InputHandler inputHandler,
-            assets.SoundManager sound) {
+            InputHandler inputHandler) {
         this.gamePanel = gamePanel;
         this.stateManager = stateManager;
         this.scoreManager = scoreManager;
         this.collisionSystem = collisionSystem;
         this.inputHandler = inputHandler;
-        this.sound = sound;
     }
 
+    // -------------------------------------------------------------------------
+    // Game update
+    // -------------------------------------------------------------------------
     public void updateGame() {
         if (stateManager.getState() != GameState.PLAYING)
             return;
@@ -46,117 +48,120 @@ public class GameLogicController {
         inputHandler.handleHeldKeys(player, levelManager, scoreManager, hud);
         boolean playerMoved = player.getX() != prevX;
 
-        if (player != null)
-            player.update();
+        player.update();
         if (levelManager != null)
             levelManager.update();
 
         checkGameConditions(player, levelManager, hud, playerMoved);
     }
 
-    private void checkGameConditions(Player player, LevelManager levelManager, ui.HUDpane hud, boolean playerMoved) {
-        if (player == null || levelManager == null)
+    // -------------------------------------------------------------------------
+    // Game conditions
+    // -------------------------------------------------------------------------
+    private void checkGameConditions(Player player, LevelManager lm, ui.HUDpane hud, boolean playerMoved) {
+        if (player == null || lm == null)
             return;
 
         int livesBefore = player.getLives();
-        int coinsBefore = collisionSystem.getCoinsCollected();
+        int coinsBefore = CollisionSystem.getCoinsCollected();
 
-        collisionSystem.checkAll(player,
-                levelManager.getObstacles(),
-                levelManager.getPlatforms(),
-                levelManager.getCoins());
+        collisionSystem.checkAll(player, lm.getObstacles(), lm.getPlatforms(), lm.getCoins());
 
-        if (playerMoved) {
-            collisionSystem.checkCoinsAlongPath(player, levelManager.getCoins());
-        }
+        if (playerMoved)
+            collisionSystem.checkCoinsAlongPath(player, lm.getCoins());
 
         // Coin collection
-        int coinsAfter = collisionSystem.getCoinsCollected();
+        int coinsAfter = CollisionSystem.getCoinsCollected();
         if (coinsAfter > coinsBefore) {
-            for (int i = 0; i < (coinsAfter - coinsBefore); i++) {
+            for (int i = 0; i < (coinsAfter - coinsBefore); i++)
                 scoreManager.onCoinCollected();
-            }
             hud.updateScore(scoreManager.getScore());
         }
 
-        // Player hit
+        // Player hit by obstacle
         if (player.getLives() < livesBefore) {
             hud.updateLives(player.getLives());
             scoreManager.onPlayerDied();
-            resetPlayerPosition(player, levelManager);
+            resetPlayerPosition(player, lm);
         }
 
         // Platform riding
-        boolean onPlatform = false;
-        platformDeltaX = 0;
+        checkPlatformRiding(player, lm);
 
-        for (Platform p : levelManager.getPlatforms()) {
-            if (p.isActive() && p.isPlayerOn(player)) {
-                onPlatform = true;
-                platformDeltaX = p.getDeltaX();
-                break;
-            }
-        }
-
-        if (onPlatform) {
-            player.setOnPlatform(true);
-            player.setX(player.getX() + platformDeltaX);
-        } else {
-            player.setOnPlatform(false);
-        }
-
-        // Water lane death
-        int playerLane = levelManager.getLaneIndex(player.getY());
-
-        if (levelManager.isPlatformLane(playerLane) && !onPlatform) {
+        // Fell into water without a platform
+        int playerLane = lm.getLaneIndex(player.getY());
+        if (lm.isPlatformLane(playerLane) && !player.isOnPlatform()) {
             player.loseLife();
             hud.updateLives(player.getLives());
             scoreManager.onPlayerDied();
-            resetPlayerPosition(player, levelManager);
+            resetPlayerPosition(player, lm);
         }
 
-        // Reached top — win
+        // Reached top — level complete
         if (!stateManager.isLevelTransitioning() && playerLane == 0) {
-            stateManager.setLevelTransitioning(true);
-            player.setActive(false);
-            scoreManager.onReachedTop(stateManager.getCurrentLevel());
-            hud.updateScore(scoreManager.getScore());
-            stateManager.incrementLevel();
-
-            int runScore = scoreManager.getTotalScore();
-            gamePanel.stopThreads();
-            SwingUtilities.invokeLater(() -> gamePanel.showFinalVictory(runScore));
+            handleLevelComplete(player, hud);
             return;
         }
 
-        // Fell off screen while on log
+        // Fell off screen while riding a platform
         if (player.getX() + player.getWidth() < 0 || player.getX() > gamePanel.getWidth()) {
             player.loseLife();
             hud.updateLives(player.getLives());
             scoreManager.onPlayerDied();
-            resetPlayerPosition(player, levelManager);
+            resetPlayerPosition(player, lm);
         }
 
         // Game over
-        if (!player.isAlive()) {
+        if (!player.isAlive())
             SwingUtilities.invokeLater(gamePanel::showGameOver);
-        }
     }
 
-    private void resetPlayerPosition(Player player, LevelManager levelManager) {
-        player.setActive(true);
-        int col = levelManager.getColumnCount() / 2;
-        int lane = levelManager.getLaneCount() - 1;
+    // -------------------------------------------------------------------------
+    // Condition helpers
+    // -------------------------------------------------------------------------
+    private void checkPlatformRiding(Player player, LevelManager lm) {
+        platformDeltaX = 0;
 
-        int centeredX = levelManager.getColumnX()[col]
-                + (levelManager.getColumnWidth() - player.getWidth()) / 2;
-        int centeredY = levelManager.getLaneY()[lane]
-                + (levelManager.getLaneHeight() - player.getHeight()) / 2;
+        for (Platform p : lm.getPlatforms()) {
+            if (p.isActive() && p.isPlayerOn(player)) {
+                player.setOnPlatform(true);
+                platformDeltaX = p.getDeltaX();
+                player.setX(player.getX() + platformDeltaX);
+                return;
+            }
+        }
+
+        player.setOnPlatform(false);
+    }
+
+    private void handleLevelComplete(Player player, ui.HUDpane hud) {
+        stateManager.setLevelTransitioning(true);
+        player.setActive(false);
+        scoreManager.onReachedTop(stateManager.getCurrentLevel());
+        hud.updateScore(scoreManager.getScore());
+        stateManager.incrementLevel();
+
+        int runScore = scoreManager.getTotalScore();
+        gamePanel.stopThreads();
+        SwingUtilities.invokeLater(() -> gamePanel.showFinalVictory(runScore));
+    }
+
+    private void resetPlayerPosition(Player player, LevelManager lm) {
+        player.setActive(true);
+
+        int col = lm.getColumnCount() / 2;
+        int lane = lm.getLaneCount() - 1;
+
+        int centeredX = lm.getColumnX()[col] + (lm.getColumnWidth() - player.getWidth()) / 2;
+        int centeredY = lm.getLaneY()[lane] + (lm.getLaneHeight() - player.getHeight()) / 2;
 
         player.setPosition(centeredX, centeredY);
         stateManager.setLevelTransitioning(false);
     }
 
+    // -------------------------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------------------------
     public int getPlatformDeltaX() {
         return platformDeltaX;
     }

@@ -4,35 +4,43 @@ import core.level.GameMap;
 
 public class GameStateManager {
 
+    // --- State ---
     private GameState state;
+    private GameMap currentMap;
     private int currentLevel = 1;
     private int selectedLevel = 1;
     private boolean levelTransitioning = false;
     private boolean freshStart = true;
     private boolean playerIsAlive = true;
     private boolean showingLeaderboard = false;
-    private GameMap currentMap;
+
+    // -------------------------------------------------------------------------
+    // Constructor
+    // -------------------------------------------------------------------------
 
     public GameStateManager() {
         this.state = GameState.CHARACTER_SELECT;
     }
 
+    // -------------------------------------------------------------------------
+    // Reset
+    // -------------------------------------------------------------------------
     public void resetForNewRun() {
+        state = GameState.CHARACTER_SELECT;
         currentLevel = 1;
         playerIsAlive = true;
         freshStart = true;
         levelTransitioning = false;
         showingLeaderboard = false;
-        state = GameState.CHARACTER_SELECT;
     }
 
     public void resetGameOverState() {
-        showingLeaderboard = false;
         state = GameState.CHARACTER_SELECT;
+        showingLeaderboard = false;
     }
-    
+
     // -------------------------------------------------------------------------
-    // Getters & Setters
+    // Getters / Setters
     // -------------------------------------------------------------------------
     public GameState getState() {
         return state;
@@ -40,6 +48,14 @@ public class GameStateManager {
 
     public void setState(GameState state) {
         this.state = state;
+    }
+
+    public GameMap getCurrentMap() {
+        return currentMap;
+    }
+
+    public void setCurrentMap(GameMap currentMap) {
+        this.currentMap = currentMap;
     }
 
     public int getCurrentLevel() {
@@ -66,39 +82,31 @@ public class GameStateManager {
         return levelTransitioning;
     }
 
-    public void setLevelTransitioning(boolean levelTransitioning) {
-        this.levelTransitioning = levelTransitioning;
+    public void setLevelTransitioning(boolean v) {
+        this.levelTransitioning = v;
     }
 
     public boolean isFreshStart() {
         return freshStart;
     }
 
-    public void setFreshStart(boolean freshStart) {
-        this.freshStart = freshStart;
+    public void setFreshStart(boolean v) {
+        this.freshStart = v;
     }
 
     public boolean isPlayerAlive() {
         return playerIsAlive;
     }
 
-    public void setPlayerAlive(boolean playerIsAlive) {
-        this.playerIsAlive = playerIsAlive;
+    public void setPlayerAlive(boolean v) {
+        this.playerIsAlive = v;
     }
 
     public boolean isShowingLeaderboard() {
         return showingLeaderboard;
     }
 
-    public void setShowingLeaderboard(boolean showingLeaderboard) {
-        this.showingLeaderboard = showingLeaderboard;
-    }
-
-    public GameMap getCurrentMap() {
-        return currentMap;
-    }
-
-    public void setCurrentMap(GameMap currentMap) {
-        this.currentMap = currentMap;
+    public void setShowingLeaderboard(boolean v) {
+        this.showingLeaderboard = v;
     }
 }
