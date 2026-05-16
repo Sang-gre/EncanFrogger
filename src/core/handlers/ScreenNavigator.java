@@ -1,43 +1,36 @@
 package core.handlers;
 
 import core.GamePanel;
-import core.level.GameMap;
 import core.logic.GameState;
 import core.logic.GameStateManager;
 import gameobjects.Player;
 import java.awt.BorderLayout;
-import javax.swing.SwingUtilities;
+import java.awt.event.ComponentListener;
+import main.GameLauncher;
 import screens.input.CharacterSelect;
 import screens.input.MapSelect;
+import screens.menu.LeaderboardScreen;
 
-/* Handles all screen transitions */
+/* Manages transitions between game screens (character select, map select, leaderboard) */
 public class ScreenNavigator {
 
     private final GamePanel gamePanel;
     private final GameStateManager stateManager;
-    private final assets.SoundManager sound;
-    private final main.GameLauncher launcher;
+    private final GameLauncher launcher;
 
     public ScreenNavigator(GamePanel gamePanel,
-                           GameStateManager stateManager,
-                           assets.SoundManager sound,
-                           main.GameLauncher launcher) {
+            GameStateManager stateManager,
+            GameLauncher launcher) {
         this.gamePanel = gamePanel;
         this.stateManager = stateManager;
-        this.sound = sound;
         this.launcher = launcher;
     }
 
+    // -------------------------------------------------------------------------
+    // Screen transitions
+    // -------------------------------------------------------------------------
     public void showMapSelect(Player selectedPlayer) {
-        showMapSelect(selectedPlayer,
-                stateManager.getCurrentMap() != null
-                        ? stateManager.getCurrentMap()
-                        : GameMap.LIREO);
-    }
-
-    public void showMapSelect(Player selectedPlayer, GameMap map) {
         stateManager.setState(GameState.MAP_SELECT);
-        stateManager.setCurrentMap(map);
 
         gamePanel.removeAll();
         gamePanel.setLayout(new BorderLayout());
@@ -53,7 +46,6 @@ public class ScreenNavigator {
         removePanelComponentListeners();
 
         stateManager.setState(GameState.CHARACTER_SELECT);
-        stateManager.setFreshStart(true);
 
         gamePanel.removeAll();
         gamePanel.setLayout(new BorderLayout());
@@ -64,35 +56,20 @@ public class ScreenNavigator {
         gamePanel.repaint();
     }
 
-    public void showCharacterSelectNextLevel() {
-        gamePanel.stopThreads();
-        sound.stopBGM();
-        sound.playBGM("menu");
-        removePanelComponentListeners();
-
-        stateManager.setState(GameState.CHARACTER_SELECT);
-        stateManager.setFreshStart(false);
-
-        gamePanel.removeAll();
-        gamePanel.setLayout(new BorderLayout());
-        gamePanel.add(
-                new CharacterSelect(gamePanel, () -> launcher.showMainMenu()),
-                BorderLayout.CENTER);
-        gamePanel.revalidate();
-        gamePanel.repaint();
-    }
-    
     public void showLeaderboard() {
         stateManager.setShowingLeaderboard(true);
-        SwingUtilities.invokeLater(() -> {
-            gamePanel.setLeaderboardScreen(new screens.menu.LeaderboardScreen());
-            gamePanel.requestFocusInWindow();
-            gamePanel.repaint();
-        });
+        gamePanel.setLeaderboardScreen(new LeaderboardScreen());
+        gamePanel.requestFocusInWindow();
+        gamePanel.repaint();
     }
 
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+
+    // Removes all component listeners from the game panel
     private void removePanelComponentListeners() {
-        for (java.awt.event.ComponentListener cl : gamePanel.getComponentListeners()) {
+        for (ComponentListener cl : gamePanel.getComponentListeners()) {
             gamePanel.removeComponentListener(cl);
         }
     }

@@ -64,7 +64,7 @@ public class GamePanel extends JPanel {
         this.launcher = launcher;
 
         inputHandler = new InputHandler(this, sound);
-        screenNavigator = new ScreenNavigator(this, stateManager, sound, launcher);
+        screenNavigator = new ScreenNavigator(this, stateManager, launcher);
         levelSetup = new LevelSetup(this, stateManager, scoreManager, sound, launcher);
 
         setFocusable(true);
@@ -113,17 +113,9 @@ public class GamePanel extends JPanel {
         screenNavigator.showMapSelect(selectedPlayer);
     }
 
-    public void showMapSelect(Player selectedPlayer, GameMap map) {
-        screenNavigator.showMapSelect(selectedPlayer, map);
-    }
-
     public void showCharacterSelect() {
         scoreManager.reset();
         screenNavigator.showCharacterSelect();
-    }
-
-    public void showCharacterSelectNextLevel() {
-        screenNavigator.showCharacterSelectNextLevel();
     }
 
     // -------------------------------------------------------------------------
@@ -189,6 +181,7 @@ public class GamePanel extends JPanel {
 
     public void resetGameOverState() {
         stateManager.resetGameOverState();
+        CollisionSystem.resetCoins();
         leaderboardScreen = null;
         gameOverScreen = null;
         if (levelManager != null) {

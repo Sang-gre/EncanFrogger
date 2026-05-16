@@ -5,8 +5,12 @@ import core.logic.GameState;
 import core.logic.GameStateManager;
 import gameobjects.Player;
 import java.awt.Graphics;
+import screens.gameplay.CongratsScreen;
+import screens.gameplay.GameOverScreen;
+import screens.gameplay.PauseScreen;
+import screens.menu.LeaderboardScreen;
 
-/* Handles rendering */
+/*  Renders the game world and UI overlays each frame */
 public class GameRenderer {
 
     private final GameStateManager stateManager;
@@ -15,38 +19,41 @@ public class GameRenderer {
         this.stateManager = stateManager;
     }
 
-    public void render(Graphics g,
-                       int width,
-                       int height,
-                       LevelManager levelManager,
-                       Player player,
-                       screens.gameplay.GameOverScreen gameOverScreen,
-                       screens.menu.LeaderboardScreen leaderboardScreen,
-                       screens.gameplay.PauseScreen pauseScreen,
-                       screens.gameplay.CongratsScreen congratsScreen) {
+    // -------------------------------------------------------------------------
+    // Rendering
+    // -------------------------------------------------------------------------
 
+    // Overlay is only drawn when its game state is active
+    public void render(Graphics g, int width, int height,
+            LevelManager levelManager, Player player,
+            GameOverScreen gameOverScreen, LeaderboardScreen leaderboardScreen,
+            PauseScreen pauseScreen, CongratsScreen congratsScreen) {
+
+        // Draw game world
         if (levelManager != null)
             levelManager.draw(g, width, height);
 
+        // Draw player
         if (player != null)
             player.draw(g);
 
+        // Draw pause overlay
+        if (stateManager.getState() == GameState.PAUSED && pauseScreen != null)
+            pauseScreen.draw(g, width, height);
+
+        // Draw congrats screen on win
+        if (congratsScreen != null)
+            congratsScreen.draw(g, width, height);
+
+        // Draw game over screen (only when no leaderboard)
         if (stateManager.getState() == GameState.GAME_OVER
                 && gameOverScreen != null
                 && !stateManager.isShowingLeaderboard()) {
             gameOverScreen.draw(g, width, height);
         }
 
-        if (stateManager.isShowingLeaderboard() && leaderboardScreen != null) {
+        // Draw leaderboard (after game over or win)
+        if (stateManager.isShowingLeaderboard() && leaderboardScreen != null)
             leaderboardScreen.draw(g, width, height);
-        }
-
-        if (stateManager.getState() == GameState.PAUSED && pauseScreen != null) {
-            pauseScreen.draw(g, width, height);
-        }
-
-        if (congratsScreen != null) {
-            congratsScreen.draw(g, width, height);
-        }
     }
 }
