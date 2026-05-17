@@ -22,10 +22,17 @@ import javax.swing.JPanel;
 import screens.menu.LeaderboardScreen;
 import ui.PopupDialog;
 
+/* Panel where the player types their initials before a run */
 public class InitialsPanel extends JPanel {
 
+    // --- Config ---
     private static final int MAX_INITIALS = 10;
+    private static final float MIN_FONT_SIZE = 10f;
+    private static final int BUTTON_PRESS_OFFSET = 4;
+    private static final Color TEXT_COLOR = new Color(151, 59, 53);
+    private static final Color FALLBACK_BG = new Color(20, 10, 40);
 
+    // --- Layout ---
     private static final double TEXT_Y = 0.63;
     private static final double TEXT_SIZE = 0.08;
     private static final double TEXT_MAX_W = 0.35;
@@ -34,9 +41,11 @@ public class InitialsPanel extends JPanel {
     private static final double LB_W = 0.20;
     private static final double LB_Y = 0.82;
 
+    // --- Callbacks ---
     private final Runnable onBack;
     private final Consumer<String> onDone;
 
+    // --- State ---
     private final StringBuilder initials = new StringBuilder();
 
     private final Image bgImage;
@@ -71,10 +80,10 @@ public class InitialsPanel extends JPanel {
         });
 
         AssetManager am = AssetManager.getInstance();
-        bgImage = am.getBackground("initials");
-        okImage = am.getButton("ok2");
+        bgImage        = am.getBackground("initials");
+        okImage        = am.getButton("ok2");
         leaderboardImage = am.getButton("leaderboardBtn");
-        popupImage = am.getPopup("initialsInput");
+        popupImage     = am.getPopup("initialsInput");
         usedPopupImage = am.getPopup("initialsTaken");
 
         okBtn = createImageButton(okImage);
@@ -102,26 +111,28 @@ public class InitialsPanel extends JPanel {
         });
     }
 
+    // -------------------------------------------------------------------------
+    // Layout
+    // -------------------------------------------------------------------------
     private void layoutButtons() {
         int w = getWidth(), h = getHeight();
 
         if (okImage != null) {
             int okW = (int) (w * OK_W);
             int okH = (int) (okW * okImage.getHeight(null) / (double) okImage.getWidth(null));
-            int okX = (w - okW) / 2;
-            int okY = (int) (h * OK_Y);
-            okBtn.setBounds(okX, okY, okW, okH);
+            okBtn.setBounds((w - okW) / 2, (int) (h * OK_Y), okW, okH);
         }
 
         if (leaderboardImage != null) {
             int lbW = (int) (w * LB_W);
             int lbH = (int) (lbW * leaderboardImage.getHeight(null) / (double) leaderboardImage.getWidth(null));
-            int lbX = (w - lbW) / 2;
-            int lbY = (int) (h * LB_Y);
-            leaderboardBtn.setBounds(lbX, lbY, lbW, lbH);
+            leaderboardBtn.setBounds((w - lbW) / 2, (int) (h * LB_Y), lbW, lbH);
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Leaderboard overlay
+    // -------------------------------------------------------------------------
     private void showLeaderboardOverlay() {
         leaderboardOverlay = new LeaderboardScreen(false);
         okBtn.setVisible(false);
@@ -137,8 +148,10 @@ public class InitialsPanel extends JPanel {
     }
 
     // -------------------------------------------------------------------------
-    // INITIALIZATION
+    // Button factory
     // -------------------------------------------------------------------------
+
+    // Builds a borderless image button with a press-down animation on click
     private JButton createImageButton(Image img) {
         JButton button = new JButton() {
             @Override
@@ -154,9 +167,10 @@ public class InitialsPanel extends JPanel {
                 g2.dispose();
             }
         };
-        if (img == null) {
+
+        if (img == null)
             button.setText("?");
-        }
+
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.setFocusPainted(false);
@@ -169,12 +183,12 @@ public class InitialsPanel extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                button.setLocation(button.getX(), button.getY() + 4);
+                button.setLocation(button.getX(), button.getY() + BUTTON_PRESS_OFFSET);
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                button.setLocation(button.getX(), button.getY() - 4);
+                button.setLocation(button.getX(), button.getY() - BUTTON_PRESS_OFFSET);
             }
 
             @Override
@@ -182,87 +196,84 @@ public class InitialsPanel extends JPanel {
                 button.setLocation(button.getX(), button.getY());
             }
         });
+
         return button;
     }
 
     // -------------------------------------------------------------------------
-    // KEYBOARD
+    // Keyboard
     // -------------------------------------------------------------------------
     private void handleKeyPressed(KeyEvent e) {
+        if (leaderboardOverlay != null) {
+            handleLeaderboardKey(e);
+        } else {
+            handleNormalKey(e);
+        }
+    }
+
+    private void handleLeaderboardKey(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP     -> { leaderboardOverlay.scroll(-1); repaint(); }
+            case KeyEvent.VK_DOWN   -> { leaderboardOverlay.scroll(1);  repaint(); }
+            case KeyEvent.VK_ESCAPE -> hideLeaderboardOverlay();
+        }
+    }
+
+    private void handleNormalKey(KeyEvent e) {
         int code = e.getKeyCode();
-        char ch = e.getKeyChar();
+        char ch  = e.getKeyChar();
 
-        if (leaderboardOverlay != null) {
-            switch (code) {
-                case KeyEvent.VK_UP -> {
-                    leaderboardOverlay.scroll(-1);
+        switch (code) {
+            case KeyEvent.VK_ESCAPE -> { reset(); onBack.run(); }
+            case KeyEvent.VK_BACK_SPACE -> {
+                if (initials.length() > 0)
+                    initials.deleteCharAt(initials.length() - 1);
+                repaint();
+            }
+            case KeyEvent.VK_ENTER -> tryConfirm();
+            default -> {
+                if (Character.isLetter(ch) && initials.length() < MAX_INITIALS) {
+                    initials.append(Character.toUpperCase(ch));
                     repaint();
-                }
-                case KeyEvent.VK_DOWN -> {
-                    leaderboardOverlay.scroll(1);
-                    repaint();
-                }
-                case KeyEvent.VK_ESCAPE -> hideLeaderboardOverlay();
-                default -> {
                 }
             }
-            return;
-        }
-
-        if (code == KeyEvent.VK_ESCAPE) {
-            reset();
-            onBack.run();
-            return;
-        }
-
-        if (code == KeyEvent.VK_BACK_SPACE) {
-            if (initials.length() > 0)
-                initials.deleteCharAt(initials.length() - 1);
-            repaint();
-            return;
-        }
-
-        if (code == KeyEvent.VK_ENTER) {
-            tryConfirm();
-            return;
-        }
-
-        if (Character.isLetter(ch) && initials.length() < MAX_INITIALS) {
-            initials.append(Character.toUpperCase(ch));
-            repaint();
         }
     }
 
     // -------------------------------------------------------------------------
-    // MOUSE
+    // Mouse
     // -------------------------------------------------------------------------
+
+    // Closes the leaderboard overlay
     private void handleMouseClick(MouseEvent e) {
-        if (leaderboardOverlay != null) {
-            if (leaderboardOverlay.isBackClicked(e.getPoint())) {
-                SoundManager.getInstance().play("click");
-                hideLeaderboardOverlay();
-            }
+        if (leaderboardOverlay != null && leaderboardOverlay.isBackClicked(e.getPoint())) {
+            SoundManager.getInstance().play("click");
+            hideLeaderboardOverlay();
         }
     }
 
     // -------------------------------------------------------------------------
-    // HELPERS
+    // Helpers
     // -------------------------------------------------------------------------
+
+    // Validates input
     private void tryConfirm() {
         if (initials.length() == 0) {
             showPopup();
             return;
         }
-        String r = initials.toString();
+        String result = initials.toString();
         reset();
-        onDone.accept(r);
+        onDone.accept(result);
     }
 
+    // Popup to input initials
     private void showPopup() {
         PopupDialog.show(this, popupImage);
         requestFocusInWindow();
     }
 
+    // Popup to use other initials
     public void showDeadPopup() {
         PopupDialog.show(this, usedPopupImage);
         requestFocusInWindow();
@@ -280,7 +291,7 @@ public class InitialsPanel extends JPanel {
     }
 
     // -------------------------------------------------------------------------
-    // RENDERING
+    // Rendering
     // -------------------------------------------------------------------------
     @Override
     protected void paintComponent(Graphics g) {
@@ -293,19 +304,18 @@ public class InitialsPanel extends JPanel {
         if (bgImage != null)
             g2.drawImage(bgImage, 0, 0, w, h, null);
         else {
-            g2.setColor(new Color(20, 10, 40));
+            g2.setColor(FALLBACK_BG);
             g2.fillRect(0, 0, w, h);
         }
 
         drawInitials(g2, w, h);
 
-        if (leaderboardOverlay != null) {
+        if (leaderboardOverlay != null)
             leaderboardOverlay.draw(g2, w, h);
-        }
 
         g2.dispose();
     }
-
+    
     private void drawInitials(Graphics2D g2, int w, int h) {
         if (initials.length() == 0)
             return;
@@ -318,7 +328,9 @@ public class InitialsPanel extends JPanel {
 
         int maxW = (int) (w * TEXT_MAX_W);
         FontMetrics fm = g2.getFontMetrics(font);
-        while (fm.stringWidth(initials.toString()) > maxW && font.getSize2D() > 10) {
+
+        // Shrink font until the text fits within the max width
+        while (fm.stringWidth(initials.toString()) > maxW && font.getSize2D() > MIN_FONT_SIZE) {
             font = font.deriveFont(font.getSize2D() - 1f);
             fm = g2.getFontMetrics(font);
         }
@@ -328,7 +340,7 @@ public class InitialsPanel extends JPanel {
         int textX = (w - fm.stringWidth(text)) / 2;
         int textY = (int) (h * TEXT_Y);
 
-        g2.setColor(new Color(151, 59, 53));
+        g2.setColor(TEXT_COLOR);
         g2.drawString(text, textX, textY);
     }
 }

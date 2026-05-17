@@ -28,6 +28,21 @@ import ui.PopupDialog;
 
 public abstract class Selection extends JPanel {
 
+    // Base dimensions
+    private static final int BASE_WIDTH = 800;
+    private static final int BASE_HEIGHT = 600;
+    private static final int BASE_NAV_H = 100;
+
+    // Element proportions and width ratios
+    private static final double BTN_W_RATIO = 120.0 / BASE_WIDTH;
+    private static final double BTN_ASPECT = 60.0 / 140.0; // h/w
+    private static final double COIN_W_RATIO = 100.0 / BASE_WIDTH;
+    private static final double COIN_ASPECT = 60.0 / 120.0;
+    private static final double LVL_W_RATIO = 135.0 / BASE_WIDTH;
+    private static final double LVL_ASPECT = 60.0 / 160.0;
+
+    private static final int BORDER_MARGIN = 4;
+
     private final GamePanel gamePanel;
     protected final Runnable onBack;
     private final SoundManager sound = SoundManager.getInstance();
@@ -35,16 +50,33 @@ public abstract class Selection extends JPanel {
     protected JLabel coinLabel;
     protected JLabel levelLabel;
 
+    // Raw images
+    private final Image coinImgRaw;
+    private final Image levelImgRaw;
+    private final Image backImgRaw;
+    private final Image nextImgRaw;
+
     public Selection(GamePanel gamePanel, Runnable onBack) {
         this.gamePanel = gamePanel;
         this.onBack = onBack;
 
-        setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(800, 600));
+        AssetManager am = AssetManager.getInstance();
+        coinImgRaw = am.getTracker("coinTrack");
+        levelImgRaw = am.getTracker("levelTrack");
+        backImgRaw = am.getButton("back");
+        nextImgRaw = am.getButton("next");
 
+        setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(BASE_WIDTH, BASE_HEIGHT));
+    }
+
+    protected final void init() {
         add(createBackground(), BorderLayout.CENTER);
     }
 
+    // -------------------------------------------------------------------------
+    // Background panel
+    // -------------------------------------------------------------------------
     public JPanel createBackground() {
         JPanel background = new JPanel(new BorderLayout()) {
             private final Image img = AssetManager.getInstance().getBackground("characterSelect");
@@ -52,7 +84,8 @@ public abstract class Selection extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
+                if (img != null)
+                    g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
             }
         };
 
@@ -63,27 +96,37 @@ public abstract class Selection extends JPanel {
         return background;
     }
 
+    // -------------------------------------------------------------------------
+    // Nav-button panel
+    // -------------------------------------------------------------------------
     protected JPanel createNavButtons() {
-        JPanel panel = new JPanel(null);
+        JPanel panel = new JPanel(null) {
+            @Override
+            public Dimension getPreferredSize() {
+                int parentH = Selection.this.getHeight();
+                int h = parentH > 0
+                        ? (int) (parentH * (BASE_NAV_H / (double) BASE_HEIGHT))
+                        : BASE_NAV_H;
+                return new Dimension(BASE_WIDTH, h);
+            }
+        };
         panel.setOpaque(false);
-        panel.setPreferredSize(new Dimension(800, 100));
 
-        int btnWidth = 140;
-        int btnHeight = 60;
-        int margin = 20;
-
-        JButton backBtn = null;
-
+        // ---- Back button ----
+        final JButton backBtn;
         if (onBack != null) {
-            backBtn = createImageButton(AssetManager.getInstance().getButton("back"), btnWidth, btnHeight);
+            backBtn = makeNavButton();
             backBtn.addActionListener(e -> {
                 onBack.run();
                 sound.play("click");
             });
             panel.add(backBtn);
+        } else {
+            backBtn = null;
         }
 
-        final JButton nextBtn = createImageButton(AssetManager.getInstance().getButton("next"), btnWidth, btnHeight);
+        // ---- Next button ----
+        final JButton nextBtn = makeNavButton();
         nextBtn.addActionListener((ActionEvent e) -> {
             if (!validateSelection()) {
                 showPopupDialog();
@@ -92,43 +135,20 @@ public abstract class Selection extends JPanel {
             sound.play("click");
             onNext();
         });
-
         panel.add(nextBtn);
 
-        JButton finalBackBtn = backBtn;
-
-        // LABEL
-
+        // ---- Tracker labels ----
         AssetManager am = AssetManager.getInstance();
-
-        Image coinImg = am.getTracker("coinTrack");
-        Image levelImg = am.getTracker("levelTrack");
-
-        Image scaledCoin = coinImg.getScaledInstance(120, 60, Image.SCALE_SMOOTH);
-        Image scaledLevel = levelImg.getScaledInstance(160, 60, Image.SCALE_SMOOTH);
-
-        coinLabel = new JLabel(new ImageIcon(scaledCoin));
-        levelLabel = new JLabel(new ImageIcon(scaledLevel));
-
-        Font font = am.getFont("proffaliceHandwrite");
-        if (font == null)
-            font = new Font("Serif", Font.BOLD, 20);
-        font = font.deriveFont(18f);
-
-        coinLabel.setFont(font);
-        coinLabel.setForeground(new Color(246, 242, 195));
-        coinLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        coinLabel.setVerticalAlignment(SwingConstants.CENTER);
-        coinLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-        coinLabel.setVerticalTextPosition(SwingConstants.CENTER);
+        coinLabel = new JLabel();
+        levelLabel = new JLabel();
+        configureLabelStyle(coinLabel, am);
+        configureLabelStyle(levelLabel, am);
 
         List<ScoreEntry> entries = LeaderboardManager.loadAll();
         String currentInitials = gamePanel.getPlayerInitials();
-
         ScoreEntry match = entries.stream()
                 .filter(e -> e.initials.equalsIgnoreCase(currentInitials))
-                .findFirst()
-                .orElse(null);
+                .findFirst().orElse(null);
 
         if (match != null) {
             levelLabel.setText("LEVEL " + match.level);
@@ -138,44 +158,104 @@ public abstract class Selection extends JPanel {
             coinLabel.setText("0");
         }
 
-        levelLabel.setFont(font);
-        levelLabel.setForeground(new Color(246, 242, 195));
-        levelLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        levelLabel.setVerticalAlignment(SwingConstants.CENTER);
-        levelLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-        levelLabel.setVerticalTextPosition(SwingConstants.CENTER);
-        
         panel.add(coinLabel);
         panel.add(levelLabel);
 
+        // ---- Resize listener ----
         panel.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                int w = panel.getWidth();
-                int h = panel.getHeight();
+                relayout(panel, backBtn, nextBtn);
+            }
 
-                if (finalBackBtn != null) {
-                    finalBackBtn.setBounds(margin, h - btnHeight, btnWidth, btnHeight);
-                }
-
-                nextBtn.setBounds(w - btnWidth - margin, h - btnHeight, btnWidth, btnHeight);
-
-                coinLabel.setBounds((w / 2) - 140, h - btnHeight, 120, 60);
-                levelLabel.setBounds((w / 2) + 20, h - btnHeight, 160, 60);
+            @Override
+            public void componentShown(ComponentEvent e) {
+                relayout(panel, backBtn, nextBtn);
             }
         });
 
         return panel;
     }
 
-    protected abstract void onNext();
+    // -------------------------------------------------------------------------
+    // Resizing
+    // -------------------------------------------------------------------------
+    private void relayout(JPanel panel, JButton backBtn, JButton nextBtn) {
+        int w = panel.getWidth();
+        int h = panel.getHeight();
+        if (w <= 0 || h <= 0)
+            return;
 
-    public JButton createImageButton(Image img, int width, int height) {
-        if (img == null)
-            return new JButton("?");
-        Image scaled = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        // Scale with panel but cap at original design sizes
+        int btnW = (int) (w * BTN_W_RATIO);
+        int btnH = (int) (btnW * BTN_ASPECT);
+        int coinW = (int) (w * COIN_W_RATIO);
+        int coinH = (int) (coinW * COIN_ASPECT);
+        int lvlW = (int) (w * LVL_W_RATIO);
+        int lvlH = (int) (lvlW * LVL_ASPECT);
 
-        JButton button = new JButton(new ImageIcon(scaled));
+        int bottomPad = (int) (h * 0.05);
+        int btnY = h - btnH - bottomPad;
+
+        // Buttons
+        if (backBtn != null) {
+            rescaleButton(backBtn, backImgRaw, btnW, btnH);
+            backBtn.setBounds(BORDER_MARGIN, btnY, btnW, btnH);
+        }
+        rescaleButton(nextBtn, nextImgRaw, btnW, btnH);
+        nextBtn.setBounds(w - btnW - BORDER_MARGIN, btnY, btnW, btnH);
+
+        // Tracker labels aligned with buttons
+        int trackerY = btnY + (btnH - Math.max(coinH, lvlH)) / 2;
+        int gap = 8;
+        int totalTracker = coinW + gap + lvlW;
+        int startX = (w - totalTracker) / 2;
+
+        coinLabel.setBounds(startX, trackerY, coinW, coinH);
+        levelLabel.setBounds(startX + coinW + gap, trackerY, lvlW, lvlH);
+
+        rescaleLabel(coinLabel, coinImgRaw, coinW, coinH);
+        rescaleLabel(levelLabel, levelImgRaw, lvlW, lvlH);
+
+        // Scale font
+        float fontSize = Math.max(8f, coinH * 0.28f);
+        Font scaled = coinLabel.getFont().deriveFont(fontSize);
+        coinLabel.setFont(scaled);
+        levelLabel.setFont(scaled);
+
+        panel.revalidate();
+        panel.repaint();
+    }
+
+    /* Rescales a button's icon based on raw image */
+    private void rescaleButton(JButton btn, Image raw, int w, int h) {
+        if (raw == null || w <= 0 || h <= 0)
+            return;
+        btn.setIcon(new ImageIcon(raw.getScaledInstance(w, h, Image.SCALE_SMOOTH)));
+    }
+
+    /* Rescales a tracker label's icon based on raw image */
+    private void rescaleLabel(JLabel label, Image raw, int w, int h) {
+        if (raw == null || w <= 0 || h <= 0)
+            return;
+        label.setIcon(new ImageIcon(raw.getScaledInstance(w, h, Image.SCALE_SMOOTH)));
+    }
+
+    /* Shared font/colour/alignment for tracker labels. */
+    private void configureLabelStyle(JLabel label, AssetManager am) {
+        Font font = am.getFont("proffaliceHandwrite");
+        if (font == null)
+            font = new Font("Serif", Font.BOLD, 20);
+        label.setFont(font.deriveFont(18f));
+        label.setForeground(new Color(246, 242, 195));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setVerticalAlignment(SwingConstants.CENTER);
+        label.setHorizontalTextPosition(SwingConstants.CENTER);
+        label.setVerticalTextPosition(SwingConstants.CENTER);
+    }
+
+    private JButton makeNavButton() {
+        JButton button = new JButton();
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.setFocusPainted(false);
@@ -206,6 +286,23 @@ public abstract class Selection extends JPanel {
         return button;
     }
 
+    // -------------------------------------------------------------------------
+    // Public helper for subclasses that need to create extra buttons
+    // -------------------------------------------------------------------------
+    public JButton createImageButton(Image img, int width, int height) {
+        JButton button = makeNavButton();
+        if (img != null)
+            button.setIcon(new ImageIcon(img.getScaledInstance(width, height, Image.SCALE_SMOOTH)));
+        else
+            button.setText("?");
+        return button;
+    }
+
+    // -------------------------------------------------------------------------
+    // Abstract methods
+    // -------------------------------------------------------------------------
+    protected abstract void onNext();
+
     public abstract JPanel createSelectionButtons();
 
     public abstract boolean validateSelection();
@@ -225,6 +322,9 @@ public abstract class Selection extends JPanel {
         PopupDialog.show(this, popupImg);
     }
 
+    // -------------------------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------------------------
     public GamePanel getGamePanel() {
         return gamePanel;
     }

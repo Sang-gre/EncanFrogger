@@ -17,11 +17,15 @@ import ui.CharacterSelectUI;
 
 public class CharacterSelect extends Selection {
 
+    // Must match Selection's BASE_NAV_H / BASE_HEIGHT = 100 / 600
+    private static final double NAV_H_RATIO = 100.0 / 600.0;
+
     private JRadioButton paopao, terra, flammara, adamus, deia;
     private CharacterSelectUI charUI;
 
     public CharacterSelect(GamePanel gamePanel, Runnable onBack) {
         super(gamePanel, onBack);
+        init();
     }
 
     // -------------------------------------------------------------------------
@@ -29,11 +33,11 @@ public class CharacterSelect extends Selection {
     // -------------------------------------------------------------------------
     @Override
     public JPanel createSelectionButtons() {
-        paopao = createBtn(0);
-        terra = createBtn(1);
+        paopao   = createBtn(0);
+        terra    = createBtn(1);
         flammara = createBtn(2);
-        adamus = createBtn(3);
-        deia = createBtn(4);
+        adamus   = createBtn(3);
+        deia     = createBtn(4);
 
         JRadioButton[] buttons = { paopao, terra, flammara, adamus, deia };
         ButtonGroup group = new ButtonGroup();
@@ -79,7 +83,7 @@ public class CharacterSelect extends Selection {
         };
 
         JPanel selection = createSelectionButtons();
-        JPanel nav = super.createNavButtons();
+        JPanel nav       = super.createNavButtons();
 
         background.add(selection);
         background.add(nav);
@@ -99,11 +103,14 @@ public class CharacterSelect extends Selection {
     private void layoutPanels(JPanel background, JPanel selection, JPanel nav) {
         int w = background.getWidth();
         int h = background.getHeight();
-        if (w <= 0 || h <= 0)
-            return;
+        if (w <= 0 || h <= 0) return;
 
-        selection.setBounds(0, 0, w, h - 100);
-        nav.setBounds(0, h - 100, w, 100);
+        // Derive nav height from the same ratio used in Selection
+        int navH = (int) Math.round(h * NAV_H_RATIO);
+
+        selection.setBounds(0, 0, w, h - navH);
+        nav.setBounds(0, h - navH, w, navH);
+
         charUI.layoutAll();
     }
 
@@ -127,16 +134,11 @@ public class CharacterSelect extends Selection {
     }
 
     protected Player getSelectedPlayer() {
-        if (paopao.isSelected())
-            return new Player(0, 0, PlayerType.PAOPAO);
-        if (terra.isSelected())
-            return new Player(0, 0, PlayerType.TERRA);
-        if (flammara.isSelected())
-            return new Player(0, 0, PlayerType.FLAMARA);
-        if (adamus.isSelected())
-            return new Player(0, 0, PlayerType.ADAMUS);
-        if (deia.isSelected())
-            return new Player(0, 0, PlayerType.DEIA);
+        if (paopao.isSelected())   return new Player(0, 0, PlayerType.PAOPAO);
+        if (terra.isSelected())    return new Player(0, 0, PlayerType.TERRA);
+        if (flammara.isSelected()) return new Player(0, 0, PlayerType.FLAMARA);
+        if (adamus.isSelected())   return new Player(0, 0, PlayerType.ADAMUS);
+        if (deia.isSelected())     return new Player(0, 0, PlayerType.DEIA);
         return null;
     }
 }
