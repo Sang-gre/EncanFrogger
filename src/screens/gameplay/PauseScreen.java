@@ -16,18 +16,20 @@ import javax.swing.JPanel;
 
 public class PauseScreen extends JPanel {
 
+    // --- Assets ---
     private final Image panelBg;
     private final Image resumeImg;
     private final Image menuImg;
     private final Image exitImg;
 
+    // --- Buttons ---
     private final JButton resumeBtn;
     private final JButton menuBtn;
     private final JButton exitBtn;
 
-    private int lastBtnH = -1;
-
-    private SoundManager sound = SoundManager.getInstance();
+    // --- Misc ---
+    private int lastBtnH = -1; // tracks last computed button height
+    private final SoundManager sound = SoundManager.getInstance();
 
     public PauseScreen(Runnable onResume, Runnable onMenu, Runnable onExit) {
         setLayout(null);
@@ -59,6 +61,7 @@ public class PauseScreen extends JPanel {
         add(menuBtn);
         add(exitBtn);
 
+        // Re-layout buttons when the panel is resized
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -67,8 +70,12 @@ public class PauseScreen extends JPanel {
         });
     }
 
+    // -------------------------------------------------------------------------
+    // Button setup
+    // -------------------------------------------------------------------------
     private JButton makeButton() {
         JButton btn = new JButton();
+
         btn.setBorderPainted(false);
         btn.setContentAreaFilled(false);
         btn.setFocusPainted(false);
@@ -89,6 +96,7 @@ public class PauseScreen extends JPanel {
 
             @Override
             public void mouseExited(MouseEvent e) {
+                // Snap back if the cursor leaves before releasing
                 btn.setLocation(btn.getX(), btn.getY());
             }
         });
@@ -96,16 +104,16 @@ public class PauseScreen extends JPanel {
         return btn;
     }
 
+    // -------------------------------------------------------------------------
+    // Layout
+    // -------------------------------------------------------------------------
     private void layoutButtons() {
         int w = getWidth();
         int h = getHeight();
 
-        int panelH = h;
-        int panelY = 0;
-
-        int btnH = (int) (panelH * 0.18);
+        int btnH = (int) (h * 0.18);
         if (btnH == lastBtnH)
-            return;
+            return; // skip if no change in size
         lastBtnH = btnH;
 
         int resumeW = scaledWidth(resumeImg, btnH);
@@ -116,44 +124,45 @@ public class PauseScreen extends JPanel {
         menuBtn.setIcon(new ImageIcon(menuImg.getScaledInstance(menuW, btnH, Image.SCALE_SMOOTH)));
         exitBtn.setIcon(new ImageIcon(exitImg.getScaledInstance(exitW, btnH, Image.SCALE_SMOOTH)));
 
-        int startY = panelY + (int) (panelH * 0.27);
-        int spacing = (int) (panelH * 0.185);
-
-        int offset = 4;
+        int startY = (int) (h * 0.27);
+        int spacing = (int) (h * 0.185);
+        int offset = 4; // just to center within panel bg
 
         resumeBtn.setBounds((w - resumeW) / 2 - offset, startY, resumeW, btnH);
         menuBtn.setBounds((w - menuW) / 2 - offset, startY + spacing, menuW, btnH);
         exitBtn.setBounds((w - exitW) / 2 - offset, startY + spacing * 2, exitW, btnH);
     }
 
+    /* Scaled given a target height, preserving aspect ratio */
     private int scaledWidth(Image img, int targetH) {
         int naturalW = img.getWidth(null);
         int naturalH = img.getHeight(null);
         if (naturalW <= 0 || naturalH <= 0)
-            return targetH * 4; // fallback
+            return targetH * 4; // fallback if image dimensions aren't available yet
         return (int) ((double) naturalW / naturalH * targetH);
     }
 
+    // -------------------------------------------------------------------------
+    // Rendering
+    // -------------------------------------------------------------------------
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        // Dim the game behind the pause overlay
         g.setColor(new Color(0, 0, 0, 140));
         g.fillRect(0, 0, getWidth(), getHeight());
 
-        if (panelBg != null) {
+        if (panelBg != null)
             g.drawImage(panelBg, 0, 0, getWidth(), getHeight(), this);
-        }
     }
 
+    /* Draws onto external graphics context */
     public void draw(Graphics g, int w, int h) {
-        // dim
         g.setColor(new Color(0, 0, 0, 140));
         g.fillRect(0, 0, w, h);
 
-        // panel bg
-        if (panelBg != null) {
+        if (panelBg != null)
             g.drawImage(panelBg, 0, 0, w, h, null);
-        }
     }
 }

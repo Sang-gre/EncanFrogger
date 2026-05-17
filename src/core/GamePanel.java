@@ -222,24 +222,6 @@ public class GamePanel extends JPanel {
             else if (key == KeyEvent.VK_DOWN)
                 leaderboardScreen.scroll(1);
             repaint();
-            return;
-        }
-
-        if (state == GameState.GAME_OVER && gameOverScreen != null
-                && !gameOverScreen.isShowingPlayAgain()
-                && !stateManager.isShowingLeaderboard()) {
-            boolean handled = gameOverScreen.handleKey(key, e.getKeyChar());
-            if (!handled) {
-                int coins = getCoinsCollected();
-                new Thread(() -> LeaderboardManager.upsertEntry(
-                        new ScoreEntry(gameOverScreen.getInitials(), scoreManager.getScore(),
-                                stateManager.getCurrentLevel(), false, coins)))
-                        .start();
-                leaderboardScreen = new screens.menu.LeaderboardScreen();
-                stateManager.setShowingLeaderboard(true);
-                requestFocusInWindow();
-            }
-            repaint();
         }
     }
 

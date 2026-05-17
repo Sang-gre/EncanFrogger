@@ -9,12 +9,14 @@ import java.awt.Rectangle;
 
 public class GameOverScreen {
 
-    private Image bgImage;
-    private Image yesImage;
-    private Image noImage;
+    // --- Assets ---
+    private final Image bgImage;
+    private final Image yesImage;
+    private final Image noImage;
 
-    private Rectangle yesBounds = new Rectangle();
-    private Rectangle noBounds = new Rectangle();
+    // --- Button hit areas ---
+    private final Rectangle yesBounds = new Rectangle();
+    private final Rectangle noBounds = new Rectangle();
 
     public GameOverScreen() {
         bgImage = AssetManager.getInstance().getGameOver("background");
@@ -22,12 +24,22 @@ public class GameOverScreen {
         noImage = AssetManager.getInstance().getButton("no");
     }
 
+    // -------------------------------------------------------------------------
+    // Rendering
+    // -------------------------------------------------------------------------
     public void draw(Graphics g, int w, int h) {
         Graphics2D g2 = (Graphics2D) g.create();
 
         if (bgImage != null)
             g2.drawImage(bgImage, 0, 0, w, h, null);
 
+        drawButtons(g2, w, h);
+
+        g2.dispose();
+    }
+
+    /* Yes/No buttons */
+    private void drawButtons(Graphics2D g2, int w, int h) {
         int btnW = (int) (w * 0.11);
         int btnH = (yesImage != null)
                 ? (int) (btnW * yesImage.getHeight(null) / (double) yesImage.getWidth(null))
@@ -45,10 +57,11 @@ public class GameOverScreen {
             g2.drawImage(yesImage, yesX, btnY, btnW, btnH, null);
         if (noImage != null)
             g2.drawImage(noImage, noX, btnY, btnW, btnH, null);
-
-        g2.dispose();
     }
 
+    // -------------------------------------------------------------------------
+    // Click
+    // -------------------------------------------------------------------------
     public boolean isYesClicked(Point p) {
         return yesBounds.contains(p);
     }
@@ -56,24 +69,12 @@ public class GameOverScreen {
     public boolean isNoClicked(Point p) {
         return noBounds.contains(p);
     }
-    
+
     public boolean isBannerClicked(Point p) {
         return false;
     }
 
     public boolean isOkClicked(Point p) {
         return false;
-    }
-
-    public boolean handleKey(int keyCode, char keyChar) {
-        return true;
-    }
-
-    public boolean isShowingPlayAgain() {
-        return true;
-    }
-
-    public String getInitials() {
-        return "";
     }
 }
