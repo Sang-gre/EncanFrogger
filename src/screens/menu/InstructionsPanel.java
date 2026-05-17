@@ -19,25 +19,25 @@ import launch.GameLauncher;
 public class InstructionsPanel extends JPanel {
 
     private GameLauncher launcher;
-    private Image[] pages;
-    private final Image background;
 
+    // --- Pages ---
+    private Image[] pages;
+    private int currentPage = 0;
+
+    // --- Assets ---
+    private final Image background;
     private Image leftImg;
     private Image rightImg;
     private Image exitImg;
 
-    private int currentPage = 0;
-
+    // --- Buttons ---
     private JButton leftButton;
     private JButton rightButton;
     private JButton xButton;
 
-    private Runnable onExit = () -> launcher.showMainMenu(); // default
+    // --- Misc ---
+    private Runnable onExit = () -> launcher.showMainMenu(); // default exit action
     SoundManager sound = SoundManager.getInstance();
-
-    public void setOnExit(Runnable onExit) {
-        this.onExit = onExit;
-    }
 
     public InstructionsPanel(GameLauncher launcher) {
         this.launcher = launcher;
@@ -52,30 +52,15 @@ public class InstructionsPanel extends JPanel {
         setupKeys();
     }
 
-    @Override
-    public void addNotify() {
-        super.addNotify();
-        SwingUtilities.invokeLater(this::requestFocusInWindow);
-    }
-
+    // -------------------------------------------------------------------------
+    // Layout / Responsiveness
+    // -------------------------------------------------------------------------
     private ImageIcon scaleIcon(Image img, int width, int height) {
         return new ImageIcon(
                 img.getScaledInstance(width, height, Image.SCALE_SMOOTH));
     }
 
-    private void animateButtonPress(JButton btn) {
-        Point original = btn.getLocation();
-        btn.setLocation(original.x, original.y + 5);
-        Timer timer = new Timer(80, e -> btn.setLocation(original));
-        timer.setRepeats(false);
-        timer.start();
-    }
-
-    private void updateButtonVisibility() {
-        leftButton.setVisible(currentPage > 0);
-        rightButton.setVisible(currentPage < pages.length - 1);
-    }
-
+    // Recomputes button sizes and positions
     private void updateResponsiveLayout() {
         int w = getWidth();
         int h = getHeight();
@@ -93,6 +78,15 @@ public class InstructionsPanel extends JPanel {
         xButton.setBounds(w - btnSize - xMargin, h / 25, btnSize, btnSize);
     }
 
+    // Shows or hides the navigation arrows based on the current page index
+    private void updateButtonVisibility() {
+        leftButton.setVisible(currentPage > 0);
+        rightButton.setVisible(currentPage < pages.length - 1);
+    }
+
+    // -------------------------------------------------------------------------
+    // Button setup
+    // -------------------------------------------------------------------------
     private void setupButtons() {
         leftImg = AssetManager.getInstance().getButton("leftArrow");
         rightImg = AssetManager.getInstance().getButton("rightArrow");
@@ -112,9 +106,7 @@ public class InstructionsPanel extends JPanel {
         }
 
         leftButton.addActionListener(e -> {
-
             sound.play("click");
-
             animateButtonPress(leftButton);
             if (currentPage > 0) {
                 currentPage--;
@@ -126,7 +118,6 @@ public class InstructionsPanel extends JPanel {
 
         rightButton.addActionListener(e -> {
             sound.play("click");
-
             animateButtonPress(rightButton);
             if (currentPage < pages.length - 1) {
                 currentPage++;
@@ -138,15 +129,15 @@ public class InstructionsPanel extends JPanel {
 
         xButton.addActionListener(e -> {
             sound.play("click");
-
             animateButtonPress(xButton);
-            currentPage = 0; // reset page for next time
+            currentPage = 0; // reset for the next visit
             Timer t = new Timer(100, ev -> onExit.run());
             t.setRepeats(false);
             t.start();
             requestFocusInWindow();
         });
 
+        // Re-layout buttons whenever the panel is resized
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -158,6 +149,9 @@ public class InstructionsPanel extends JPanel {
         updateButtonVisibility();
     }
 
+    // -------------------------------------------------------------------------
+    // Keyboard input
+    // -------------------------------------------------------------------------
     private void setupKeys() {
         addKeyListener(new KeyAdapter() {
             @Override
@@ -165,7 +159,6 @@ public class InstructionsPanel extends JPanel {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_RIGHT -> {
                         sound.play("click");
-
                         if (currentPage < pages.length - 1) {
                             currentPage++;
                             repaint();
@@ -185,12 +178,14 @@ public class InstructionsPanel extends JPanel {
                         currentPage = 0;
                         onExit.run();
                     }
-                    }
                 }
-            });
-        }
+            }
+        });
+    }
 
-
+    // -------------------------------------------------------------------------
+    // Asset loading
+    // -------------------------------------------------------------------------
     private void loadPages() {
         pages = new Image[] {
                 AssetManager.getInstance().getInstructions("instruction1"),
@@ -203,14 +198,41 @@ public class InstructionsPanel extends JPanel {
         };
     }
 
+    // -------------------------------------------------------------------------
+    // Rendering
+    // -------------------------------------------------------------------------
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (background != null) {
+
+        if (background != null)
             g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
-        }
-        if (pages != null && pages[currentPage] != null) {
+
+        if (pages != null && pages[currentPage] != null)
             g.drawImage(pages[currentPage], 0, 0, getWidth(), getHeight(), this);
-        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Helpers
+    // -------------------------------------------------------------------------
+    private void animateButtonPress(JButton btn) {
+        Point original = btn.getLocation();
+        btn.setLocation(original.x, original.y + 5);
+        Timer timer = new Timer(80, e -> btn.setLocation(original));
+        timer.setRepeats(false);
+        timer.start();
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        SwingUtilities.invokeLater(this::requestFocusInWindow);
+    }
+
+    // -------------------------------------------------------------------------
+    // Setters
+    // -------------------------------------------------------------------------
+    public void setOnExit(Runnable onExit) {
+        this.onExit = onExit;
     }
 }

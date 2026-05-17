@@ -13,19 +13,23 @@ import launch.GameLauncher;
 
 public class MainPanel extends JPanel {
 
+    // --- Buttons ---
     JButton startBttn;
     JButton menuBttn;
     JButton exitBttn;
 
+    // --- Layout ---
     private JPanel buttonPanel;
-    private final GameLauncher parent;
-    private final SoundManager sound = SoundManager.getInstance();
 
+    // --- Assets ---
     private Image background;
-
     private Image startImg;
     private Image menuImg;
     private Image exitImg;
+
+    // --- Misc ---
+    private final GameLauncher parent;
+    private final SoundManager sound = SoundManager.getInstance();
 
     public MainPanel(GameLauncher parent) {
         this.parent = parent;
@@ -36,16 +40,20 @@ public class MainPanel extends JPanel {
         setupButtons();
     }
 
+    // -------------------------------------------------------------------------
+    // Asset loading
+    // -------------------------------------------------------------------------
     private void loadAssets() {
         background = AssetManager.getInstance().getBackground("menu");
         startImg = AssetManager.getInstance().getButton("start");
         menuImg = AssetManager.getInstance().getButton("menu");
         exitImg = AssetManager.getInstance().getButton("exit");
-        
     }
 
+    // -------------------------------------------------------------------------
+    // Button setup
+    // -------------------------------------------------------------------------
     private void setupButtons() {
-
         buttonPanel = new JPanel(null);
         buttonPanel.setOpaque(false);
 
@@ -75,6 +83,8 @@ public class MainPanel extends JPanel {
 
     private JButton createButton(Image img) {
         JButton btn = new JButton();
+
+        // Remove default Swing so only the icon shows
         btn.setBorderPainted(false);
         btn.setContentAreaFilled(false);
         btn.setFocusPainted(false);
@@ -84,7 +94,6 @@ public class MainPanel extends JPanel {
         int pressOffset = 4;
 
         btn.addMouseListener(new MouseAdapter() {
-
             @Override
             public void mousePressed(MouseEvent e) {
                 btn.setLocation(btn.getX(), btn.getY() + pressOffset);
@@ -97,6 +106,7 @@ public class MainPanel extends JPanel {
 
             @Override
             public void mouseExited(MouseEvent e) {
+                // Snap back if the cursor leaves before releasing
                 btn.setLocation(btn.getX(), btn.getY());
             }
         });
@@ -104,13 +114,15 @@ public class MainPanel extends JPanel {
         return btn;
     }
 
+    // -------------------------------------------------------------------------
+    // Layout
+    // -------------------------------------------------------------------------
     @Override
     public void doLayout() {
         super.doLayout();
 
         int panelW = (int) (getWidth() * 0.30);
         int panelH = (int) (getHeight() * 0.50);
-
         int x = (getWidth() - panelW) / 2;
         int y = (int) (getHeight() * 0.30);
 
@@ -119,7 +131,6 @@ public class MainPanel extends JPanel {
         int gap = (int) (panelH * 0.02);
         int btnW = (int) (panelW * 0.70);
         int btnH = (panelH - (gap * 4)) / 3;
-
         int centerX = (panelW - btnW) / 2;
 
         startBttn.setBounds(centerX, gap, btnW, btnH);
@@ -131,18 +142,20 @@ public class MainPanel extends JPanel {
         scaleButton(exitBttn, exitImg, btnW, btnH);
     }
 
+    /* Rescales a button's icon to match its current bounds */
     private void scaleButton(JButton button, Image img, int w, int h) {
         Image scaled = img.getScaledInstance(w, h, Image.SCALE_SMOOTH);
         button.setIcon(new ImageIcon(scaled));
     }
 
+    // -------------------------------------------------------------------------
+    // Rendering
+    // -------------------------------------------------------------------------
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (background != null) {
+        if (background != null)
             g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
-        }
-
     }
 }

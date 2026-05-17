@@ -15,7 +15,7 @@ public class LeaderboardManager {
 
     private static final Object LOCK = new Object();
     private static final String FILE_PATH = getDataPath();
-    private static final int MAX_ENTRIES = 100;
+    private static final int MAX_ENTRIES = 50;
 
     // Adds a new entry, sorts by score, trims to max
     public static void saveEntry(ScoreEntry entry) {

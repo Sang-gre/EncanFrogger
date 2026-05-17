@@ -18,22 +18,22 @@ import javax.swing.SwingUtilities;
 
 public class MapSelect extends Selection {
 
-    private static final double NAV_H_RATIO     = 100.0 / 600.0;
-    private static final double HEIGHT_RATIO    = 0.72;
-    private static final double IMAGE_SCALE_W   = 0.95;
-    private static final double IMAGE_SCALE_H   = 1.15;
-    private static final double VERTICAL_BIAS   = 0.14;
-    private static final int    FLAG_COUNT      = 5;
-    private static final int    FLAG_GAP        = 24;
-    private static final int    OUTER_PAD       = FLAG_GAP * 3;
-    private static final int    SELECTED_OFFSET = 30;
+    private static final double NAV_H_RATIO = 100.0 / 600.0;
+    private static final double HEIGHT_RATIO = 0.72;
+    private static final double IMAGE_SCALE_W = 0.95;
+    private static final double IMAGE_SCALE_H = 1.15;
+    private static final double VERTICAL_BIAS = 0.14;
+    private static final int FLAG_COUNT = 5;
+    private static final int FLAG_GAP = 24;
+    private static final int OUTER_PAD = FLAG_GAP * 3;
+    private static final int SELECTED_OFFSET = 30;
 
     private final Player selectedPlayer;
-    private final int[]  baseY = new int[FLAG_COUNT];
+    private final int[] baseY = new int[FLAG_COUNT];
 
     private JRadioButton[] buttons;
-    private JPanel         flagPanel;
-    private GameMap        selectedMap;
+    private JPanel flagPanel;
+    private GameMap selectedMap;
 
     public MapSelect(GamePanel gamePanel, Runnable onBack, Player selectedPlayer) {
         super(gamePanel, onBack);
@@ -57,7 +57,7 @@ public class MapSelect extends Selection {
         };
 
         JPanel selection = createSelectionButtons();
-        JPanel nav       = super.createNavButtons();
+        JPanel nav = super.createNavButtons();
 
         background.add(selection);
         background.add(nav);
@@ -76,7 +76,8 @@ public class MapSelect extends Selection {
     private void layoutPanels(JPanel background, JPanel selection, JPanel nav) {
         int w = background.getWidth();
         int h = background.getHeight();
-        if (w <= 0 || h <= 0) return;
+        if (w <= 0 || h <= 0)
+            return;
 
         int navH = (int) Math.round(h * NAV_H_RATIO);
         selection.setBounds(0, 0, w, h - navH);
@@ -96,10 +97,14 @@ public class MapSelect extends Selection {
             buttons[i] = createBtn(i, maps[i]);
 
         ButtonGroup group = new ButtonGroup();
-        for (JRadioButton b : buttons) group.add(b);
+        for (JRadioButton b : buttons)
+            group.add(b);
 
         flagPanel = new JPanel(null) {
-            @Override public boolean isOptimizedDrawingEnabled() { return false; }
+            @Override
+            public boolean isOptimizedDrawingEnabled() {
+                return false;
+            }
 
             @Override
             protected void paintChildren(Graphics g) {
@@ -111,7 +116,8 @@ public class MapSelect extends Selection {
         };
         flagPanel.setOpaque(false);
 
-        for (JRadioButton b : buttons) flagPanel.add(b);
+        for (JRadioButton b : buttons)
+            flagPanel.add(b);
 
         return flagPanel;
     }
@@ -141,18 +147,19 @@ public class MapSelect extends Selection {
     // Flag sizing
     // -------------------------------------------------------------------------
     private void resizeFlags(int panelWidth, int panelHeight) {
-        if (flagPanel == null) return;
+        if (flagPanel == null)
+            return;
 
-        int imgWidth  = (int)((panelWidth - OUTER_PAD * 2) / (double) FLAG_COUNT * IMAGE_SCALE_W);
-        int imgHeight = (int)(panelHeight * HEIGHT_RATIO * IMAGE_SCALE_H);
+        int imgWidth = (int) ((panelWidth - OUTER_PAD * 2) / (double) FLAG_COUNT * IMAGE_SCALE_W);
+        int imgHeight = (int) (panelHeight * HEIGHT_RATIO * IMAGE_SCALE_H);
 
         int totalW = imgWidth * FLAG_COUNT + FLAG_GAP * (FLAG_COUNT - 1);
         int startX = (panelWidth - totalW) / 2;
-        int startY = (panelHeight - imgHeight) / 2 + (int)(panelHeight * VERTICAL_BIAS);
+        int startY = (panelHeight - imgHeight) / 2 + (int) (panelHeight * VERTICAL_BIAS);
 
         for (int i = 0; i < FLAG_COUNT; i++) {
             JRadioButton btn = buttons[i];
-            Image original   = (Image) btn.getClientProperty("originalImg");
+            Image original = (Image) btn.getClientProperty("originalImg");
             btn.setIcon(new ImageIcon(original.getScaledInstance(imgWidth, imgHeight, Image.SCALE_SMOOTH)));
 
             baseY[i] = startY;
@@ -175,17 +182,21 @@ public class MapSelect extends Selection {
                 break;
             }
         }
-        if (selectedMap == null) return;
+        if (selectedMap == null)
+            return;
         getGamePanel().startLevel(selectedPlayer, selectedMap, 1);
     }
 
     @Override
     public boolean validateSelection() {
         for (JRadioButton btn : buttons)
-            if (btn.isSelected()) return true;
+            if (btn.isSelected())
+                return true;
         return false;
     }
 
     @Override
-    protected String getPopupKey() { return "mapSelect"; }
+    protected String getPopupKey() {
+        return "mapSelect";
+    }
 }
