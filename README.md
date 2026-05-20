@@ -22,58 +22,52 @@ Denise Jade Leguarda · Lorenz Ed Ocampo · Jessa Jasmine Parcero · Jezrel Mari
 
 ### Option A — From Source
 
-**Requirements:** Java JDK 25+
+**Requirements:** Java JDK 21+
 
-1. Navigate to the `Sang'gre/` folder.
+1. Navigate to the `Sang'gre/EncanFrogger/` folder.
 
 2. Compile:
 
 **On Windows:**
 ```bash
-javac -d EncanFrogger\bin -sourcepath EncanFrogger\src EncanFrogger\src\main\Main.java
+javac -d bin -sourcepath src src\main\Main.java
 ```
 
 **On Mac/Linux:**
 ```bash
-javac -d EncanFrogger/bin -sourcepath EncanFrogger/src EncanFrogger/src/main/Main.java
+javac -d bin -sourcepath src src/main/Main.java
 ```
 3. Run:
 
 ```bash
-java -cp EncanFrogger/bin main.Main
+java -cp bin main.Main
 ```
 
 > `Main` is the driver class located at the root of `src/`.
 
-### Option B — From JAROption B — From JAR
-Requirements: Java JDK 17+
+### Option B — From JAR
 
-Navigate to the Sang'gre/ folder.
+**Requirements:** Java JDK 21+
 
-Run:
-
-java -jar Installer/Jar/EncanFrogger.jar
-
-**Requirements:** Java JDK 17+
-
-1. Navigate to the `Sang'gre/` folder.
+1. Navigate to the `Sang'gre/Installer/Jar/` folder.
 
 2. Run:
 
 ```bash
-java -jar Installer/Jar/EncanFrogger.jar
+java -jar EncanFrogger.jar
 ```
 
-### Option C — Installer (Windows only)
+### Option C — Windows Executable
 
-Navigate to `Installer/Windows/EncanFrogger/` and double-click **`EncanFrogger.exe`**.
+**Requirements:** Java JDK 21+
 
-> On first launch, a splash screen will appear while assets load. This is expected.
+Navigate to `Installer/Windows/` and double-click **`EncanFrogger.exe`**.
 
 ### Option D — Setup Installer (Windows only)
 
-Navigate to `Installer/Release/` and double-click **`EncanFroggerSetup.exe`**.
+Navigate to `Installer/Windows/` and double-click **`EncanFroggerSetup.exe`**.
 
 This will install the game to `C:\Program Files\EncanFrogger\` and create
 shortcuts on your Desktop and Start Menu. You can launch the game from
 either shortcut after installation.
+
