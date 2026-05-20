@@ -12,45 +12,22 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public final class SoundManager {
 
-    private static SoundManager instance;
-
-    private static String getBasePath() {
-        try {
-            File codeSource = new File(
-                    SoundManager.class.getProtectionDomain()
-                            .getCodeSource()
-                            .getLocation()
-                            .toURI());
-            if (codeSource.getName().endsWith(".jar")) {
-                return codeSource.getParentFile()
-                        .getParentFile()
-                        .getParentFile()
-                        .getAbsolutePath() + File.separator;
-            }
-            return codeSource.getParentFile()
-                    .getParentFile()
-                    .getAbsolutePath() + File.separator;
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
-    private static final String BASE = getBasePath();
+    private static SoundManager instance; 
 
     private final Map<String, Clip> sounds;
     private Clip currentMusic;
 
-    private SoundManager() {
-        sounds = new HashMap<>();
+    private SoundManager(){
+        sounds = new HashMap<> ();
 
-        loadSound("click", BASE + "EncanFrogger/assets/sounds/sfx/click.wav");
-        loadSound("coin", BASE + "EncanFrogger/assets/sounds/sfx/coins.wav");
-        loadSound("death", BASE + "EncanFrogger/assets/sounds/sfx/died.wav");
-        loadSound("move", BASE + "EncanFrogger/assets/sounds/sfx/move.wav");
-        loadSound("gameover", BASE + "EncanFrogger/assets/sounds/sfx/gameover.wav");
+       loadSound("click", "assets/sounds/sfx/click.wav");
+       loadSound("coin", "assets/sounds/sfx/coins.wav");
+       loadSound("death", "assets/sounds/sfx/died.wav");
+       loadSound("move", "assets/sounds/sfx/move.wav");
+       loadSound("gameover", "assets/sounds/sfx/gameover.wav");
 
-        loadSound("game", BASE + "EncanFrogger/assets/sounds/bgm/gameBGM.wav");
-        loadSound("menu", BASE + "EncanFrogger/assets/sounds/bgm/menuBGM.wav");
+       loadSound("game", "assets/sounds/bgm/gameBGM.wav");
+       loadSound("menu", "assets/sounds/bgm/menuBGM.wav");
     }
 
     public static SoundManager getInstance() {
@@ -60,10 +37,10 @@ public final class SoundManager {
         return instance;
     }
 
-    public void loadSound(String name, String path) {
-
+    public void loadSound (String name, String path){
+       
         try {
-            // find resource
+            //find resource
             File soundFile = new File(path);
 
             if (!soundFile.exists()) {
@@ -71,55 +48,57 @@ public final class SoundManager {
                 return;
             }
 
-            // read audio data
+            //read audio data
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
 
             Clip clip = AudioSystem.getClip();
             clip.open(audioStream);
-            sounds.put(name, clip); // adding it to the hashmap
+            sounds.put(name, clip); //adding it to the hashmap
 
-        } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e) {
+        } catch (IOException | LineUnavailableException | UnsupportedAudioFileException e ){
             System.out.println("Error Loading Sound " + name);
         }
-
+       
     }
 
-    // ------------------ sound effects ------------------//
-    public void play(String name) {
+    //------------------ sound effects ------------------//
+    public void play(String name){
         Clip clip = sounds.get(name);
 
-        // making sure it exists
-        if (clip == null) {
+        //making sure it exists
+        if (clip == null){
             System.out.println("Sound Not Found" + name);
             return;
         }
 
-        // if it's already playing, stop playbacck
-        if (clip.isRunning()) {
+        //if it's already playing, stop playbacck
+        if (clip.isRunning()){
             clip.stop();
         }
 
-        clip.setFramePosition(0); // rewind
-        clip.start(); // play the sound
+        clip.setFramePosition(0);   //rewind 
+        clip.start();   // play the sound 
     }
 
-    public void stop(String name) {
+    public void stop (String name){
         Clip clip = sounds.get(name);
 
-        if (clip != null) {
+        if (clip != null){
             clip.stop();
         }
     }
 
-    // ----------------------BGM--------------------//
-    public void playBGM(String name) {
-        if (currentMusic != null) {
+
+    //----------------------BGM--------------------//
+    public void playBGM (String name){
+        if (currentMusic != null){
             currentMusic.stop();
         }
+        
 
         currentMusic = sounds.get(name);
 
-        if (currentMusic == null) {
+        if (currentMusic == null){
             System.out.println("Current BGM does not exist " + name);
             return;
         }
@@ -129,16 +108,17 @@ public final class SoundManager {
 
     }
 
-    public void stopBGM() {
-        if (currentMusic != null) {
+
+    public void stopBGM (){
+        if (currentMusic != null){
             currentMusic.stop();
         }
     }
 
-    public void loop(String name) {
+    public void loop (String name){
         Clip clip = sounds.get(name);
 
-        if (clip == null) {
+        if (clip == null){
             return;
         }
 
