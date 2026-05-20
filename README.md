@@ -67,7 +67,8 @@ Navigate to `Installer/Windows/` and double-click **`EncanFrogger.exe`**.
 
 Navigate to `Installer/Windows/` and double-click **`EncanFroggerSetup.exe`**.
 
+Or download it directly from the [latest release](https://github.com/Sang-gre/Sanggre/releases/download/v1.0/EncanFroggerSetup.exe).
+
 This will install the game to `C:\Program Files\EncanFrogger\` and create
-shortcuts on your Desktop and Start Menu. You can launch the game from
-either shortcut after installation.
+shortcuts on your Desktop and Start Menu. You can launch the game from either shortcut after installation.
 
