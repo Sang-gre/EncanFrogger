@@ -22,6 +22,29 @@ public final class AssetManager {
 
     private static AssetManager instance;
 
+    private static String getBasePath() {
+        try {
+            File codeSource = new File(
+                    AssetManager.class.getProtectionDomain()
+                            .getCodeSource()
+                            .getLocation()
+                            .toURI());
+            if (codeSource.getName().endsWith(".jar")) {
+                return codeSource.getParentFile()
+                        .getParentFile()
+                        .getParentFile()
+                        .getAbsolutePath() + File.separator;
+            }
+            return codeSource.getParentFile()
+                    .getParentFile()
+                    .getAbsolutePath() + File.separator;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    private static final String BASE = getBasePath();
+
     /* GAME LOGO/ICON */
     private final Map<String, ImageIcon> logo = new HashMap<>();
 
@@ -106,135 +129,138 @@ public final class AssetManager {
     private void loadCongrats() {
 
         congrats.put("levelClearedBackground",
-                loadImage("assets/Backgrounds/levelClearedBackground.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/Backgrounds/levelClearedBackground.png"));
 
         congrats.put("levelCleared",
-                loadImage("assets/Backgrounds/levelCleared.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/Backgrounds/levelCleared.png"));
     }
 
     private void loadLogo() {
-        logo.put("logo", new ImageIcon("assets/gameLogo.png"));
+        logo.put("logo", new ImageIcon(BASE + "EncanFrogger/assets/icons/gameLogo.png"));
     }
 
     private void loadTracker() {
-        tracker.put("coinTrack", loadImage("assets/Buttons/coinTrackLabel.png"));
-        tracker.put("levelTrack", loadImage("assets/Buttons/levelTrackLabel.png"));
+        tracker.put("coinTrack", loadImage(BASE + "EncanFrogger/assets/images/Buttons/coinTrackLabel.png"));
+        tracker.put("levelTrack", loadImage(BASE + "EncanFrogger/assets/images/Buttons/levelTrackLabel.png"));
     }
 
     private void loadBackgrounds() {
-        backgrounds.put("title", loadImage("assets/Backgrounds/background.png"));
-        backgrounds.put("titleFont", loadImage("assets/Backgrounds/titleFont.png"));
-        backgrounds.put("menu", loadImage("assets/Backgrounds/buttonDashboardBackground.png"));
-        backgrounds.put("characterSelect", loadImage("assets/Backgrounds/chooseCharacterBackground.png"));
-        backgrounds.put("mapSelect", loadImage("assets/Backgrounds/mapSelectBackground.png"));
-        backgrounds.put("leaderboard", loadImage("assets/Backgrounds/leaderboardPanel.png"));
-        backgrounds.put("initials", loadImage("assets/Backgrounds/initialsBackground.png"));
-        backgrounds.put("pausePanel", loadImage("assets/Backgrounds/pausePanel.png"));
+        backgrounds.put("title", loadImage(BASE + "EncanFrogger/assets/images/Backgrounds/background.png"));
+        backgrounds.put("titleFont", loadImage(BASE + "EncanFrogger/assets/images/Backgrounds/titleFont.png"));
+        backgrounds.put("menu",
+                loadImage(BASE + "EncanFrogger/assets/images/Backgrounds/buttonDashboardBackground.png"));
+        backgrounds.put("characterSelect",
+                loadImage(BASE + "EncanFrogger/assets/images/Backgrounds/chooseCharacterBackground.png"));
+        backgrounds.put("mapSelect",
+                loadImage(BASE + "EncanFrogger/assets/images/Backgrounds/mapSelectBackground.png"));
+        backgrounds.put("leaderboard", loadImage(BASE + "EncanFrogger/assets/images/Backgrounds/leaderboardPanel.png"));
+        backgrounds.put("initials", loadImage(BASE + "EncanFrogger/assets/images/Backgrounds/initialsBackground.png"));
+        backgrounds.put("pausePanel", loadImage(BASE + "EncanFrogger/assets/images/Backgrounds/pausePanel.png"));
     }
 
     private void loadButtons() {
         // Main menu
-        buttons.put("start", loadImage("assets/Buttons/startButton.png"));
-        buttons.put("menu", loadImage("assets/Buttons/menuButton.png"));
-        buttons.put("exit", loadImage("assets/Buttons/exitButton.png"));
+        buttons.put("start", loadImage(BASE + "EncanFrogger/assets/images/Buttons/startButton.png"));
+        buttons.put("menu", loadImage(BASE + "EncanFrogger/assets/images/Buttons/menuButton.png"));
+        buttons.put("exit", loadImage(BASE + "EncanFrogger/assets/images/Buttons/exitButton.png"));
 
         // Navigation
-        buttons.put("back", loadImage("assets/Buttons/backButton.png"));
-        buttons.put("next", loadImage("assets/Buttons/nextButton.png"));
-        buttons.put("select", loadImage("assets/Buttons/selectButton.png"));
+        buttons.put("back", loadImage(BASE + "EncanFrogger/assets/images/Buttons/backButton.png"));
+        buttons.put("next", loadImage(BASE + "EncanFrogger/assets/images/Buttons/nextButton.png"));
+        buttons.put("select", loadImage(BASE + "EncanFrogger/assets/images/Buttons/selectButton.png"));
 
         // Play again
-        buttons.put("playAgain", loadImage("assets/Buttons/playAgainButton.png"));
-        buttons.put("ok", loadImage("assets/Buttons/okButton.png"));
-        buttons.put("yes", loadImage("assets/Buttons/yesButton.png"));
-        buttons.put("no", loadImage("assets/Buttons/noButton.png"));
+        buttons.put("playAgain", loadImage(BASE + "EncanFrogger/assets/images/Buttons/playAgainButton.png"));
+        buttons.put("ok", loadImage(BASE + "EncanFrogger/assets/images/Buttons/okButton.png"));
+        buttons.put("yes", loadImage(BASE + "EncanFrogger/assets/images/Buttons/yesButton.png"));
+        buttons.put("no", loadImage(BASE + "EncanFrogger/assets/images/Buttons/noButton.png"));
 
         // Popup Dialog
-        buttons.put("ok2", loadImage("assets/Buttons/okButton2.png"));
+        buttons.put("ok2", loadImage(BASE + "EncanFrogger/assets/images/Buttons/okButton2.png"));
 
         // Instructions Button
-        buttons.put("leftArrow", loadImage("assets/Buttons/leftArrowButton.png"));
-        buttons.put("rightArrow", loadImage("assets/Buttons/rightArrowButton.png"));
-        buttons.put("xButton", loadImage("assets/Buttons/exButton.png"));
+        buttons.put("leftArrow", loadImage(BASE + "EncanFrogger/assets/images/Buttons/leftArrowButton.png"));
+        buttons.put("rightArrow", loadImage(BASE + "EncanFrogger/assets/images/Buttons/rightArrowButton.png"));
+        buttons.put("xButton", loadImage(BASE + "EncanFrogger/assets/images/Buttons/exButton.png"));
 
         // Pause Panel Buttons
-        buttons.put("exit2", loadImage("assets/Buttons/exitButton2.png"));
-        buttons.put("menu2", loadImage("assets/Buttons/menuButton2.png"));
-        buttons.put("resume", loadImage("assets/Buttons/resumeButton.png"));
-        buttons.put("pause", loadImage("assets/Buttons/pauseButton.png"));
+        buttons.put("exit2", loadImage(BASE + "EncanFrogger/assets/images/Buttons/exitButton2.png"));
+        buttons.put("menu2", loadImage(BASE + "EncanFrogger/assets/images/Buttons/menuButton2.png"));
+        buttons.put("resume", loadImage(BASE + "EncanFrogger/assets/images/Buttons/resumeButton.png"));
+        buttons.put("pause", loadImage(BASE + "EncanFrogger/assets/images/Buttons/pauseButton.png"));
 
-        //leaderboard Buttons
-        buttons.put("leaderboardBtn", loadImage("assets/Buttons/leaderboardButton.png"));
+        // leaderboard Buttons
+        buttons.put("leaderboardBtn", loadImage(BASE + "EncanFrogger/assets/images/Buttons/leaderboardButton.png"));
 
     }
 
     private void loadObstacles() {
 
         obstacles.put("adamyaRock",
-                loadImage("assets/obstacles/adamyaObstacles/adamyaRock.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/adamyaObstacles/adamyaRock.png"));
 
         obstacles.put("ball",
-                loadImage("assets/obstacles/adamyaObstacles/adamyaBallLeaves.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/adamyaObstacles/adamyaBallLeaves.png"));
 
         obstacles.put("lava",
-                loadImage("assets/obstacles/hathoriaObstacles/hathoriaLava.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/hathoriaObstacles/hathoriaLava.png"));
 
         obstacles.put("hathoriaRock",
-                loadImage("assets/obstacles/hathoriaObstacles/hathoriaRock.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/hathoriaObstacles/hathoriaRock.png"));
 
         obstacles.put("storm",
-                loadImage("assets/obstacles/lireoObstacles/lireoStormCloud.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/lireoObstacles/lireoStormCloud.png"));
 
         obstacles.put("wind",
-                loadImage("assets/obstacles/lireoObstacles/lireoWind.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/lireoObstacles/lireoWind.png"));
 
         obstacles.put("snowball",
-                loadImage("assets/obstacles/mineaveObstacles/mineaveSnowball.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/mineaveObstacles/mineaveSnowball.png"));
 
         obstacles.put("mineaveSpike",
-                loadImage("assets/obstacles/mineaveObstacles/mineaveSpikes.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/mineaveObstacles/mineaveSpikes.png"));
 
         obstacles.put("sapiroRock",
-                loadImage("assets/obstacles/sapiroObstacles/sapiroRock.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/sapiroObstacles/sapiroRock.png"));
 
         obstacles.put("tumbleweed",
-                loadImage("assets/obstacles/sapiroObstacles/sapiroTumbleweed.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/sapiroObstacles/sapiroTumbleweed.png"));
     }
 
     private void loadPlatforms() {
 
         platforms.put("log",
-                loadImage("assets/obstacles/adamyaObstacles/adamyaLog.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/adamyaObstacles/adamyaLog.png"));
 
         platforms.put("lily",
-                loadImage("assets/obstacles/adamyaObstacles/adamyaLily.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/adamyaObstacles/adamyaLily.png"));
 
         platforms.put("lily2",
-                loadImage("assets/obstacles/adamyaObstacles/adamyaLily2.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/adamyaObstacles/adamyaLily2.png"));
 
         platforms.put("hathoriaPlatform",
-                loadImage("assets/obstacles/hathoriaObstacles/hathoriaPlatform.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/hathoriaObstacles/hathoriaPlatform.png"));
 
         platforms.put("hathoriaPlatform2",
-                loadImage("assets/obstacles/hathoriaObstacles/hathoriaPlatform2.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/hathoriaObstacles/hathoriaPlatform2.png"));
 
         platforms.put("cloud",
-                loadImage("assets/obstacles/lireoObstacles/lireoCloud.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/lireoObstacles/lireoCloud.png"));
 
         platforms.put("lireoPlatform",
-                loadImage("assets/obstacles/lireoObstacles/lireoDisappearingPlatform.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/lireoObstacles/lireoDisappearingPlatform.png"));
 
         platforms.put("glacier",
-                loadImage("assets/obstacles/mineaveObstacles/mineaveGlacier.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/mineaveObstacles/mineaveGlacier.png"));
 
         platforms.put("mineavePlatform",
-                loadImage("assets/obstacles/mineaveObstacles/mineaveIcePlatform.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/mineaveObstacles/mineaveIcePlatform.png"));
 
         platforms.put("sand",
-                loadImage("assets/obstacles/sapiroObstacles/sapiroSand.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/sapiroObstacles/sapiroSand.png"));
 
         platforms.put("sapiroPlatform",
-                loadImage("assets/obstacles/sapiroObstacles/sapiroPlatform.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/obstacles/sapiroObstacles/sapiroPlatform.png"));
 
     }
 
@@ -245,60 +271,74 @@ public final class AssetManager {
     private void loadHUD() {
 
         hud.put("heart",
-                loadImage("assets/hud/heartIcon.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/hud/heartIcon.png"));
 
         hud.put("score",
-                loadImage("assets/hud/scoreLabel.png"));
+                loadImage(BASE + "EncanFrogger/assets/images/hud/scoreLabel.png"));
     }
 
     private void loadCoins() {
-        coins.put("coin", loadImage("assets/coins/coin.png"));
+        coins.put("coin", loadImage(BASE + "EncanFrogger/assets/images/coins/coin.png"));
     }
 
     private void loadCursor() {
-        customCursor = loadImage("assets/customCursor.png");
+        customCursor = loadImage(BASE + "EncanFrogger/assets/images/customCursor.png");
     }
 
     private void loadCharacterCards() {
-        characterCards.put(PlayerType.PAOPAO, loadImage("assets/characterCards/paopaoCard.png"));
-        characterCards.put(PlayerType.DEIA, loadImage("assets/characterCards/deiaCard.png"));
-        characterCards.put(PlayerType.FLAMARA, loadImage("assets/characterCards/flammaraCard.png"));
-        characterCards.put(PlayerType.TERRA, loadImage("assets/characterCards/terraCard.png"));
-        characterCards.put(PlayerType.ADAMUS, loadImage("assets/characterCards/adamusCard.png"));
+        characterCards.put(PlayerType.PAOPAO,
+                loadImage(BASE + "EncanFrogger/assets/images/characterCards/paopaoCard.png"));
+        characterCards.put(PlayerType.DEIA, loadImage(BASE + "EncanFrogger/assets/images/characterCards/deiaCard.png"));
+        characterCards.put(PlayerType.FLAMARA,
+                loadImage(BASE + "EncanFrogger/assets/images/characterCards/flammaraCard.png"));
+        characterCards.put(PlayerType.TERRA,
+                loadImage(BASE + "EncanFrogger/assets/images/characterCards/terraCard.png"));
+        characterCards.put(PlayerType.ADAMUS,
+                loadImage(BASE + "EncanFrogger/assets/images/characterCards/adamusCard.png"));
     }
 
     private void loadInfoCards() {
-        infoCards.put(PlayerType.PAOPAO, loadImage("assets/characterInfoCard/paopaoInfoCard.png"));
-        infoCards.put(PlayerType.DEIA, loadImage("assets/characterInfoCard/deiaInfoCard.png"));
-        infoCards.put(PlayerType.FLAMARA, loadImage("assets/characterInfoCard/flammaraInfoCard.png"));
-        infoCards.put(PlayerType.TERRA, loadImage("assets/characterInfoCard/terraInfoCard.png"));
-        infoCards.put(PlayerType.ADAMUS, loadImage("assets/characterInfoCard/adamusInfoCard.png"));
+        infoCards.put(PlayerType.PAOPAO,
+                loadImage(BASE + "EncanFrogger/assets/images/characterInfoCard/paopaoInfoCard.png"));
+        infoCards.put(PlayerType.DEIA,
+                loadImage(BASE + "EncanFrogger/assets/images/characterInfoCard/deiaInfoCard.png"));
+        infoCards.put(PlayerType.FLAMARA,
+                loadImage(BASE + "EncanFrogger/assets/images/characterInfoCard/flammaraInfoCard.png"));
+        infoCards.put(PlayerType.TERRA,
+                loadImage(BASE + "EncanFrogger/assets/images/characterInfoCard/terraInfoCard.png"));
+        infoCards.put(PlayerType.ADAMUS,
+                loadImage(BASE + "EncanFrogger/assets/images/characterInfoCard/adamusInfoCard.png"));
     }
 
     private void loadMapBackgrounds() {
-        mapBackgrounds.put(GameMap.LIREO, loadImage("assets/maps/lireoMap.png"));
-        mapBackgrounds.put(GameMap.HATHORIA, loadImage("assets/maps/hathoriaMap.png"));
-        mapBackgrounds.put(GameMap.ADAMYA, loadImage("assets/maps/adamyaMap.png"));
-        mapBackgrounds.put(GameMap.SAPIRO, loadImage("assets/maps/sapiroMap.png"));
-        mapBackgrounds.put(GameMap.MINEAVE, loadImage("assets/maps/mineaveMap.png"));
+        mapBackgrounds.put(GameMap.LIREO, loadImage(BASE + "EncanFrogger/assets/images/maps/lireoMap.png"));
+        mapBackgrounds.put(GameMap.HATHORIA, loadImage(BASE + "EncanFrogger/assets/images/maps/hathoriaMap.png"));
+        mapBackgrounds.put(GameMap.ADAMYA, loadImage(BASE + "EncanFrogger/assets/images/maps/adamyaMap.png"));
+        mapBackgrounds.put(GameMap.SAPIRO, loadImage(BASE + "EncanFrogger/assets/images/maps/sapiroMap.png"));
+        mapBackgrounds.put(GameMap.MINEAVE, loadImage(BASE + "EncanFrogger/assets/images/maps/mineaveMap.png"));
     }
 
     private void loadMapFlags() {
-        mapFlags.put(GameMap.LIREO, loadImage("assets/flags/lireoFlagMap.png"));
-        mapFlags.put(GameMap.HATHORIA, loadImage("assets/flags/hathoriaFlagMap.png"));
-        mapFlags.put(GameMap.ADAMYA, loadImage("assets/flags/adamyaFlagMap.png"));
-        mapFlags.put(GameMap.SAPIRO, loadImage("assets/flags/sapiroFlagMap.png"));
-        mapFlags.put(GameMap.MINEAVE, loadImage("assets/flags/mineaveFlagMap.png"));
+        mapFlags.put(GameMap.LIREO, loadImage(BASE + "EncanFrogger/assets/images/flags/lireoFlagMap.png"));
+        mapFlags.put(GameMap.HATHORIA, loadImage(BASE + "EncanFrogger/assets/images/flags/hathoriaFlagMap.png"));
+        mapFlags.put(GameMap.ADAMYA, loadImage(BASE + "EncanFrogger/assets/images/flags/adamyaFlagMap.png"));
+        mapFlags.put(GameMap.SAPIRO, loadImage(BASE + "EncanFrogger/assets/images/flags/sapiroFlagMap.png"));
+        mapFlags.put(GameMap.MINEAVE, loadImage(BASE + "EncanFrogger/assets/images/flags/mineaveFlagMap.png"));
     }
 
     private void loadAllSpritesheets() {
         try {
             // columns = frames per row, rows = 4 directions (DOWN, LEFT, RIGHT, UP)
-            loadSpritesheet(PlayerType.PAOPAO, "assets/spritesheets/paopaoSpritesheet.png", 9, 4);
-            loadSpritesheet(PlayerType.DEIA, "assets/spritesheets/deiaSpritesheet.png", 9, 4);
-            loadSpritesheet(PlayerType.FLAMARA, "assets/spritesheets/flammaraSpritesheet.png", 9, 4);
-            loadSpritesheet(PlayerType.TERRA, "assets/spritesheets/terraSpritesheet.png", 9, 4);
-            loadSpritesheet(PlayerType.ADAMUS, "assets/spritesheets/adamusSpritesheet.png", 9, 4);
+            loadSpritesheet(PlayerType.PAOPAO, BASE + "EncanFrogger/assets/images/spritesheets/paopaoSpritesheet.png",
+                    9, 4);
+            loadSpritesheet(PlayerType.DEIA, BASE + "EncanFrogger/assets/images/spritesheets/deiaSpritesheet.png", 9,
+                    4);
+            loadSpritesheet(PlayerType.FLAMARA,
+                    BASE + "EncanFrogger/assets/images/spritesheets/flammaraSpritesheet.png", 9, 4);
+            loadSpritesheet(PlayerType.TERRA, BASE + "EncanFrogger/assets/images/spritesheets/terraSpritesheet.png", 9,
+                    4);
+            loadSpritesheet(PlayerType.ADAMUS, BASE + "EncanFrogger/assets/images/spritesheets/adamusSpritesheet.png",
+                    9, 4);
         } catch (IOException e) {
             System.err.println("[AssetManager] Failed to load one or more spritesheets:");
         }
@@ -341,7 +381,7 @@ public final class AssetManager {
         try {
             proffaliceHandwriteFont = Font.createFont(
                     Font.TRUETYPE_FONT,
-                    new File("assets/Proffalice Handwrite Regular.ttf")).deriveFont(20f);
+                    new File(BASE + "EncanFrogger/assets/fonts/Proffalice Handwrite Regular.ttf")).deriveFont(20f);
         } catch (IOException | FontFormatException e) {
             System.err.println("[AssetManager] WARNING: failed to load Font");
             proffaliceHandwriteFont = new Font("Segoe UI", Font.BOLD, 20); // fallback
@@ -358,25 +398,25 @@ public final class AssetManager {
     }
 
     private void loadGameOver() {
-        gameover.put("background", loadImage("assets/Backgrounds/gameoverBackground.png"));
-        gameover.put("okButton", loadImage("assets/Buttons/okButton.png"));
+        gameover.put("background", loadImage(BASE + "EncanFrogger/assets/images/Backgrounds/gameoverBackground.png"));
+        gameover.put("okButton", loadImage(BASE + "EncanFrogger/assets/images/Buttons/okButton.png"));
     }
 
     private void loadPopups() {
-        popups.put("characterSelect", loadImage("assets/Popups/characterSelectPopup.png"));
-        popups.put("mapSelect", loadImage("assets/Popups/mapSelectPopup.png"));
-        popups.put("initialsInput", loadImage("assets/Popups/initialsInputPopup.png"));
-        popups.put("initialsTaken", loadImage("assets/Popups/initialsTakenPopup.png"));
+        popups.put("characterSelect", loadImage(BASE + "EncanFrogger/assets/images/Popups/characterSelectPopup.png"));
+        popups.put("mapSelect", loadImage(BASE + "EncanFrogger/assets/images/Popups/mapSelectPopup.png"));
+        popups.put("initialsInput", loadImage(BASE + "EncanFrogger/assets/images/Popups/initialsInputPopup.png"));
+        popups.put("initialsTaken", loadImage(BASE + "EncanFrogger/assets/images/Popups/initialsTakenPopup.png"));
     }
 
     private void loadInstructions() {
-        instructions.put("instruction1", loadImage("assets/instructions/page1.png"));
-        instructions.put("instruction2", loadImage("assets/instructions/page2.png"));
-        instructions.put("instruction3", loadImage("assets/instructions/page3.png"));
-        instructions.put("instruction4", loadImage("assets/instructions/page4.png"));
-        instructions.put("instruction5", loadImage("assets/instructions/page5.png"));
-        instructions.put("instruction6", loadImage("assets/instructions/page6.png"));
-        instructions.put("instruction7", loadImage("assets/instructions/page7.png"));
+        instructions.put("instruction1", loadImage(BASE + "EncanFrogger/assets/images/instructions/page1.png"));
+        instructions.put("instruction2", loadImage(BASE + "EncanFrogger/assets/images/instructions/page2.png"));
+        instructions.put("instruction3", loadImage(BASE + "EncanFrogger/assets/images/instructions/page3.png"));
+        instructions.put("instruction4", loadImage(BASE + "EncanFrogger/assets/images/instructions/page4.png"));
+        instructions.put("instruction5", loadImage(BASE + "EncanFrogger/assets/images/instructions/page5.png"));
+        instructions.put("instruction6", loadImage(BASE + "EncanFrogger/assets/images/instructions/page6.png"));
+        instructions.put("instruction7", loadImage(BASE + "EncanFrogger/assets/images/instructions/page7.png"));
     }
 
     // Convenience loader: returns null and prints a warning instead of throwing.

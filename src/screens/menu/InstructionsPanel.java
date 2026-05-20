@@ -226,7 +226,13 @@ public class InstructionsPanel extends JPanel {
     @Override
     public void addNotify() {
         super.addNotify();
+        updateButtonVisibility();
         SwingUtilities.invokeLater(this::requestFocusInWindow);
+    }
+
+    public void resetPanel() {
+        currentPage = 0;
+        updateButtonVisibility();
     }
 
     // -------------------------------------------------------------------------

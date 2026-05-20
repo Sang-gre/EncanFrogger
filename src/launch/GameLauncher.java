@@ -63,6 +63,7 @@ public class GameLauncher extends JFrame {
                 (int) (screenWidth * 0.6),
                 (int) (screenHeight * 0.6)));
 
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -133,6 +134,7 @@ public class GameLauncher extends JFrame {
             instructionsPanel.setOnExit(this::showMainMenu);
         }
         cardLayout.show(mainPanel, "Instructions");
+        instructionsPanel.resetPanel();
         SwingUtilities.invokeLater(instructionsPanel::requestFocusInWindow);
     }
 

@@ -1,77 +1,79 @@
-# ENCANFROGGER - README
+# EncanFrogger
 
-**Group Sang'gre**
-* **Denise Jade Leguarda** – Graphics & Rendering Developer
-* **Lorenz Ed Ocampo** – Asset & Integration Manager
-* **Jessa Jasmine Parcero** – Gameplay & Physics Developer
-* **Jezrel Marie Saño** – Lead Architect
-* **Jubiemyr Silvio** – Systems Engineer
+A Frogger-inspired arcade game set in the fantasy world of **Encantadia**.
+Play as one of five Sang'gre characters and navigate through five elemental
+kingdoms — crossing lava rivers, icy waters, desert sands, open skies, and
+tropical coasts — while dodging obstacles, collecting coins, and reaching
+the goal before losing your three lives.
 
-**Course:** CMSC 12
-
----
-
-## IMPORTANT NOTE
-
-This project can be run in **TWO** ways as required for the laboratory activity:
-
-1. [**Running from SOURCE CODE (Java CLI)**](#running-from-source-code)
-2. [**Running from INSTALLER (One-click app)**](#running-from-installer)
-
-Both methods are fully functional and included in this package.
+Features a character selection screen, kingdom map selection, local
+leaderboard, and progressively harder levels. A Help section and Credits
+are accessible from the main menu.
 
 ---
 
-## REQUIREMENTS (FOR SOURCE RUN)
-* **Java JDK 17** or higher installed on the system.
-* **Command Prompt / Terminal** access.
+**Group Sang'gre | CMSC 12**
+
+Denise Jade Leguarda · Lorenz Ed Ocampo · Jessa Jasmine Parcero · Jezrel Marie Saño · Jubiemyr Silvio
 
 ---
 
-## RUNNING FROM SOURCE CODE
+## Running the Game
 
-### Step 1: Open Terminal
+### Option A — From Source
 
-Navigate to the root `EncanFrogger` folder where the `src` directory is located.
+**Requirements:** Java JDK 25+
 
-### Step 2: Compile the Project
+1. Navigate to the `Sang'gre/` folder.
 
-Execute the following commands to generate the class files into an `out` folder:
+2. Compile:
+
+**On Windows:**
+```bash
+javac -d EncanFrogger\bin -sourcepath EncanFrogger\src EncanFrogger\src\main\Main.java
+```
+
+**On Mac/Linux:**
+```bash
+javac -d EncanFrogger/bin -sourcepath EncanFrogger/src EncanFrogger/src/main/Main.java
+```
+3. Run:
 
 ```bash
-dir /s /b src\*.java > sources.txt
-mkdir out
-javac -d out @sources.txt
+java -cp EncanFrogger/bin main.Main
 ```
 
-### Step 3: Run the Game
+> `Main` is the driver class located at the root of `src/`.
 
-Execute the compiled project using the following command:
+### Option B — From JAROption B — From JAR
+Requirements: Java JDK 17+
+
+Navigate to the Sang'gre/ folder.
+
+Run:
+
+java -jar Installer/Jar/EncanFrogger.jar
+
+**Requirements:** Java JDK 17+
+
+1. Navigate to the `Sang'gre/` folder.
+
+2. Run:
 
 ```bash
-java -cp out main.GameLauncher
+java -jar Installer/Jar/EncanFrogger.jar
 ```
 
-**OR** (if the JAR file is preferred):
+### Option C — Installer (Windows only)
 
-```bash
-java -jar release\EncanFrogger.jar
-```
+Navigate to `Installer/Windows/EncanFrogger/` and double-click **`EncanFrogger.exe`**.
 
----
+> On first launch, a splash screen will appear while assets load. This is expected.
 
-## RUNNING FROM INSTALLER
+### Option D — Setup Installer (Windows only)
 
-### Step 1: Open Folder
+Navigate to `Installer/Release/` and double-click **`EncanFroggerSetup.exe`**.
 
-Navigate to the following directory:
-
-```
-EncanFrogger-Installer
-```
-
-### Step 2: Launch the App
-
-Double-click the executable file:
-
-**`EncanFrogger.exe`**
+This will install the game to `C:\Program Files\EncanFrogger\` and create
+shortcuts on your Desktop and Start Menu. You can launch the game from
+either shortcut after installation.
